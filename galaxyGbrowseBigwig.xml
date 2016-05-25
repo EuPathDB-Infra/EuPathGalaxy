@@ -1,24 +1,39 @@
 <display id="gbrowse_bigwig" version="1.0.0" name="display at EupathDB">
 
-    <!-- Load links from mapping file: one line to one link.  In our case, only one line will match the filter -->
+    <!-- 
+	 Display links specified in a mapping file: one link per line.  In our case, only one line will match the filter,
+	 so we'll show only one link
+    -->
     <dynamic_links from_file="tool-data/shared/gbrowse/gbrowse_build_sites.txt" skip_startswith="#" id="0" name="1">
       
-      <!-- the format of the URL is: http://fungidb.org/cgi-bin/gbrowse/fungidb?name=GG663363;eurl=BIGWIG_FILE_URL -->
+      <!-- the desired URL format is: http://plasmodb.org/cgi-bin/gbrowse/plasmodb?name=GG663363;eurl=BIGWIG_FILE_URL -->
+      
+      <!-- a sample line from mapping file. The 2nd column is "dbkeys."  I think they need to be in the .loc file for the tool
+	   that created the datasaet, in order for the dataset to be bound to this dbkey. The 3rd column is a "site_seq_ids."  These 
+	   must be ordered parallel to the dbkeys column.
 
-      <!-- Define parameters by column from file, allow splitting on dbkeys and seq ids -->
+      plasmodb _Pfalciparum_3D7,_Pfalciparum_IT Pf3D7_05_v3,PfIT_05_v1
+
+      -->
+
+      <!-- Define parameters by column from mapping file.  Allow splitting on dbkeys and seq ids -->
       <dynamic_param name="site_name" value="0"/>
       <dynamic_param name="site_dbkeys" value="1" split="True" separator="," />
       <dynamic_param name="site_seq_ids" value="2" split="True" separator="," />
       
-      <!-- Filter this dataset's dbkeys to one found in the mapping file (I think!)-->
-      <!-- I don't really understand how the filtering works.  The only basis we have for choosing -->
-      <!-- a row, it seems, is if this dataset has a dbkey that matches the list in the row -->
+      <!-- filter rows in the mapping file.  In this case, we'll find exactly one row: one where the dataset's dbkey is in the list of dbkeys -->
       <filter>${dataset.dbkey in $site_dbkeys}</filter>
 
+      <!-- the formatted url.  the .qp method presumably does escaping for http -->
       <url>http://${site_name}/cgi-bin/gbrowse/${site_name}?name=${site_seq_id};eurl=${bigwig_file.qp}</url>
+
+      <!-- hopefully, this provides an url to the bigwig file -->
       <param type="data" name="bigwig_file" url="galaxy_${DATASET_HASH}.bw" />
+
+      <!-- find the seq_id by postion, indexing with the dbkey position -->
       <param type="template" name="site_seq_id" strip="True" >
 	$site_seq_ids[ $site_dbkeys.index( $bigwig_file.dbkey ) ]
       </param>
+
     </dynamic_links>
 </display>
