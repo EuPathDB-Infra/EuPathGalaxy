@@ -4,9 +4,9 @@
 	 Display links specified in a mapping file: one link per line.  In our case, only one line will match the filter,
 	 so we'll show only one link
     -->
-    <dynamic_links from_file="tool-data/shared/gbrowse/gbrowse_build_sites.txt" skip_startswith="#" id="0" name="1">
+    <dynamic_links from_file="tool-data/shared/gbrowse/gbrowse_display_application.txt" skip_startswith="#" id="0" name="1">
       
-      <!-- the desired URL format is: http://plasmodb.org/cgi-bin/gbrowse/plasmodb?name=GG663363;eurl=BIGWIG_FILE_URL -->
+      <!-- the desired URL format is: http://plasmodb.org/cgi-bin/gbrowse/plasmodb?name=GG663363&eurl=BIGWIG_FILE_URL -->
       
       <!-- a sample line from mapping file. The 2nd column is "dbkeys."  I think they need to be in the .loc file for the tool
 	   that created the datasaet, in order for the dataset to be bound to this dbkey. The 3rd column is a "site_seq_ids."  These 
@@ -25,7 +25,7 @@
       <filter>${dataset.dbkey in $site_dbkeys}</filter>
 
       <!-- the formatted url.  the .qp method presumably does escaping for http -->
-      <url>http://${site_name}/cgi-bin/gbrowse/${site_name}?name=${site_seq_id};eurl=${bigwig_file.qp}</url>
+      <url>http://${site_name}/cgi-bin/gbrowse/${site_name}?name=${site_seq_id}&amp;eurl=${bigwig_file.qp}</url>
 
       <!-- hopefully, this provides an url to the bigwig file -->
       <param type="data" name="bigwig_file" url="galaxy_${DATASET_HASH}.bw" />
