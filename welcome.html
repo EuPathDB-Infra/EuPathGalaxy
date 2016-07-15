@@ -27,6 +27,21 @@
 		  margin-top: 2em;
 		  padding: 1em;
 		  background-color:#eee;
+		  position: fixed; 
+		  bottom: 0; 
+		  left: 0; 
+		  right: 0;
+	  }
+	  .globus-name {
+		  margin-left: 4em;
+		  float: left;
+		  text-align: left;
+	  }
+	  .globus-icon {
+	  	float: right;
+		width: 56px;
+		height: 56px;
+		margin-left: 0.5em;
 	  }
 	  .sites {
 		  text-align: center;
@@ -38,8 +53,10 @@
   <header class="eupath-header">
     <div class="container">
 	  <div class="row">
-	    <div class="col-md-9">
-		  <img alt="Link to EuPathDB homepage" src="http://eupathdb.org/eupathdb/images/EuPathDB/title_s-094b836d84d22de89fbb14643a81e403.png" align="left">
+	    <div class="col-md-9 pull-left">
+		  <a href="http://eupathdb.org" target="_top">	
+		    <img alt="Link to EuPathDB homepage" src="http://eupathdb.org/eupathdb/images/EuPathDB/title_s-094b836d84d22de89fbb14643a81e403.png">
+	      </a>
 		</div>
 	    <div class="col-md-2">
 	      system status
@@ -195,9 +212,10 @@
 
 		<div class="col-md-3 text-right">
 		  <a href="https://www.globus.org/genomics" target="_top">
-			<img src="https://eupathdb.globusgenomics.org/static/images/galaxyIcon_noText.png">
-			<br />
-			Powered by globus genomics
+			<div class="globus-name">Powered by<br />globus genomics</div>
+			<div class="globus-icon">
+			  <img src="https://eupathdb.globusgenomics.org/static/images/galaxyIcon_noText.png"/>
+			</div>  
 		  </a>
 		      
 		  
