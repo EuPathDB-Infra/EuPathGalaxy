@@ -3,50 +3,7 @@
 <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="style/base.css" type="text/css" />
-    <style type="text/css">
-      div.status_image {
-          display: inline-block; 
-          margin-left: auto; 
-          margin-right: auto; 
-          background: url(images/sprite_32.png) no-repeat; 
-          height: 32px; 
-          width: 32px; 
-          position: relative; 
-          background-position: 0 50%;
-      }
-	  .workflows {
-		  width: 100%;
-	  }
-	  .eupath-header {
-		  margin-bottom: 2em;
-		  padding: 1em;
-		  background-color:#eee;
-		  font-size: 1.3em;
-	  }
-	  .eupath-footer {
-		  margin-top: 2em;
-		  padding: 1em;
-		  background-color:#eee;
-		  position: fixed; 
-		  bottom: 0; 
-		  left: 0; 
-		  right: 0;
-	  }
-	  .globus-name {
-		  margin-left: 4em;
-		  float: left;
-		  text-align: left;
-	  }
-	  .globus-icon {
-	  	float: right;
-		width: 56px;
-		height: 56px;
-		margin-left: 0.5em;
-	  }
-	  .sites {
-		  text-align: center;
-	  }
-	</style>
+    <link rel="stylesheet" href="http://localhost/css/eupath-galaxy.css" />
 </head>
 <body style="margin: 0">
 
@@ -69,35 +26,18 @@
   </header>
 
   <div class="container">
-	<div class="row">
-	  <h1>Welcome to the EuPathDB Galaxy Site</h1>
-	</div>
-	<div class="row">
-	  <div class="col-md-8">	  
-	    <h2>Helpful Information</h2>
+	  <div class="row">
+	    <h1>Welcome to the EuPathDB Galaxy Site</h1>
 	  </div>
-	  <div class="col-md-4">
-	    <h2>Useful Links</h2>
-	  </div>
-	</div>
-	<div class="row">  	  
-	  <div class="col-md-8">
-	    <ul>
-		  <li>		  
-		    Quisque eget leo quis nisl dignissim imperdiet sit amet in ipsum. Suspendisse maximus condimentum tincidunt. Vestibulum commodo, dui quis lacinia venenatis, ex lorem              fermentum erat, vitae mollis velit urna eget mi. Phasellus faucibus sit amet magna eget euismod.
-	      </li>
-	      <li>
-		  	 Aenean vulputate quis nulla vel vulputate. Donec tempus, justo ac vulputate rutrum, enim dui varius lorem, at euismod ante tellus quis nulla. Vivamus non
-			 iaculis    eros. Nullam in auctor elit. Suspendisse sollicitudin, risus in faucibus scelerisque, est eros interdum ipsum, id egestas mi metus in diam.
-		  </li>
-	  </ul>	 
+	  <div class="row">
+	    <div id="eupath-intro" class="col-md-8">	  
+	    </div>
+	    <div class="col-md-4" style="vertical-align:top">
+	      <h2 class="eupath-links-header">Useful Links</h2>
+        <ul id="eupath-links">
+        </ul>
+      </div>  
     </div>
-	<div class="col-md-4">
-		<div><a href="#">Link 1</a></div>
-		<div><a href="#">Link 2</a></div>
-		<div><a href="#">Link 3</a></div>
-	</div>
-  </div>
   <div class="row">
 	<div class="col-md-12">
       <h2>EuPathDB Workflows</h2>
@@ -105,7 +45,7 @@
   </div>
   <div class="row">
 	<div class="col-md-12">  
-	  <table class="workflows">
+	  <table id="eupath-workflows" class="eupath-workflows-table">
 	    <tr>		  
 	      <td>
 		    <h3>Workflow 1</h3>
@@ -145,10 +85,12 @@
   <footer class="eupath-footer">
 	<div class="container">  
 	  <div class="row">
-	    <div class="col-md-3 pull-left">Please <a href="http://eupathdb.org/eupathdb/contact.do" target="_top">Contact Us</a> with any questions or comments.
-  		  </div>
-	    <div class="col-md-6">
-		      <ul class="list-inline sites">
+	    <div class="col-md-3 pull-left">
+        <img src="http://www.sas.upenn.edu/~egme/UPennlogo2.jpg" alt="University of Pennsylvania" style="width:125px;height:67px;">
+        <img src="https://d28htnjz2elwuj.cloudfront.net/wp-content/uploads/2013/11/University_of_Georgia_logo.jpg" alt="University of Georgia" style="width:125px;height:67px;">
+  		</div>
+	    <div class="col-md-5">
+		      <ul class="list-inline eupath-sites">
 		        <li title="AmoebaDB.org">
 		          <a href="http://amoebadb.org" target="_top">
 		            <img src="http://eupathdb.org/eupathdb/images/AmoebaDB/footer-logo-833993e0662eecc516705c5268225145.png"/>
@@ -206,24 +148,19 @@
 		        </li>
 		      </ul>
 		    </div>
-	    
-		
-
-		<div class="col-md-3 text-right">
-		  <a href="https://www.globus.org/genomics" target="_top">
-			<div class="globus-name">Powered by<br />globus genomics</div>
-			<div class="globus-icon">
-			  <img src="https://eupathdb.globusgenomics.org/static/images/galaxyIcon_noText.png"/>
-			</div>  
-		  </a>
-		      
-		  
-		</div>
-	  </div>	
-	  		
-	  
-      </div>
-    </div>
-  </footer>	 		  
+		<div class="col-md-4 text-right">
+      Please <a href="http://eupathdb.org/eupathdb/contact.do" target="_top">Contact Us</a> with any questions or comments.
+      <div>
+		    <a href="https://www.globus.org/genomics" target="_top">
+			    <span class="globus-name">Powered by<br />globus genomics</span>
+          <span class="globus-icon">
+            <img src="https://eupathdb.globusgenomics.org/static/images/galaxyIcon_noText.png"/>
+          </span>
+        </a>
+      </div>    
+    </div>  
+  </div>
+  </footer>	 
+  <script type="text/javascript" src="http://localhost/js/eupath-galaxy.js"></script>
 </body>
 </html>
