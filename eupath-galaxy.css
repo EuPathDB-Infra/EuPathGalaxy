@@ -1,14 +1,3 @@
-div.status_image {
-  display: inline-block; 
-  margin-left: auto; 
-  margin-right: auto; 
-  background: url(images/sprite_32.png) no-repeat; 
-  height: 32px; 
-  width: 32px; 
-  position: relative; 
-  background-position: 0 50%;
-}
-
 .eupath-workflows-table {
     width: 100%;
 }
