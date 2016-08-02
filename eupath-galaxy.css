@@ -1,0 +1,54 @@
+div.status_image {
+  display: inline-block; 
+  margin-left: auto; 
+  margin-right: auto; 
+  background: url(images/sprite_32.png) no-repeat; 
+  height: 32px; 
+  width: 32px; 
+  position: relative; 
+  background-position: 0 50%;
+}
+
+.eupath-workflows-table {
+    width: 100%;
+}
+    
+.eupath-header {
+  margin-bottom: 2em;
+  padding: 1em;
+  background-color:#eee;
+  font-size: 1.3em;
+}
+
+.eupath-links-header {
+  margin-top: 0;
+}
+
+.eupath-footer {
+  margin-top: 2em;
+  padding: 1em;
+  background-color:#eee;
+  position: fixed; 
+  bottom: 0; 
+  left: 0; 
+  right: 0;
+}
+
+.globus-name {
+  margin-top: 0.7em;
+  margin-left: 14em;
+  float: left;
+  text-align: left;
+}
+
+.globus-icon {
+  margin-top: 0.7em;
+  float: right;
+  width: 56px;
+  height: 56px;
+  margin-left: 0.5em;
+}
+
+.eupath-sites {
+  text-align: center;
+}
