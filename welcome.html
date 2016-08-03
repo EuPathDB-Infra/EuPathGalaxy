@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <link rel="stylesheet" href="style/base.css" type="text/css" />
-  <link rel="stylesheet" href="http://localhost/css/eupath-galaxy.css" />
+  <link rel="stylesheet" type="text/css" href="style/base.css" />
+  <link rel="stylesheet" type="text/css" href="http://localhost/css/eupath-galaxy.css"  />
   <style>
     div.status_image {
       display: inline-block; 
@@ -38,23 +38,23 @@
   </header>
 
   <div class="container">
-	<div class="row">
-	  <h1>Welcome to the EuPathDB Galaxy Site!</h1>
-	</div>
-  <div class="container">
-	<div class="row">	  
-	  <h3>Free, interactive, web-based platform for large scale data analysis.</h3>
-	</div>
-  <div class="col-md-4">
-	  <p> EuPathDB Galaxy workspaces require no prior knowledge of programming or bioinformatics experience. 
-	  This Galaxy instance integrate bioinformatics algorithms and tools into an easy to use interactive platform 
-	  that offers pre-loaded annotated genomes and workflows to help you perform large-scale data analysis. You can 
-	  also upload your own data, compose and run custom workflows, retrieve results and share your workflows and data 
-	  analyses with colleagues.</p>
+	  <div class="row">
+	    <h1 id="eupath-title">Welcome to the EuPathDB Galaxy Site</h1>
+	  </div>
+	  <div class="row">
+	    <div class="col-md-8">
+        <h2 id="eupath-subtitle"></h2>
+        <p id="eupath-intro"></p>  
+	    </div>
+	    <div class="col-md-4" style="vertical-align:top">
+	      <h2 class="eupath-links-header">Useful Links</h2>
+        <ul id="eupath-links">
+        </ul>
+      </div>  
     </div>
   <div class="row">
 	<div class="col-md-12">
-      <h3>EuPathDB Workflows</h3>
+      <h2>EuPathDB Workflows</h2>
 	</div>  
   </div>
   <div class="row">
@@ -73,7 +73,7 @@
 	    </tr>	  
   	    <tr>
 	      <td colspan="3">	  
-            Description of the workflow #1
+            Etiam fermentum fringilla molestie. Nulla eu consequat urna, sed placerat ante. Maecenas dignissim sed nibh eu ultrices
 	      </td>
 	    <tr>
 	    <tr>
@@ -89,42 +89,21 @@
   		</tr>
 		<tr>
           <td>
-            Description of the workflow #2.
+            Non scelerisque metus congue vel. Aenean at posuere risus, id aliquet sem. Nulla facilisi.
           </td>
 		</tr>
 	  </table>
 	</div>
   </div>
-</div>
-<div class="container">
-	<div class="row">
-    <h3>Helpful Information</h3>
-	  </div>
-	  <div class="row">
-	    <h3>Useful Links</h3>
-	  </div>
-	</div>
-	<div class="row">  	  
-	  <div class="col-md-8">
-	    <ul>
-		  <li>		  
-		      </li>
-	      <li>
-		  	 Short description of the links here.
-		  </li>
-	  </ul>	 
-    </div>
-	<div class="col-md-4">
-		<div><a href="#">Link 1</a></div>
-		<div><a href="#">Link 2</a></div>
-		<div><a href="#">Link 3</a></div>
-	</div>
-  </div>	  	
+</div>	  	
   <footer class="eupath-footer">
-	<div class="container">  
-	  <div class="row">
-	    <div class="col-md-3 pull-left">
-       	    <div class="col-md-5">
+	  <div class="container">  
+	    <div class="row">
+	      <div class="col-md-3 pull-left">
+          <img src="http://www.sas.upenn.edu/~egme/UPennlogo2.jpg" alt="University of Pennsylvania" style="width:125px;height:67px;">
+          <img src="https://d28htnjz2elwuj.cloudfront.net/wp-content/uploads/2013/11/University_of_Georgia_logo.jpg" alt="University of Georgia" style="width:125px;height:67px;">
+  		  </div>
+	      <div class="col-md-5">
 		      <ul class="list-inline eupath-sites">
 		        <li title="AmoebaDB.org">
 		          <a href="http://amoebadb.org" target="_top">
@@ -151,51 +130,52 @@
 		            <img src="http://eupathdb.org/eupathdb/images/MicrosporidiaDB/footer-logo-3c9df278f048bdd00661c02b9e5c528e.png"/>
 		          </a>
 		        </li>
-		        <li title="PiroplasmaDB.org" target="_top">
-		          <a href="http://piroplasmadb.org">
+		        <li title="PiroplasmaDB.org">
+		          <a href="http://piroplasmadb.org" target="_top">
 		            <img src="http://eupathdb.org/eupathdb/images/PiroplasmaDB/footer-logo-84d98fe79085ce2e37775d21292ced9d.png"/>
 		          </a>
 		        </li>
-		        <li title="PlasmoDB.org" target="_top">
-		          <a href="http://plasmodb.org">
+		        <li title="PlasmoDB.org">
+		          <a href="http://plasmodb.org" target="_top">
 		            <img src="http://eupathdb.org/eupathdb/images/PlasmoDB/footer-logo-a5599f0e62c43f185296457aa068f39a.png"/>
 		          </a>
 		        </li>
-		        <li title="ToxoDB.org" target="_top">
-		          <a href="http://toxodb.org">
+		        <li title="ToxoDB.org">
+		          <a href="http://toxodb.org" target="_top">
 		            <img src="http://eupathdb.org/eupathdb/images/ToxoDB/footer-logo-0c246903dc7ae83541ffbb76b00a1355.png"/>
 		          </a>
 		        </li>
-		        <li title="TrichDB.org" target="_top">
-		          <a href="http://trichdb.org">
+		        <li title="TrichDB.org">
+		          <a href="http://trichdb.org"  target="_top">
 		            <img src="http://eupathdb.org/eupathdb/images/TrichDB/footer-logo-f9ae1e14e1f6d6e66948a9e10acf995f.png"/>
 		          </a>
 		        </li>
-		        <li title="TriTrypDB.org" target="_top">
-		          <a href="http://tritrypdb.org">
+		        <li title="TriTrypDB.org">
+		          <a href="http://tritrypdb.org" target="_top">
 		            <img src="http://eupathdb.org/eupathdb/images/TriTrypDB/footer-logo-191820c51f8abb7d088584ed7e2e4622.png"/>
 		          </a>
 		        </li>
-		        <li title="OrthoMCL.org" target="_top">
-		          <a href="http://orthomcl.org">
+		        <li title="OrthoMCL.org">
+		          <a href="http://orthomcl.org" target="_top">
 		            <img src="http://eupathdb.org/eupathdb/images/OrthoMCL/footer-logo-4a02e04c2d1841fa9c610b0f4f1560d9.png"/>
 		          </a>
 		        </li>
 		      </ul>
 		    </div>
-		<div class="col-md-4 text-right">
-      Please <a href="http://eupathdb.org/eupathdb/contact.do" target="_top">Contact Us</a> with any questions or comments.
-      <div>
-		    <a href="https://www.globus.org/genomics" target="_top">
-			    <span class="globus-name">Powered by<br />globus genomics</span>
-          <span class="globus-icon">
-            <img src="https://eupathdb.globusgenomics.org/static/images/galaxyIcon_noText.png"/>
-          </span>
-        </a>
-      </div>    
-    </div>  
-  </div>
+		    <div class="col-md-4 text-right">
+          <div>
+            Please <a href="http://eupathdb.org/eupathdb/contact.do" target="_top">Contact Us</a> with any questions or comments.
+          </div>
+		      <a href="https://www.globus.org/genomics" target="_top">
+			      <span class="globus-name">Powered by<br />globus genomics</span>
+            <span class="globus-icon">
+              <img src="https://eupathdb.globusgenomics.org/static/images/galaxyIcon_noText.png"/>
+            </span>
+          </a>
+        </div>    
+      </div>  
+    </div>
   </footer>	 
-  <script type="text/javascript" src="http://localhost/js/eupath-galaxy.js"></script>
+  <script type="text/javascript" src="https://www.cbil.upenn.edu/svn/apidb/EuPathGalaxy/eupath-galaxy.js"></script>
 </body>
 </html>
