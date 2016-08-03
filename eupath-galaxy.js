@@ -1,6 +1,15 @@
+document.getElementById("eupath-title").innerHTML = "" +
+        "Welcome to the EuPathDB Galaxy Site!";
+
+document.getElementById("eupath-subtitle").innerHTML = "" +
+        "Free, interactive, web-based platform for large-scale data analysis";
+
 document.getElementById("eupath-intro").innerHTML = "" +
-		"The come has come, the walrus said, to speak of many things." +
-		" Of ships and sails and sealing wax.  Of cabbages and kings.";
+		"EuPathDB Galaxy workspaces require no prior knowledge of programming or bioinformatics experience." +
+		" This Galaxy instance integrate bioinformatics algorithms and tools into an easy to use interactive platform" +
+		" that offers pre-loaded annotated genomes and workflows to help you perform large-scale data analysis. You can also" +
+		" upload your own data, compose and run custom workflows, retrieve results and share your workflows and data" +
+		" analyses with colleagues.";
 
 document.getElementById("eupath-links").innerHTML = "" +
         "<li><a href='#'>Link A</a></li>" +
@@ -9,7 +18,7 @@ document.getElementById("eupath-links").innerHTML = "" +
 
 document.getElementById("eupath-workflows").innerHTML = "" +
 		"<tr><td><h3>Workflow A</h3></td><td><a href='#'>Describe</a></td><td><a href='#'>Import</a></td></tr>" +
-        "<tr><td colspan='3'>Beware the Jabberwock my son, with claws that catch and teeth that bite</td></tr>";
+        "<tr><td colspan='3'>Workflow 1 Description</td></tr>";
   
   
 
