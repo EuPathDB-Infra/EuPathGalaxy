@@ -10,6 +10,7 @@
 }
 
 .eupath-footer {
+  text-align: center;
   margin-top: 2em;
   padding: 1em;
   background-color:#eee;
@@ -20,20 +21,9 @@
 }
 
 .globus-name {
-  margin-top: 0.7em;
-  margin-left: 14em;
-  float: left;
-  text-align: left;
 }
 
 .globus-icon {
-  margin-top: 0.7em;
-  float: right;
   width: 56px;
   height: 56px;
-  margin-left: 0.5em;
-}
-
-.eupath-sites {
-  text-align: center;
 }
