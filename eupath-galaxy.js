@@ -27,8 +27,8 @@ document.getElementById("eupath-workflows").innerHTML = "" +
         "<tr><td colspan='3'>Workflow 1 Description</td></tr>";
 
 /**
- * A series of ajax calls to import a published workflow and get its id, followed by a redirect to run the
- * imported workflow
+ * A series of ajax calls to import a published workflow (if not already imported) and get its id,
+ * followed by a redirect to run the imported workflow
  * @param id - the published (shared) workflow to import
  */
 import_and_run_workflow = function(id) {
@@ -37,23 +37,38 @@ import_and_run_workflow = function(id) {
   // First ajax call to get the name of the workflow to import
   $.get(base_url + "/api/workflows/" + id, function (result) {
     var name = result.name;
-    // Second ajax call to actually import the workflow
-    $.post(base_url + "/api/workflows/import",{"workflow_id":id},function(id) {
-      // Third ajax call to find the newly imported workflow based upon the 'imported: '
-      // key phrase, followed by the name of the original workflow
-      $.get(base_url + "/api/workflows", function (results) {
-        for(i = 0; i < results.length; i++) {
-          if(results[i].name.startsWith("imported: ") && results[i].name.endsWith(name)) {
-            import_id = results[i].id;
-            break;
-          }
+    // Second ajax call to determine if the workflow was already imported.
+    $.get(base_url + "/api/workflows", function (results) {
+      for(i = 0; i < results.length; i++) {
+        if(results[i].name.startsWith("imported: ") && results[i].name.endsWith(name)) {
+          import_id = results[i].id;
+          break;
         }
-        // If the id of the imported workflow is (hopefully always) found, redirect to the
-        // url that runs that workflow.
-        if(import_id.length > 0) {
-          location.href = "/workflow/run?id=" + import_id;
-        }
-      });
+      }
+      // If no import exists issue a third ajax call to actually import the workflow
+      if(import_id.length == 0) {
+        $.post(base_url + "/api/workflows/import",{"workflow_id":id},function(id) {
+          // Fourth ajax call to find the newly imported workflow based upon the 'imported: '
+          // key phrase, followed by the name of the original workflow
+          $.get(base_url + "/api/workflows", function (results) {
+            for(i = 0; i < results.length; i++) {
+              if(results[i].name.startsWith("imported: ") && results[i].name.endsWith(name)) {
+                import_id = results[i].id;
+                break;
+              }
+            }  
+            // If the id of the imported workflow is (hopefully always) found, redirect to the
+            // url that runs that workflow.
+            if(import_id.length > 0) {
+              location.href = "/workflow/run?id=" + import_id;
+            }
+          });
+        });
+      }
+      // Import already exists.  Just run it.
+      else {
+        location.href = "/workflow/run?id=" + import_id;
+      }    
     });
   });  
 }
