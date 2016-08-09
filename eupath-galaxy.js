@@ -24,7 +24,7 @@ document.getElementById("eupath-links").innerHTML = "" +
 // Warning insure ids inside onClick events are correct for galaxy site to which this is deployed. 
 document.getElementById("eupath-workflows").innerHTML = "" +
 		"<tr><td><h3><a id='workflow1' href='javascript:void(0)' onClick='import_and_run_workflow(\"0a248a1f62a0cc04\")'>Workflow A</a></h3></td></tr>" +
-        "<tr><td colspan='3'>Workflow 1 Description</td></tr>";
+        "<tr><td>Workflow 1 Description</td></tr>";
 
 /**
  * A series of ajax calls to import a published workflow (if not already imported) and get its id,
