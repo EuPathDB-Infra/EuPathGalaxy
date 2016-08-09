@@ -35,10 +35,10 @@ import_and_run_workflow = function(id) {
   var base_url = location.protocol + "//" + location.host;
   var import_id = "";
   // First ajax call to get the name of the workflow to import
-  $.get(base_url + "/api/workflows/" + id, function (result) {
+  jQuery.get(base_url + "/api/workflows/" + id, function (result) {
     var name = result.name;
     // Second ajax call to determine if the workflow was already imported.
-    $.get(base_url + "/api/workflows", function (results) {
+    jQuery.get(base_url + "/api/workflows", function (results) {
       for(i = 0; i < results.length; i++) {
         if(results[i].name.startsWith("imported: ") && results[i].name.endsWith(name)) {
           import_id = results[i].id;
@@ -47,10 +47,10 @@ import_and_run_workflow = function(id) {
       }
       // If no import exists issue a third ajax call to actually import the workflow
       if(import_id.length == 0) {
-        $.post(base_url + "/api/workflows/import",{"workflow_id":id},function(id) {
+        jQuery.post(base_url + "/api/workflows/import",{"workflow_id":id},function(id) {
           // Fourth ajax call to find the newly imported workflow based upon the 'imported: '
           // key phrase, followed by the name of the original workflow
-          $.get(base_url + "/api/workflows", function (results) {
+          jQuery.get(base_url + "/api/workflows", function (results) {
             for(i = 0; i < results.length; i++) {
               if(results[i].name.startsWith("imported: ") && results[i].name.endsWith(name)) {
                 import_id = results[i].id;
