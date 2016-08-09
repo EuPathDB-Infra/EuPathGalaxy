@@ -8,9 +8,9 @@
 }
     
 .eupath-header {
-  padding: 3px 0;
   background-color:#eee;
-  text-align:center;
+  /* padding: 3px 0;
+  text-align:center; */
 }
 
 .eupath-header img {
