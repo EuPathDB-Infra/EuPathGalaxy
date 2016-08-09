@@ -9,21 +9,23 @@ document.getElementById("eupath-subtitle").innerHTML = "" +
 // Introductory paragraph content
 document.getElementById("eupath-intro").innerHTML = "" +
 		"EuPathDB Galaxy workspaces require no prior knowledge of programming or bioinformatics experience." +
-		" This Galaxy instance integrate bioinformatics algorithms and tools into an easy to use interactive platform" +
+		" This Galaxy instance integrates bioinformatics algorithms and tools into an easy to use interactive platform" +
 		" that offers pre-loaded annotated genomes and workflows to help you perform large-scale data analysis. You can also" +
 		" upload your own data, compose and run custom workflows, retrieve results and share your workflows and data" +
 		" analyses with colleagues.";
 
 // Links content
+/*
 document.getElementById("eupath-links").innerHTML = "" +
         "<li><a href='#'>Link A</a></li>" +
 		"<li><a href='#'>Link B</a></li>" +
 		"<li><a href='#'>Link C</a></li>";
+*/
 
 // Workflows content
 // Warning insure ids inside onClick events are correct for galaxy site to which this is deployed. 
 document.getElementById("eupath-workflows").innerHTML = "" +
-		"<tr><td><h3><a id='workflow1' href='javascript:void(0)' onClick='import_and_run_workflow(\"0a248a1f62a0cc04\")'>Workflow A</a></h3></td></tr>" +
+		"<tr><td><h3><a id='workflow1' href='javascript:void(0)' onClick='import_and_run_workflow(\"0a248a1f62a0cc04\")'>Workflow 1</a></h3></td></tr>" +
         "<tr><td>Workflow 1 Description</td></tr>";
 
 /**
