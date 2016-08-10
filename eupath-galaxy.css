@@ -10,7 +10,8 @@
 .eupath-header {
   background-color:#eee;
   /* padding: 3px 0;
-  text-align:center; */
+  text-align:center; 
+ */
 }
 
 .eupath-header img {
@@ -36,14 +37,12 @@
 .eupath-footer {
   background-color:#eee;
   padding: 1em;
-/*
   position: absolute;
   bottom:0;
   left: 0;
   right: 0;
   text-align: center;
   margin-top: 2em;
-*/
 }
 
 .globus-name {
