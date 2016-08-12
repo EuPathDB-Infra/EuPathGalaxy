@@ -25,8 +25,11 @@ document.getElementById("eupath-links").innerHTML = "" +
 // Workflows content
 // Warning insure ids inside onClick events are correct for galaxy site to which this is deployed. 
 document.getElementById("eupath-workflows").innerHTML = "" +
-		"<tr><td class=\"notice_table_name\"><a id='workflow1' href='javascript:void(0)' onClick='import_and_run_workflow(\"3eff99ce50c5e7b3\")'>Workflow 1</a></td></tr>" +
-        "<tr><td>Workflow 1 Description</td></tr>";
+	"<tr><td class=\"notice_table_name\"><a id='workflow1' href='javascript:void(0)' onClick='import_and_run_workflow(\"3eff99ce50c5e7b3\")'>EuPathDB Workflow for Illumina paired-end RNA-seq, single replicate</a></td></tr>" +
+        "<tr><td>Profile a transcriptome and analyze differential gene expression, splicing, and promoter use (Plasmodium falciparum).<br>Tools: FastQC, GSNAP, CuffLinks, CuffDiff.</td></tr>" +
+        "<tr><td class=\"notice_table_name\"><a id='workflow2' href='javascript:void(0)' >EuPathDB Workflow for Illumina paired-end RNA-seq, biological replicates</a></td></tr>" +
+        "<tr><td>Profile a transcriptome and analyze differential gene expression (Aspergillus nidulans).</td></tr>";
+ 
 
 /**
  * A series of ajax calls to import a published workflow (if not already imported) and get its id,
