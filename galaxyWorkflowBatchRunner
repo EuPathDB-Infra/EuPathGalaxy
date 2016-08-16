@@ -1,0 +1,229 @@
+ #!/usr/bin/perl
+
+use LWP::UserAgent;
+use JSON;
+use strict;
+use Data::Dumper;
+
+
+my %IGNORE_STANDARD_PARAMS = (__workflow_invocation_uuid__ => 1, chromInfo => 1, dbkey => 1);
+my %workflowEncodeHack = ('2091733' => '3b110e2bf85a0c97', '2091734' => '3ed09f425bf288e9', '2091735' => '851e32af55354b8f');
+my %workflowDecodeHack = ('3b110e2bf85a0c97' => '2091733', '3ed09f425bf288e9' => '2091734', '851e32af55354b8f' => '2091735');
+
+usage() unless scalar(@ARGV) > 6;
+
+my ($baseUri, $workflowId, $workflowInvocationId, $projectName, $inputWorkflowStepId, $datasetIdsString, $apiKey) = @ARGV;
+
+runWorkflowBatch($baseUri, $workflowId, $workflowInvocationId, $projectName, $inputWorkflowStepId, $datasetIdsString, $apiKey);
+
+
+############################  subroutines  ###########################################
+
+sub runWorkflowBatch {
+  my ($baseUri, $workflowId, $workflowInvocationId, $projectName, $inputId, $datasetIdsString, $apiKey) = @_;
+
+  my $ua = LWP::UserAgent->new;
+
+  my $apiUrl = "https://$baseUri/api";
+
+  my ($workflowName, $paramsToIgnoreMap) = getWorkflowInfo($workflowId, $apiUrl, $apiKey, $ua);
+
+  my ($invocationMap, $orderIndexToWorkflowStepId) = getAndValidateInvocation($workflowId, $workflowInvocationId, $apiUrl, $apiKey, $ua);
+
+  my $previousParamValuesMap = getParamValuesMap($invocationMap, $paramsToIgnoreMap, $apiUrl, $apiKey, $ua);
+
+  my $previousInputValuesMap = getInputValuesMap($invocationMap, $orderIndexToWorkflowStepId, $inputWorkflowStepId);
+
+  my @datasetIdsList = split(/,\s*/, $datasetIdsString);
+
+  foreach my $datasetId (@datasetIdsList) {
+    my $datasetName = getDatasetName($datasetId, $apiUrl, $apiKey, $ua);
+    my $newHistoryName = "$projectName-$datasetName-$workflowName-" . time();
+    runWorkflow($workflowId, $newHistoryName, $previousParamValuesMap, $previousInputValuesMap, $inputId, $datasetId, $apiUrl, $apiKey, $ua);
+  }
+}
+
+# read the workflow.  find its name.
+# also, visit each step to find params that are not runtime.  add these to the ignore list
+# return (workflowName, paramsToIgnore)
+sub getWorkflowInfo {
+  my ($workflowId, $apiUrl, $apiKey, $ua) = @_;
+
+  my $workflowUrl = "$apiUrl/workflows/$workflowId?key=$apiKey";
+  my $workflowJson = makeGetRequest($ua, $workflowUrl);
+  my $workflowMap = decode_json($workflowJson);
+
+  my $ignore = {};
+  foreach my $stepId (keys %{$workflowMap->{steps}}) {
+    $stepId = $stepId;
+    $ignore->{$workflowEncodeHack{$stepId}} = {};
+    my $step = $workflowMap->{steps}->{$stepId};
+    foreach my $toolInputName (keys(%{$step->{tool_inputs}})) {
+      if ($step->{tool_inputs}->{$toolInputName} ne '{"__class__": "RuntimeValue"}') {
+	$ignore->{$workflowEncodeHack{$stepId}}->{$toolInputName} = 1;
+      }
+    }
+  }
+  return ($workflowMap->{name}, $ignore);
+}
+
+# read the workflow invocation for the ID provided
+# validate that all steps had status 'ok' or 'null;
+# return map of invocation info, and a map of order_index->workflow_step_id
+sub getAndValidateInvocation {
+  my ($workflowId, $workflowInvocationId, $apiUrl, $apiKey, $ua) = @_;
+  my $invocationUrl = "$apiUrl/workflows/$workflowId/invocations/$workflowInvocationId?key=$apiKey";
+  my $invocationJson = makeGetRequest($ua, $invocationUrl);
+  my $invocationMap = decode_json($invocationJson);
+  my $orderIndexToWorkflowStepId = {};
+  foreach my $step (@{$invocationMap->{steps}}) {
+    die "Step $step->{order_index} was not 'ok'\n" unless $step->{state} eq 'ok' || !$step->{state};
+    $orderIndexToWorkflowStepId->{$step->{order_index}} = $step->{workflow_step_id};
+  }
+
+  return ($invocationMap, $orderIndexToWorkflowStepId);
+}
+
+# read invocation map
+# for each step, read the job to get the param values used.
+# find param values that we are not ignoring, and return them.
+sub getParamValuesMap {
+  my ($invocationMap, $paramsToIgnore, $apiUrl, $apiKey, $ua) = @_;
+  my $paramValuesMap;
+  foreach my $step (@{$invocationMap->{steps}}) {
+    my $jobId = $step->{job_id};
+    next unless $jobId;   # jobId is null on dataset input steps
+    my $workflowStepId = $step->{workflow_step_id};
+    my $jobUrl = "$apiUrl/jobs/$jobId?key=$apiKey";
+    my $jobJson = makeGetRequest($ua, $jobUrl);
+    my $jobMap = decode_json($jobJson);
+    $paramValuesMap->{$workflowStepId} = {};
+
+    foreach my $paramName (keys %{$jobMap->{params}}) {
+      next if $IGNORE_STANDARD_PARAMS{$paramName} || $paramsToIgnore->{$workflowStepId}->{$paramName};
+      my $trimmedValue = $jobMap->{params}->{$paramName};
+      $trimmedValue = $1 if ($trimmedValue =~ /^"(.*)"$/);   # remove leading and trailing quotes
+      $paramValuesMap->{$workflowStepId}->{$paramName} = $trimmedValue;
+    }
+  }
+  return $paramValuesMap;
+}
+
+# read the inputs section of invocationMap.
+# find and return all input dataset values that are not the one driving the batch job.
+sub getInputValuesMap {
+  my ($invocationMap, $orderIndexToWorkflowStepId, $inputWorkflowStepId) = @_;
+
+  my $map = {};
+  foreach my $orderIndex (keys (%{$invocationMap->{inputs}})) {
+    my $workflowStepId = $orderIndexToWorkflowStepId->{$orderIndex};
+    next if $workflowStepId eq $inputWorkflowStepId;
+    $map->{$workflowStepId}->{src} = $invocationMap->{inputs}->{$orderIndex}->{src};
+    $map->{$workflowStepId}->{id} = $invocationMap->{inputs}->{$orderIndex}->{id};
+  }
+  return $map;
+}
+
+# find the name of a dataset, given its id
+sub getDatasetName {
+  my ($datasetId, $apiUrl, $apiKey, $ua) = @_;
+  my $url = "$apiUrl/datasets/$datasetId?key=$apiKey";
+  my $datasetJson = makeGetRequest($ua, $url);
+  my $datasetMap = decode_json($datasetJson);
+  return $datasetMap->{name};
+}
+
+# create a new history with name "projectName-datasetName-workflowName-timestamp"
+sub createHistory {
+  my ($projectName, $workflowName, $datasetName, $time, $apiUrl, $apiKey, $ua) = @_;
+
+  my $url = "$apiUrl/histories?key=$apiKey";
+  my $newHistoryName = "$projectName-$datasetName-$workflowName-$time";
+  my $jsonContent = "{\"name\" : \"$newHistoryName\"}";
+  makePostRequest($ua, $url, $jsonContent);
+  return $newHistoryName;
+}
+
+# run a workflow in the provided history
+# use the previous input values and parameter values, from the template invocation
+# use the provided input dataset
+# sample json content:
+#   '{ "workflow_id" :"ba06423ff18d37cc", "parameters" : {"2091734" : {"columnList" : "C1,C2"}}, "ds_map":{"2091733" : {"src" : "hda", "id": "bbd44e69cb8906b587c210f637326cca"}} }';
+sub runWorkflow {
+  my ($workflowId, $historyName, $previousParamValuesMap, $previousInputValuesMap, $inputWorkflowStepId, $datasetId, $apiUrl, $apiKey, $ua) = @_;
+
+  my $content = { workflow_id => $workflowId, history => $historyName, parameters => {}, ds_map => {}};
+
+  # add into the content all the runtime parameter values scraped from the template invocation
+  foreach my $stepId (keys(%{$previousParamValuesMap})) {
+    foreach my $paramName (keys(%{$previousParamValuesMap->{$stepId}})) {
+      $content->{parameters}->{$workflowDecodeHack{$stepId}}->{$paramName} = $previousParamValuesMap->{$stepId}->{$paramName};
+    }
+  }
+
+  # add into the content all the input datasets scraped from the template invocation (except the one driving the batch)
+  foreach my $stepId (keys(%{$previousInputValuesMap})) {
+    $content->{ds_map}->{$workflowDecodeHack{$stepId}}->{src} = $previousInputValuesMap->{$stepId}->{src};
+    $content->{ds_map}->{$workflowDecodeHack{$stepId}}->{id} = $previousInputValuesMap->{$stepId}->{id};
+  }
+
+  # add into the content the driving dataset
+  $content->{ds_map}->{$workflowDecodeHack{$inputWorkflowStepId}}->{src} = "hda";
+  $content->{ds_map}->{$workflowDecodeHack{$inputWorkflowStepId}}->{id} = $datasetId;
+
+  my $jsonContent = encode_json($content);
+  my $url = "$apiUrl/workflows?key=$apiKey";
+  print "Running workfow:
+$url
+$jsonContent
+
+";
+  makePostRequest($ua, $url, $jsonContent);
+}
+
+sub makeGetRequest {
+  my ($ua, $URL) = @_;
+
+  # Pass request to the user agent and get a response back
+  my $response = $ua->get($URL);
+  return $response->decoded_content if $response->is_success;
+
+  die "Failed issuing GETT request to 
+   url: $URL
+   error: $response->{status_line}" . "\n";
+}
+
+sub makePostRequest {
+  my ($ua, $url, $jsonContent) = @_;
+
+  my $req = new HTTP::Request('POST', $url);
+  $req->content_type('application/json');
+  $req->content($jsonContent);
+  my $response = $ua->request($req);
+  return $response->decoded_content if $response->is_success;
+
+  die "Failed issuing POST request to 
+   url: $url
+   content: $jsonContent
+   error: $response->{status_line}" . "\n";
+}
+
+sub usage {
+  die "
+
+Run a batch of galaxy workflows, using a previous workflow invocation as a template
+
+Usage: galaxyWorkflowBatchRunner baseUri workflowId workflowInvocationId projectName inputWorkflowStepId datasetIdsString apiKey
+
+Where:
+  baseUri:                 the base Uri of the instance
+  workflowId:              the id of the workflow to run
+  workflorInvocationId:    the id of the workflow invocation to use as a template
+  projectName:             the user's arbitrary name for this project
+  inputWorkflowStepId:     the step_id, in the workflow, of the input step that will be fed the list of input datasets for the batch
+  datasetIdsString:        a comma delimited list of dataset IDs for the datasets in the batch
+
+Example:  perl galaxyWorkflowBatchRunner usegalaxy.org ba06423ff18d37cc a41a53d88a422ba2 myBestExperiment 3b110e2bf85a0c97 'bbd44e69cb8906b587c210f637326cca,bbd44e69cb8906b5b42bf19693fd41f1' 6bd4ed0a61fcbff915a934cb7b499e4e
+
+";
+}
