@@ -8,12 +8,12 @@ document.getElementById("eupath-subtitle").innerHTML = "" +
 
 // Introductory paragraph content
 document.getElementById("eupath-intro").innerHTML = "" +
-                "1.   Start analyzing your data now.  All EuPathDB genomes are pre-loaded.  Pre-configured workflows are available.<br>" +
-                "2.   Perform large-scale data analysis with no prior programming or bioinformatics experience.<br>" +
-                "3.   Create custom workflows using an interactive workflow editor. <a href='https://wiki.galaxyproject.org/Learn/AdvancedWorkflow'>Learn how</a><br> " +
-                "4.   Visualize your BigWig results in GBrowse. <br>" +
-                "5.   Keep data private, or share it with colleagues or the community. <br>" +
-                "<br><i>To learn more about Galaxy check out public Galaxy resources:  </i><a href='https://wiki.galaxyproject.org/Learn'>Learn Galaxy</a>";
+                "<ol><li>Start analyzing your data now.  All EuPathDB genomes are pre-loaded.  Pre-configured workflows are available.</li>" +
+                "<li>Perform large-scale data analysis with no prior programming or bioinformatics experience.</li>" +
+                "<li>Create custom workflows using an interactive workflow editor. <a target='_blank'  href='https://wiki.galaxyproject.org/Learn/AdvancedWorkflow'>Learn how</a></li> " +
+                "<li>Visualize your results (BigWig) in GBrowse. </li>" +
+                "<li>Keep data private, or share it with colleagues or the community. </li></ol>" +
+                "<br><i>To learn more about Galaxy check out public Galaxy resources:  </i><a target='_blank' href='https://wiki.galaxyproject.org/Learn'>Learn Galaxy</a>";
 
 
 // Links content
