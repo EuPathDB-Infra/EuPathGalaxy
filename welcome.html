@@ -4,17 +4,7 @@
   <head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
   <link rel="stylesheet" href="style/base.css" type="text/css">
-  
-  <!-- Remote link...need production location and https -->
-  <link rel="stylesheet" type="text/css" href="http://alpha.plasmodb.org/assets/css/eupath-galaxy.css"  />
-  
-  <!-- Local link - aurreco
-  <link rel="stylesheet" type="text/css" href="style/eupath-galaxy.css" /> 
-  -->
-  <!-- Simulated remote link - crisl 
-  <link rel="stylesheet" type="text/css" href="http://localhost/assets/css/eupath-galaxy.css" />
-  -->
-
+  <link rel="stylesheet" type="text/css" href="https://www.cbil.upenn.edu/svn/apidb/EuPathGalaxy/eupath-galaxy.css"  />
 
   <style type="text/css">
 
@@ -123,6 +113,11 @@
          text-decoration:underline;
       }
 
+      .row { 
+        margin-left:0;
+      }
+
+
   </style>
  
   </head>
@@ -130,7 +125,6 @@
    <!--  <div style="width: 100%; height: 100%;position:relative"> --> 
       <!-- <div class="unified-panel-header" unselectable="on"></div> -->
       <div class="document">
-
 
         <!-- HEADER -->
 	<div class="eupath-header" align="center">
@@ -145,7 +139,7 @@
 			        </tr><tr>
 		          </tr>
 			  </tbody></table>
-	    </div>
+      </div>
 
         <!-- INTRO -->
         <div class="container">
@@ -154,18 +148,20 @@
           </div>
           <div class="row" align="left">
             <div class="col-md-12">
-              <h3 id="eupath-subtitle"></h3>
+              <p id="eupath-subtitle"></p>
+              <br><h3>With EuPathDB Galaxy you can:</h3>
               <p id="eupath-intro"></p>
             </div>   
           </div>
         </div>
-
+        <br>
 
         <!-- WORKFOW LIST -->
 	<div align="left">
           <!-- <p class="section_title">GET STARTED</p> -->
-          <h3 style="margin-left:60px">Get Started</h3>
+          <h3 style="margin-left:60px;margin-bottom:0">Get started with pre-configured workflows:</h3>
           <div class="notice_table">
+          <p>(additional workflows will be added soon)</p>
           <table id="eupath-workflows" class="eupath-workflows-table">
             <tr>
               <td class="notice_table_name">
@@ -177,7 +173,6 @@
           <br>
 
         </div>
-	<br><br>
 
       </div>
    
@@ -249,15 +244,6 @@
     integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
     crossorigin="anonymous"></script>
 
-  <!-- Remote script...need production location and https -->
-  <script type="text/javascript" src="http://alpha.plasmodb.org/assets/js/eupath-galaxy.js"></script>
-  
-  <!-- Local script - aurreco
-  <script type="text/javascript" src="style/eupath-galaxy.js"></script>
-  -->
-  <!-- Simulated remote script - crisl 
-  <script type="text/javascript" src="http://localhost/assets/js/eupath-galaxy.js"></script>
-  -->
-
+  <script type="text/javascript" src="https://www.cbil.upenn.edu/svn/apidb/EuPathGalaxy/eupath-galaxy.js"></script>
 </body>
 </html>
