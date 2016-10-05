@@ -5,7 +5,7 @@
 
 .eupath-workflows-table {
   width: 100%;
-  margin-left: 1em;
+  margin-left: 2em;
 }
 
 .eupath-header {
@@ -36,7 +36,7 @@
 }
 
 #eupath-intro i {
-  margin-left: 1em;
+  margin-left: 20px; 
 }
 
 .eupath-footer {
