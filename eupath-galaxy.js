@@ -29,7 +29,7 @@ document.getElementById("eupath-links").innerHTML = "" +
 document.getElementById("eupath-workflows").innerHTML = "" +
 	"<tr><td title=\"click to run the workflow\"><a id='workflow1' href='javascript:void(0)' onClick='import_and_run_workflow(\"95c953aafa7b040f\")'>EuPathDB Workflow for Illumina paired-end RNA-seq, single replicate</a></td></tr>" +
         "<tr><td>Profile a transcriptome and analyze differential gene expression in <i>Aspergillus nidulans</i>.<br>Tools: FastQC, GSNAP, CuffLinks, CuffDiff.<br><br></td></tr>" +
-        "<tr><td title=\"not ready\">EuPathDB Workflow for Illumina paired-end RNA-seq, biological replicates</td></tr>" +
+        "<tr><td title=\"not ready\"><a id='workflow1' href='javascript:void(0)'>EuPathDB Workflow for Illumina paired-end RNA-seq, biological replicates</a></td></tr>" +
         "<tr><td>Profile a transcriptome and analyze differential gene expression in <i>Aspergillus nidulans</i>.<br>Tools: FastQC, TopHatforIllumina, CuffLinks, CuffDiff.<br><br></td></tr>";
 
 
