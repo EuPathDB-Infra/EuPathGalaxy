@@ -25,6 +25,10 @@
   margin-left: 23px; 
 }
 
+#eupath-workflows {
+  margin-left: 29px;
+  font-size: 120%;
+}
 .eupath-workflows-table {
   width: 100%;
   margin-left: 29px;
