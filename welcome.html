@@ -10,7 +10,7 @@
 
       div.document {
          /* padding: 0 10px 0 10px; */
-         text-align: center;
+         text-align: left;
          min-height: calc(100vh - 10em);
       }
       div.status_image {
@@ -43,67 +43,16 @@
          padding-bottom: 20px;
          width:45px;
       }
-      div.section_break {
-         margin-left: 90px;
-         margin-right: 45px;
-      }
-      div.final_break {
-         margin-left: 20px;
-         margin-right: 20px;
-      }
-      hr.section_break {
-         color: #cccccc;
-         background-color: #cccccc;
-         height: 1px;
-      }
-      p.section_title {
-         color:#666666;
-         font-size:18px;
-         line-height:22px; 
-         text-align: left;
-         padding-left: 90px;
-      }
+
       div.notice_table {
-        /*
-         padding-right:90px;
-         padding-left:90px;
-         margin-right: 45px;
-         */
-        margin-left: 60px;
-        margin-right:60px;
-      }
-      td.notice_table {
-         width:70px;
-         vertical-align: top; 
-         text-align: right;
-         padding-right: 10px;
-         font-size:11px; 
-         color:#999999; 
-      }
-      div.notice_table_image {
-         display: block;
-         margin-left: auto; 
-         margin-right: auto;
-         background: url(images/sprite_32.png) no-repeat; 
-         height: 32px; width:32px; 
-         position:relative;  
-         background-position: 0% 83.6%;
+        margin-right: 2em;
       }
       td.notice_table_name {
-         font-size:22px;
          line-height: 22px;
          color:#0066cc;
          padding: 8px 0;
       }
-      td.notice_table_description {
-         font-size:14px; 
-         line-height:1.5; 
-         color:#333333;
-      }
 
-      td.notice_table_date {
-         font-size:12px; 
-      }
 
       a:link {
          color: #0066cc;
@@ -112,50 +61,45 @@
          color: #003399;
          text-decoration:underline;
       }
+      .row { 
+        margin-left:0;
+      }
+
 
   </style>
  
   </head>
   <body style="margin: 0; padding: 0;">
-   <!--  <div style="width: 100%; height: 100%;position:relative"> --> 
-      <!-- <div class="unified-panel-header" unselectable="on"></div> -->
-      <div class="document">
+    <div class="document">
 
+      <!-- HEADER -->
+      <div class="eupath-header" align="center">
+        <table width="90%">
+          <tbody><tr>
+            <td><img class="topLogo" src="http://eupathdb.org/eupathdb/images/EuPathDB/title_s.png"></td>
+            <td class="logo_table_row">system status</td>
+            <td class="status"><div class="status_image" alt="Globus Genomics System Status"></div></td>
+          </tr>
+          <tr></tr><tr></tr>
+          </tbody>
+        </table>
+      </div>
 
-        <!-- HEADER -->
-	<div class="eupath-header" align="center">
-	    <table width="90%">
-	          <tbody><tr>
-              <!--  <td><img class="topLogo" src="images/globusGenomics-2.png" alt="Globus Genomics Galaxy"></td> -->
-              <td><img class="topLogo" src="http://eupathdb.org/eupathdb/images/EuPathDB/title_s.png"></td>
-	            <td class="logo_table_row">system status</td>
-		          <td class="status"><div class="status_image" alt="Globus Genomics System Status"></div></td>
-			      </tr>
-		        <tr>
-			        </tr><tr>
-		          </tr>
-			  </tbody></table>
-	    </div>
+      <!-- TITLE and INTRO -->
+      <h1 id="eupath-title"></h1>
+      <div id="eupath-subtitle"></div>
+      <div style="margin-left:4em">
+        <h3>With EuPathDB Galaxy you can:</h3>
+        <p id="eupath-intro"></p>
+      </div>
 
-        <!-- INTRO -->
-        <div class="container">
-          <div class="row">
-            <h1 id="eupath-title"></h1>
-          </div>
-          <div class="row" align="left">
-            <div class="col-md-12">
-              <h3 id="eupath-subtitle"></h3>
-              <p id="eupath-intro"></p>
-            </div>   
-          </div>
-        </div>
+      <br>
 
-
-        <!-- WORKFOW LIST -->
-	<div align="left">
-          <!-- <p class="section_title">GET STARTED</p> -->
-          <h3 style="margin-left:60px">Get Started</h3>
-          <div class="notice_table">
+      <!-- WORKFOW LIST -->
+      <div style="margin-left:4em">
+        <h3>Get started with pre-configured workflows:</h3>
+        <div class="notice_table">
+          <p>(additional workflows will be added soon)</p>
           <table id="eupath-workflows" class="eupath-workflows-table">
             <tr>
               <td class="notice_table_name">
@@ -163,17 +107,15 @@
               </td>
             </tr>
           </table>
-          </div> 
-          <br>
-
-        </div>
-	<br><br>
-
+        </div> 
+        <br>
       </div>
+
+    </div>  <!-- end document -->
    
 
-  <!-- FOOTER -->
-  <footer class="eupath-footer">
+    <!-- FOOTER -->
+    <footer class="eupath-footer">
     <div class="container">  
       <div class="row">
         <div class="col-md-12">
@@ -230,7 +172,7 @@
         </div>
       </div>
     </div>
-  </footer>
+    </footer>
 
 
  <!-- TODO should change from CDN to pull jQuery from WDK site -->

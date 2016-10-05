@@ -7,7 +7,7 @@
   width: 100%;
   margin-left: 1em;
 }
-    
+
 .eupath-header {
   background-color:#eee;
   margin-bottom: 1em;
@@ -28,31 +28,25 @@
 #eupath-subtitle {
   text-align:center;
   font-size: 135%;
+  margin-bottom: 2em;
 }
 
 #eupath-intro {
-  margin-left: 1em;
   font-size: 120%;
+}
+
+#eupath-intro i {
+  margin-left: 1em;
 }
 
 .eupath-footer {
   background-color:#eee;
   padding: 1em;
-/*   margin-top: 2em; */
   text-align: center; 
   position: relative;
   height: 8em;
-/*
-  position: absolute;
-  bottom:0;
-  left: 0;
-  right: 0;
-*/
 }
 
-.globus-name {
-
-}
 
 span.globus-icon img {
   width: 30px;

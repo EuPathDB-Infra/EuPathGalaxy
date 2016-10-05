@@ -13,7 +13,7 @@ document.getElementById("eupath-intro").innerHTML = "" +
                 "<li>Create custom workflows using an interactive workflow editor. <a target='_blank'  href='https://wiki.galaxyproject.org/Learn/AdvancedWorkflow'>Learn how</a></li> " +
                 "<li>Visualize your results (BigWig) in GBrowse. </li>" +
                 "<li>Keep data private, or share it with colleagues or the community. </li></ol>" +
-                "<br><i>To learn more about Galaxy check out public Galaxy resources:  </i><a target='_blank' href='https://wiki.galaxyproject.org/Learn'>Learn Galaxy</a>";
+                "<i>To learn more about Galaxy check out public Galaxy resources:  </i><a target='_blank' href='https://wiki.galaxyproject.org/Learn'>Learn Galaxy</a>";
 
 
 // Links content
