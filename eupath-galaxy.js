@@ -27,11 +27,11 @@ document.getElementById("eupath-links").innerHTML = "" +
 // Workflows content
 // Warning insure ids inside onClick events are correct for galaxy site to which this is deployed. 
 document.getElementById("eupath-workflows").innerHTML = "" +
-	"<p title=\"click to run the workflow\"><a id='workflow1' href='javascript:void(0)' onClick='import_and_run_workflow(\"95c953aafa7b040f\")'>EuPathDB Workflow for Illumina paired-end RNA-seq, without replicates</a><br>" +
+	"<p title=\"Click to run the workflow with your datasets\"><a id='workflow1' href='javascript:void(0)' onClick='import_and_run_workflow(\"95c953aafa7b040f\")'>EuPathDB Workflow for Illumina paired-end RNA-seq, without replicates</a><br>" +
         "Profile a transcriptome and analyze differential gene expression.<br>Tools: FastQC, Sickle, GSNAP, CuffLinks, CuffDiff.</p>" +
-        "<p title=\"click to run the workflow\"><a id='workflow1' href='javascript:void(0)' onClick='import_and_run_workflow(\"ba1f5a6a3d5eec2c\")'>EuPathDB Workflow for Illumina paired-end RNA-seq, without replicates</a><br>" +
+        "<p title=\"Click to run the workflow with your datasets\"><a id='workflow2' href='javascript:void(0)' onClick='import_and_run_workflow(\"ba1f5a6a3d5eec2c\")'>EuPathDB Workflow for Illumina paired-end RNA-seq, without replicates</a><br>" +
         "Profile a transcriptome and analyze differential gene expression.<br>Tools: FastQC, Trimmomatic, TopHat2, CuffLinks, CuffDiff.</p>" +
-        "<p title=\"not ready\"><a id='workflow1' href='javascript:void(0)'>EuPathDB Workflow for Illumina paired-end RNA-seq, biological replicates</a><br>" +
+        "<p title=\"Not ready\"><a id='workflow3' href='javascript:void(0)'>EuPathDB Workflow for Illumina paired-end RNA-seq, biological replicates</a><br>" +
         "Profile a transcriptome and analyze differential gene expression.<br>Tools: FastQC, TopHatforIllumina, CuffLinks, CuffDiff.<br></p>";
 
 /**
