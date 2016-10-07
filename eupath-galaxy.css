@@ -8,7 +8,6 @@
 .eupath-header .status-image {
   text-align:right;
 }
-
 #eupath-title {
   text-align:center;
 }
@@ -17,7 +16,6 @@
   font-size: 135%;
   margin-bottom: 2em;
 }
-
 .eupath-section {
   margin-left: 4em;
 }
@@ -33,18 +31,10 @@
 #eupath-workflows {
   font-size: 120%;
 }
-
-.container {
-  max-width: 93%;
-  position: relative;
-}
 .eupath-footer {
   background-color:#eee;
   padding: 1em;
   text-align: center; 
   position: relative;
   height: 8em;
-}
-span.globus-icon img {
-  width: 30px;
 }
