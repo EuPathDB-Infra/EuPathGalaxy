@@ -29,7 +29,7 @@ document.getElementById("eupath-links").innerHTML = "" +
 document.getElementById("eupath-workflows").innerHTML = "" +
 	"<p title=\"click to run the workflow\"><a id='workflow1' href='javascript:void(0)' onClick='import_and_run_workflow(\"95c953aafa7b040f\")'>EuPathDB Workflow for Illumina paired-end RNA-seq, without replicates</a><br>" +
         "Profile a transcriptome and analyze differential gene expression.<br>Tools: FastQC, GSNAP, CuffLinks, CuffDiff.</p>" +
-        "<p title=\"click to run the workflow\"><a id='workflow1' href='javascript:void(0)' onClick='import_and_run_workflow(\"ba1f5a6a3d5eec2c\")'>EuPathDB Workflow for Illumina paired-end RNA-seq, without replicates_2</a><br>" +
+        "<p title=\"click to run the workflow\"><a id='workflow1' href='javascript:void(0)' onClick='import_and_run_workflow(\"ba1f5a6a3d5eec2c\")'>EuPathDB Workflow for Illumina paired-end RNA-seq, without replicates</a><br>" +
         "Profile a transcriptome and analyze differential gene expression.<br>Tools: FastQC, Trimmomatic, TopHat2, CuffLinks, CuffDiff.</p>" +
         "<p title=\"not ready\"><a id='workflow1' href='javascript:void(0)'>EuPathDB Workflow for Illumina paired-end RNA-seq, biological replicates</a><br>" +
         "Profile a transcriptome and analyze differential gene expression.<br>Tools: FastQC, TopHatforIllumina, CuffLinks, CuffDiff.<br></p>";
