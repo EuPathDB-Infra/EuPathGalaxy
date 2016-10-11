@@ -31,7 +31,7 @@ document.getElementById("eupath-workflows").innerHTML = "" +
         "Profile a transcriptome and analyze differential gene expression.<br>Tools: FastQC, Sickle, GSNAP, CuffLinks, CuffDiff.</p>" +
         "<p title=\"Click to run the workflow with your datasets\"><a id='workflow2' href='javascript:void(0)' onClick='import_and_run_workflow(\"ba1f5a6a3d5eec2c\")'>EuPathDB Workflow for Illumina paired-end RNA-seq, without replicates</a><br>" +
         "Profile a transcriptome and analyze differential gene expression.<br>Tools: FastQC, Trimmomatic, TopHat2, CuffLinks, CuffDiff.</p>" +
-        "<p title=\"Not ready\"><a id='workflow3' href='javascript:void(0)' onClick='import_and_run_workflow(\"ce06b4957c351b77\")'>EuPathDB Workflow for Illumina paired-end RNA-seq, biological replicates</a><br>" +
+        "<p title=\"Click to run the workflow with your datasets\"><a id='workflow3' href='javascript:void(0)' onClick='import_and_run_workflow(\"ce06b4957c351b77\")'>EuPathDB Workflow for Illumina paired-end RNA-seq, biological replicates</a><br>" +
         "Profile a transcriptome and analyze differential gene expression.<br>Tools: FastQC, TopHat2, HTseq, DESeq2.<br></p>";
 
 /**
