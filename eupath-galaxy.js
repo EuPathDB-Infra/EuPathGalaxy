@@ -36,6 +36,8 @@ document.getElementById("eupath-workflows").innerHTML = "" +
         "<p title=\"Click to run the workflow with your datasets\"><a id='workflow4' href='javascript:void(0)' onClick='import_and_run_workflow(\"c065e7bd4a1680ca\")'>EuPathDB Workflow for Illumina paired-end RNA-seq, biological replicates</a><br>" +
         "Profile a transcriptome and analyze differential gene expression.<br>Tools: FastQC, Trimmomatic, TopHat2, CuffLinks, CuffDiff.<br></p>" +
         "<p title=\"Click to run the workflow with your datasets\"><a id='workflow5' href='javascript:void(0)' onClick='import_and_run_workflow(\"59725c868c65b63f\")'>EuPathDB Workflow for Variant Calling, single-read sequencing</a><br>" +
+        "Profile and analyse SNPs.<br>Tools: Bowtie2, FreeBayes, and SnpEff<br></p>" +
+        "<p title=\"Click to run the workflow with your datasets\"><a id='workflow6' href='javascript:void(0)' onClick='import_and_run_workflow(\"78f0ccbcef5e3211\")'>EuPathDB Workflow for Variant Calling, paired-ed sequencing</a><br>" +
         "Profile and analyse SNPs.<br>Tools: Bowtie2, FreeBayes, and SnpEff<br></p>";
 /**
  * A series of ajax calls to import a published workflow (if not already imported) and get its id,
