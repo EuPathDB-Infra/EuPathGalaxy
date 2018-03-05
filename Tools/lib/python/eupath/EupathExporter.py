@@ -9,7 +9,6 @@ import sys
 import requests
 import tempfile
 import contextlib
-import optparse
 import re
 from requests.auth import HTTPBasicAuth
 from subprocess import Popen, PIPE
@@ -26,7 +25,6 @@ class Export:
     META_JSON = "meta.json"
     DATAFILES = "datafiles"
 
-
     def __init__(self, dataset_type, version, validation_script, args):
         """
         Initializes the export class with the parameters needed to accomplish the export of user
@@ -34,22 +32,14 @@ class Export:
         :param dataset_type: The EuPathDB type of this dataset
         :param version: The version of the EuPathDB type of this dataset
         :param validation_script: A script that handles the validation of this dataset
-        :param user_id: The identity of the user on EuPathDB (the WDK user_id)
-        :param dataset_name: The name the user has selected for this dataset to be exported
-        :param dataset_summary: A summary of the dataset
-        :param dataset_description: A fuller characterization of the dataset
-        :param tool_directory: The tool directory (where validation scripts should also live
+        :param args: An array of the input parameters
         """
         self._type = dataset_type
         self._version = version
         self._validation_script = validation_script
-        #self._user_id = user_id
-        #self._dataset_name = dataset_name
-        #self._summary = dataset_summary
-        #self._description = dataset_description
-        #self._tool_directory = tool_directory
 
-        self.parseParams(args)
+        # Extract and transform the parameters as needed into member variables
+        self.parse_params(args)
 
         # This msec timestamp is used to denote both the created and modified times.
         self._timestamp = int(time.time() * 1000)
@@ -63,15 +53,18 @@ class Export:
         # Set up the configuration data
         (self._url, self._user, self._pwd, self._lz_coll, self._flag_coll) = self.collect_rest_data()
 
-    def parseParams(self, args):
-
-        # Salt away all parameters and do some initial validation.
-        if len(args) < 8:
+    def parse_params(self, args):
+        """
+        Salts away all generic parameters (i.e., the first 5 params) and do some initial validation.  The subclasses
+        will handle the other parameters.
+        :param args:
+        :return:
+        """
+        if len(args) < 5:
             raise ValidationException("The tool was passed an insufficient numbers of arguments.")
         self._dataset_name = args[0]
         self._summary = args[1]
         self._description = args[2]
-
 
         # WDK user id is derived from the user email
         user_email = args[3].strip()
@@ -81,6 +74,7 @@ class Export:
         galaxy_user = user_email.split("@")[0]
         self._user_id = galaxy_user[galaxy_user.rfind(".") + 1:]
 
+        # Used to find the configuration file containing IRODS url and credentials
         self._tool_directory = args[4]
 
 
@@ -97,8 +91,8 @@ class Export:
         # Uncomment to check.
         #print >> sys.stdout, "self._tool_directory is " + self._tool_directory
         with open(config_path, "r+") as config_file:
-          config_json = json.load(config_file)
-          return (config_json["url"], config_json["user"], config_json["password"], "lz", "flags")
+            config_json = json.load(config_file)
+            return (config_json["url"], config_json["user"], config_json["password"], "lz", "flags")
 
     def validate_datasets(self):
         """
@@ -307,7 +301,7 @@ class Export:
             self.create_tarball()
             
             # Uncomment to check the calling ip address for this tool.
-            #self.connection_diagnostic()
+            # self.connection_diagnostic()
 
             # Call the iRODS rest service to drop the tarball into the iRODS workspace landing zone
             self.process_request(self._lz_coll, self._export_file_root + ".tgz")
@@ -339,7 +333,7 @@ class Export:
         finally:
             # Added the boolean arg because cannot remove top level of temp dir structure in
             # Globus Dev Galaxy instance and it will throw an Exception if the boolean, 'True', is not in place.
-            shutil.rmtree(temp_path,True)
+            shutil.rmtree(temp_path, True)
 
 
 class ValidationException(Exception):

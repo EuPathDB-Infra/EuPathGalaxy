@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import EupathExporter
+import ReferenceGenome
 
 
 class GeneListExport(EupathExporter.Export):
@@ -24,25 +25,22 @@ class GeneListExport(EupathExporter.Export):
         """
         Initializes the gene list export class with the parameters needed to accomplish the particular
         type of export.
-        :param dataset_file_path: The location in Galaxy of the gene list file
-        :param reference_genome: The reference genome to use
-        :param args: These args are needed by the generic EuPathDB export tool
+        :param args: parameters provided from tool form
         """
         EupathExporter.Export.__init__(self,
                                        GeneListExport.GENE_LIST_TYPE,
                                        GeneListExport.GENE_LIST_VERSION,
                                        GeneListExport.GENE_LIST_VALIDATION_SCRIPT,
                                        args)
+
+        # For the gene list export, three parameters beyond generic 5 are required.
+        if len(args) < 8:
+            raise EupathExporter.ValidationException("The tool was passed an insufficient numbers of arguments.")
+
+        # Data for the input given by the user
         self._dataset_file_path = args[5]
-
-        # Reference genome is required with the pattern: ProjectId-EupathBuildNumber_Strain_Genome
-        self._reference_genome = args[6]
-        if not self._reference_genome and not re.match(r'^.+-\d+_.+_Genome$', self.reference_genome, flags=0):
-            raise EupathExporter.ValidationException(
-                "A syntactically correct reference genome is required for exports to EuPathDB.")
-
+        self._genome = ReferenceGenome.Genome(args[6])
         self._datatype = args[7]
-
 
     def identify_dependencies(self):
         """
@@ -51,33 +49,24 @@ class GeneListExport(EupathExporter.Export):
         all separated by a dash in the first instance and an underscore in the second instance.
         :return: list containing the single dependency with the component parts parsed out (only one for now)
         """
-
-        # Syntax was validated when tool parameters were obtained
-        sans_project = self._reference_genome[self._reference_genome.index("-") + 1:]
-        components = sans_project.split("_")
         return [{
-            "resourceIdentifier": self._reference_genome,
-            "resourceVersion": components[0],
-            "resourceDisplayName": components[1] + " Genome"
+            "resourceIdentifier": self._genome.identifier,
+            "resourceVersion": self._genome.version,
+            "resourceDisplayName": self._genome.display_name
         }]
 
     def identify_projects(self):
         """
         The appropriate project(s) will be determined by the reference genome selected - only one for now
-        The project name must start the genome reference, separated by a dash.  The project
-        name must also be listed in the SUPPORTED_PROJECTS array.  Either failure will be
+        The project name must be listed in the SUPPORTED_PROJECTS array.  Failure to find it will be
         regarded as a validation exception.
         :return: list containing the single relevant EuPath project (only one for now)
         """
 
-        # Syntax was validated when tool parameters were obtained
-        project = self._reference_genome[0 : self._reference_genome.index("-")]
-
-        if project not in self.SUPPORTED_PROJECTS:
-            raise EupathExporter.ValidationException("The user dataset feature for project " + project +
-                                                      " is not supported presently by EuPathDB.")
-        return [project]
-
+        if self._genome.project not in self.SUPPORTED_PROJECTS:
+            raise EupathExporter.ValidationException("The user dataset feature for project " + self._genome.project +
+                                                     " is not supported presently by EuPathDB.")
+        return [self._genome.project]
 
     def identify_dataset_files(self):
         """
