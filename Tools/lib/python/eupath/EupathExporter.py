@@ -102,7 +102,7 @@ class Export:
         """
         dataset_files = self.identify_dataset_files()
 
-        validation_process = Popen(['python', self._tool_directory + "/" + self._validation_script],
+        validation_process = Popen(['python', self._tool_directory + "/../../bin/" + self._validation_script],
                                    stdin=PIPE, stdout=PIPE, stderr=PIPE)
         # output is a tuple containing (stdout, stderr)
         output = validation_process.communicate(json.dumps(dataset_files))
