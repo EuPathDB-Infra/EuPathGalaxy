@@ -1,7 +1,7 @@
 # !/usr/bin/env python
 
 import sys
-sys.path.insert(0, "/Users/crisl-adm/Tools/galaxy/galaxy/tools/eupath")
+sys.path.insert(0, "/opt/galaxy/tools/eupath")
 from Tools.lib.python import GeneListEupathExporter
 from Tools.lib.python import EupathExporter
 import optparse
