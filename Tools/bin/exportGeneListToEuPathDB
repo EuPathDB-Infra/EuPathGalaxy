@@ -14,9 +14,15 @@ def main():
     """
       The following program is a Galaxy Tool for exporting gene list data from Galaxy to EuPathDB via iRODS.
 
-      Sample for testing outside of Galaxy:
+      Sample for testing outside of Galaxy (assuming the existing file structure):
       python exportGeneListToEuPathDB
-             "a name" "a summary" "a description" "test-data/genelist.txt" "<user.wdk_id@eupath.org>" <this directory>
+             "a name" "a summary" "a description" "<user.wdk_id@eupath.org>" "<the galaxy tool xml directory>"
+             "<path to genelist.txt file>"
+
+       For example:  on my localhost, I was able to run this successfully:
+       python exportGeneListToEuPathDB "A name" "A summary" "A description" "crisl.108976930@eupathdb.org"
+        "../lib/xml" "/Users/crisl-adm/Desktop/test-data/genelist.txt" "PlasmoDB-29_PfalciparumIT_Genome" "gg"
+
     """
 
     parser = optparse.OptionParser()
