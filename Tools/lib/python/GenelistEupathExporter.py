@@ -1,10 +1,10 @@
 #!/usr/bin/python
 
-import eupath_exporter
+import EupathExporter
 import sys
 
 
-class GeneListExport(eupath_exporter.Export):
+class GeneListExport(EupathExporter.Export):
     """
     This class is a specialized version of the Galaxy to EuPathDB dataset export tool.  This tool's
     specialty is furnishing user's gene list data to EuPathDB.  As with all specialty export tools, this
@@ -19,7 +19,7 @@ class GeneListExport(eupath_exporter.Export):
 
     # The validation script to be applied to the dataset files.  A failed validation should
     # return in a system exit status of other than 0.
-    GENE_LIST_VALIDATION_SCRIPT = "validate_gene_list.py"
+    GENE_LIST_VALIDATION_SCRIPT = "validateGeneList"
 
     def __init__(self, dataset_file_path, reference_genome, *args):
         """
@@ -29,7 +29,7 @@ class GeneListExport(eupath_exporter.Export):
         :param reference_genome: The reference genome to use
         :param args: These args are needed by the generic EuPathDB export tool
         """
-        eupath_exporter.Export.__init__(self,
+        EupathExporter.Export.__init__(self,
                                         GeneListExport.GENE_LIST_TYPE,
                                         GeneListExport.GENE_LIST_VERSION,
                                         GeneListExport.GENE_LIST_VALIDATION_SCRIPT,
@@ -67,7 +67,7 @@ class GeneListExport(eupath_exporter.Export):
         project = self._reference_genome[0 : self._reference_genome.index("-")]
 
         if project not in self.SUPPORTED_PROJECTS:
-            raise eupath_exporter.ValidationException("The user dataset feature for project " + project +
+            raise EupathExporter.ValidationException("The user dataset feature for project " + project +
                                                       " is not supported presently by EuPathDB.")
         return [project]
 

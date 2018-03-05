@@ -66,7 +66,7 @@ class Export:
         :return:  A tuple containing the url, user, and password, landing zone and flags collection,
          in that order
         """
-        config_path = self._tool_directory + "/config.json"
+        config_path = self._tool_directory + "/../../config/config.json"
         
         # The tool directory path seems glitchy on Globus Dev Galaxy instance after service restarts.
         # Uncomment to check.
