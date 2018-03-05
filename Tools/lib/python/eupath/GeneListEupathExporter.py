@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 import EupathExporter
-import sys
 
 
 class GeneListExport(EupathExporter.Export):
@@ -21,7 +20,7 @@ class GeneListExport(EupathExporter.Export):
     # return in a system exit status of other than 0.
     GENE_LIST_VALIDATION_SCRIPT = "validateGeneList"
 
-    def __init__(self, dataset_file_path, reference_genome, *args):
+    def __init__(self, args):
         """
         Initializes the gene list export class with the parameters needed to accomplish the particular
         type of export.
@@ -30,12 +29,20 @@ class GeneListExport(EupathExporter.Export):
         :param args: These args are needed by the generic EuPathDB export tool
         """
         EupathExporter.Export.__init__(self,
-                                        GeneListExport.GENE_LIST_TYPE,
-                                        GeneListExport.GENE_LIST_VERSION,
-                                        GeneListExport.GENE_LIST_VALIDATION_SCRIPT,
-                                        *args)
-        self._dataset_file_path = dataset_file_path
-        self._reference_genome = reference_genome
+                                       GeneListExport.GENE_LIST_TYPE,
+                                       GeneListExport.GENE_LIST_VERSION,
+                                       GeneListExport.GENE_LIST_VALIDATION_SCRIPT,
+                                       args)
+        self._dataset_file_path = args[5]
+
+        # Reference genome is required with the pattern: ProjectId-EupathBuildNumber_Strain_Genome
+        self._reference_genome = args[6]
+        if not self._reference_genome and not re.match(r'^.+-\d+_.+_Genome$', self.reference_genome, flags=0):
+            raise EupathExporter.ValidationException(
+                "A syntactically correct reference genome is required for exports to EuPathDB.")
+
+        self._datatype = args[7]
+
 
     def identify_dependencies(self):
         """

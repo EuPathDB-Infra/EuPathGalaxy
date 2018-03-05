@@ -9,6 +9,8 @@ import sys
 import requests
 import tempfile
 import contextlib
+import optparse
+import re
 from requests.auth import HTTPBasicAuth
 from subprocess import Popen, PIPE
 
@@ -24,8 +26,8 @@ class Export:
     META_JSON = "meta.json"
     DATAFILES = "datafiles"
 
-    def __init__(self, dataset_type, version, validation_script, user_id, dataset_name,
-                 dataset_summary, dataset_description, tool_directory):
+
+    def __init__(self, dataset_type, version, validation_script, args):
         """
         Initializes the export class with the parameters needed to accomplish the export of user
         datasets on Galaxy to EuPathDB projects.
@@ -41,11 +43,13 @@ class Export:
         self._type = dataset_type
         self._version = version
         self._validation_script = validation_script
-        self._user_id = user_id
-        self._dataset_name = dataset_name
-        self._summary = dataset_summary
-        self._description = dataset_description
-        self._tool_directory = tool_directory
+        #self._user_id = user_id
+        #self._dataset_name = dataset_name
+        #self._summary = dataset_summary
+        #self._description = dataset_description
+        #self._tool_directory = tool_directory
+
+        self.parseParams(args)
 
         # This msec timestamp is used to denote both the created and modified times.
         self._timestamp = int(time.time() * 1000)
@@ -58,6 +62,27 @@ class Export:
 
         # Set up the configuration data
         (self._url, self._user, self._pwd, self._lz_coll, self._flag_coll) = self.collect_rest_data()
+
+    def parseParams(self, args):
+
+        # Salt away all parameters and do some initial validation.
+        if len(args) < 8:
+            raise ValidationException("The tool was passed an insufficient numbers of arguments.")
+        self._dataset_name = args[0]
+        self._summary = args[1]
+        self._description = args[2]
+
+
+        # WDK user id is derived from the user email
+        user_email = args[3].strip()
+        if not re.match(r'.+\.\d+@eupathdb.org$', user_email, flags=0):
+            raise ValidationException(
+                "The user email " + str(user_email) + " is not valid for the use of this tool.")
+        galaxy_user = user_email.split("@")[0]
+        self._user_id = galaxy_user[galaxy_user.rfind(".") + 1:]
+
+        self._tool_directory = args[4]
+
 
     def collect_rest_data(self):
         """
