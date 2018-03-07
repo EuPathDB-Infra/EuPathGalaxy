@@ -11,7 +11,7 @@
     ../../bin/exportBigwigFilesToEuPathDB "$dataset_name" "$summary" "$description" "$__user_email__" "$__tool_directory__"
 
     #for $bigwig_file in $bigwig_files
-      "$bigwig_file" "$bigwig_file.metadata.dbkey" 
+      "$bigwig_file" "$bigwig_file.name" "$bigwig_file.metadata.dbkey"
     #end for
     ]]>
     
