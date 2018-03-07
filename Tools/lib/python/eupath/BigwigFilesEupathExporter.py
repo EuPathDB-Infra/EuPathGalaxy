@@ -8,13 +8,12 @@ class BigwigFilesExport(EupathExporter.Export):
     # Constants
     TYPE = "Bigwig Tracks"
     VERSION = "1.0"
-    VALIDATION_SCRIPT = "validateBigwigFiles"
 
     def __init__(self, args):
         EupathExporter.Export.__init__(self,
                                        TYPE,
                                        VERSION,
-                                       VALIDATION_SCRIPT,
+                                       None,
                                        args)
 
         # beyond the standard 5 params, this exporter requires one or more pairs of args: dataset1 dataset1.refGenome dataset2...
@@ -50,4 +49,4 @@ class BigwigFilesExport(EupathExporter.Export):
         """
         :return: A list containing the dataset files accompanied by their EuPathDB designation.
         """
-        return [{"name": self.FILE, "path": self._dataset_file_path}]
+        return self.datasetInfos
