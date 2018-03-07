@@ -27,12 +27,7 @@
       <validator type="length" message="Please restrict the name to 100 characters or less." max="100" />
     </param>
 
-    <param name="bigwig_files" type="data" multiple="true" size="100" value="" format="bigwig"
-           label="Bigwig files:"
-           help="The name of this dataset will become the name of the associated genome browser track.">
-      <validator type="empty_field" />
-      <validator type="regex" message="Only letters, numbers, spaces and dashes are allowed in the name.">^[\w\d\s\-]*$</validator>
-      <validator type="length" message="Please restrict the name to 100 characters or less." max="100" />
+    <param name="bigwig_files" type="data" multiple="true" format="bigwig" label="Bigwig files:">
     </param>
     
     <param name="summary" type="text" value=""
