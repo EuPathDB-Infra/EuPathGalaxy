@@ -20,7 +20,7 @@ def main():
     parser = optparse.OptionParser()
     (options, args) = parser.parse_args()
 
-    exporter = BigwigFilesEupathExporter.GeneListExport(args)
+    exporter = BigwigFilesEupathExporter.BigwigFilesExport(args)
     try:
         exporter.export()
     except EupathExporter.ValidationException as ve:
