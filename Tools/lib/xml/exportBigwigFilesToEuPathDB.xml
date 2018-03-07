@@ -19,6 +19,14 @@
   
   <inputs>
     
+    <param name="dataset_name" type="text" size="100" value=""
+           label="EuPathDB User Dataset name:"
+           help="This is the name EuPathDB sites will display for your dataset">
+      <validator type="empty_field" />
+      <validator type="regex" message="Only letters, numbers, spaces and dashes are allowed in the name.">^[\w\d\s\-]*$</validator>
+      <validator type="length" message="Please restrict the name to 100 characters or less." max="100" />
+    </param>
+
     <param name="bigwig_files" type="data" multiple="true" size="100" value="" format="bigwig"
            label="Bigwig files:"
            help="The name of this dataset will become the name of the associated genome browser track.">
@@ -63,16 +71,6 @@
       </sanitizer>
     </param>
     
-    <!--
-     multiple = false by default.  If the user select N files, the tool runs N times.  This is
-     a problem since the accompanying information will be the same each time.
-     -->
-    <param name="input" type="data" format="txt" label="Gene list to export:" >
-      <!--
-      This does not work with the older version of Galaxy that Globus uses.
-      <validator type="empty_dataset" />
-      -->
-    </param>
   </inputs>
   
   <outputs>
