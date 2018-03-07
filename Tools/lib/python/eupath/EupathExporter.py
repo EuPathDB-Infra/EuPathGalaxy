@@ -100,6 +100,10 @@ class Export:
         dataset files as standard input.
         :return:
         """
+
+        if self._validation_script == None:
+            return
+        
         dataset_files = self.identify_dataset_files()
 
         validation_process = Popen(['python', self._tool_directory + "/../../bin/" + self._validation_script],
@@ -135,6 +139,15 @@ class Export:
         raise NotImplementedError(
             "The method 'identify_project(self)' needs to be implemented in the specialized export module.")
 
+    def identify_supported_projects(self):
+        """
+        Override this method to provide a non-default list of projects.
+
+        Default is None, interpreted as all projects are ok, ie, no constraints.
+        """
+        return None;
+
+
     def identify_dataset_files(self):
         """
         An abstract method to be addressed by a specialized export tool that furnishes a json list
@@ -155,6 +168,11 @@ class Export:
 
         # Get the total size of the dataset files (needed for the json file)
         size = sum(os.stat(dataset_file['path']).st_size for dataset_file in self.identify_dataset_files())
+
+        if self.identify_supported_projects() != None:
+            for (project) in self.identify_projects():
+                if project not in self.identify_supported_projects():
+                    raise ValidationException("Sorry, you cannot export this kind of data to " + project)
 
         dataset_path = temp_path + "/" + self.DATASET_JSON
         with open(dataset_path, "w+") as json_file:

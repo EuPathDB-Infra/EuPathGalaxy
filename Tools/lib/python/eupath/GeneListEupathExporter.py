@@ -15,7 +15,6 @@ class GeneListExport(EupathExporter.Export):
     GENE_LIST_TYPE = "GeneList"
     GENE_LIST_VERSION = "1.0"
     GENE_LIST_FILE = "genelist.txt"
-    SUPPORTED_PROJECTS = ["PlasmoDB", "ToxoDB", "FungiDB"]
 
     # The validation script to be applied to the dataset files.  A failed validation should
     # return in a system exit status of other than 0.
@@ -62,10 +61,6 @@ class GeneListExport(EupathExporter.Export):
         regarded as a validation exception.
         :return: list containing the single relevant EuPath project (only one for now)
         """
-
-        if self._genome.project not in self.SUPPORTED_PROJECTS:
-            raise EupathExporter.ValidationException("The user dataset feature for project " + self._genome.project +
-                                                     " is not supported presently by EuPathDB.")
         return [self._genome.project]
 
     def identify_dataset_files(self):

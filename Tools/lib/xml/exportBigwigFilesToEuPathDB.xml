@@ -1,0 +1,112 @@
+<tool id="exportBigwigFilesToEuPathDB" name="Bigwig Files to EuPathDB" version="1.0.0">
+  
+  <description>Export a set of bigwig files to EuPathDB, to view as genome browser tracks</description>
+  
+  <requirements>
+    <requirement type="package">pymodules</requirement>
+  </requirements>
+  
+  <command interpreter="python" detect_errors="aggressive">
+    <![CDATA[
+    ../../bin/exportBigwigFilesToEuPathDB "$dataset_name" "$summary" "$description" "$__user_email__" "$__tool_directory__"
+
+    #for $bigwig_file in $bigwig_files
+      "$bigwig_file" "$bigwig_file.metadata.dbkey" 
+    #end for
+    ]]>
+    
+  </command>
+  
+  <inputs>
+    
+    <param name="bigwig_files" type="data" multiple="true" size="100" value="" format="bigwig"
+           label="Bigwig files:"
+           help="The name of this dataset will become the name of the associated genome browser track.">
+      <validator type="empty_field" />
+      <validator type="regex" message="Only letters, numbers, spaces and dashes are allowed in the name.">^[\w\d\s\-]*$</validator>
+      <validator type="length" message="Please restrict the name to 100 characters or less." max="100" />
+    </param>
+    
+    <param name="summary" type="text" value=""
+           label="EuPathDB dataset summary:"
+           help="This summary will appear in your EuPathDB dataset listing page.">
+      <validator type="empty_field" />
+      <!--
+        The summary may have any printable character with the exception that double quotes must be
+        translated into single quotes since this value will be embedded in a json object
+      -->
+      <sanitizer>
+        <valid initial="string.printable">
+          <remove value="&quot;"/>
+        </valid>
+        <mapping initial="none">
+          <add source="&quot;" target="'"/>
+        </mapping>
+      </sanitizer>
+    </param>
+    
+    <param name="description" type="text" value="" area="True"
+           label="EuPathDB dataset description:"
+           help="This description is visible on the EuPathDB dataset page reached via the dataset listing page." >
+      <validator type="empty_field" />
+      <!--
+        The description may have any printable character with the exception that double quotes must be
+        translated into single quotes since this value will be embedded in a json object
+      -->
+      <sanitizer>
+        <valid initial="string.printable">
+          <remove value="&quot;"/>
+        </valid>
+        <mapping initial="none">
+          <add source="&quot;" target="'"/>
+        </mapping>
+      </sanitizer>
+    </param>
+    
+    <!--
+     multiple = false by default.  If the user select N files, the tool runs N times.  This is
+     a problem since the accompanying information will be the same each time.
+     -->
+    <param name="input" type="data" format="txt" label="Gene list to export:" >
+      <!--
+      This does not work with the older version of Galaxy that Globus uses.
+      <validator type="empty_dataset" />
+      -->
+    </param>
+  </inputs>
+  
+  <outputs>
+      <data format="txt" name="output" label="exportToEuPathDBInfo.txt" />
+  </outputs>
+
+  <help>
+
+**What it does**
+
+This tool exports one or more bigwig files to the EuPathDB website (e.g., PlasmoDB) that hosts the reference genome associated with the bigwig files.  The bigwig files  will be available at that site as tracks in the genome browser.  The tracks will be named after the each of the bigwig files.
+
+The bigwig files provided must all have the same reference genome.
+
+-----
+
+**Example**
+
+Here is an example of a properly filled in form:
+      
+.. image:: ${static_path}/images/geneListToolDemo.png
+        :height: 200
+        :width: 500
+
+.. class:: warningmark
+
+We recommend that the user only supply one dataset file at a time. The tool can run in batch mode,
+but the datasets could be very difficult to distinguish in EuPathDB as all the other parameters above
+will apply to every dataset.
+
+  </help>
+  <citations>
+    <citation type="doi">
+      10.1093/nar/gkw1105
+    </citation>
+  </citations>
+</tool>
