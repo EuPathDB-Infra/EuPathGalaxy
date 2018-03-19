@@ -180,6 +180,7 @@ class Export:
               "type": {"name": self._type, "version": self._version},
               "dependencies": self.identify_dependencies(),
               "projects": self.identify_projects(),
+              "dataset_files": self.create_data_file_metadata(),
               "owner": self._user_id,
               "size": size,
               "created": self._timestamp
@@ -193,6 +194,20 @@ class Export:
                        "summary": self._summary,
                        "description": self._description
                        }, json_file, indent=4)
+
+    def create_data_file_metadata(self):
+        """
+        Create a json object holding metadata for an array of dataset files.
+        :return: json object to be inserted into dataset.json
+        """
+        dataset_files_metadata = []
+        for dataset_file in self.identify_dataset_files():
+            dataset_file_metadata = {}
+            dataset_file_metadata["filename"] = dataset_file['name']
+            dataset_file_metadata["filesize"] = os.stat(dataset_file['path']).st_size
+            dataset_files_metadata.append(dataset_file_metadata)
+        return dataset_files_metadata
+
 
     def package_data_files(self, temp_path):
         """
