@@ -52,7 +52,7 @@
      multiple = false by default.  If the user select N files, the tool runs N times.  This is
      a problem since the accompanying information will be the same each time.
      -->
-    <param name="input" type="data" format="html" label="Gene list to export:" >
+    <param name="input" type="data" format="txt" label="Gene list to export:" >
       <!--
       This does not work with the older version of Galaxy that Globus uses.
       <validator type="empty_dataset" />
@@ -60,7 +60,7 @@
     </param>
   </inputs>
   <outputs>
-      <data format="txt" name="output" label="exportToEuPathDBInfo.txt" />
+      <data format="html" name="output" label="exportToEuPathDBInfo.txt" />
   </outputs>
 
   <help>
