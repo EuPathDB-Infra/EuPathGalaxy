@@ -382,9 +382,11 @@ class Export:
         <a href='http://cryptodb.org/cryptodb/app/workspace/datasets'>CryptoDB</a><br />
         <a href='http://fungidb.org/fungidb/app/workspace/datasets'>FungiDB</a><br />
         <a href='http://giardiadb.org/giardiadb/app/workspace/datasets'>GiardiaDB</a><br />
+        <a href='http://hostdb.org/hostdb/app/workspace/datasets'>HostDB</a><br />
         <a href='http://microsporidiadb.org/micro/app/workspace/datasets'>MicrosporidiaDB</a><br />
         <a href='http://piroplasmadb.org/piro/app/workspace/datasets'>PiroplasmaDB</a><br />
         <a href='http://plasmodb.org/plasmo/app/workspace/datasets'>PlasmoDB</a><br />
+        <a href='http://schistodb.net/schisto/app/workspace/datasets'>SchistoDB</a><br />
         <a href='http://toxodb.org/toxo/app/workspace/datasets'>ToxoDB</a><br />
         <a href='http://trichdb.org/trichdb/app/workspace/datasets'>TrichDB</a><br />
         <a href='http://tritrypdb.org/tritrypdb/app/workspace/datasets'>TriTrypDB</a><br />
