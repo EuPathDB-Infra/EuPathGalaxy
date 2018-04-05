@@ -28,6 +28,9 @@ def main():
     parser = optparse.OptionParser()
     (options, args) = parser.parse_args()
 
+    # So users are greeted with a bewildering traceback
+    sys.tracebacklimit = 0
+
     # Create and populate the meta.json file that must be included in the tarball
     exporter = GeneListEupathExporter.GeneListExport(args)
     try:
