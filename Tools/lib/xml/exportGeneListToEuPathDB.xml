@@ -4,7 +4,7 @@
     <requirement type="package">pymodules</requirement>
   </requirements>
   <command interpreter="python" detect_errors="aggressive">
-    ../../bin/exportGeneListToEuPathDB "$dataset_name" "$summary" "$description" "$__user_email__" "$__tool_directory__" "$input" "$input.metadata.dbkey" "$input.datatype"
+    ../../bin/exportGeneListToEuPathDB "$dataset_name" "$summary" "$description" "$__user_email__" "$__tool_directory__" "$output" "$input" "$input.metadata.dbkey" "$input.datatype"
   </command>
   <inputs>
     <param name="dataset_name" type="text" size="100" value=""
@@ -52,7 +52,7 @@
      multiple = false by default.  If the user select N files, the tool runs N times.  This is
      a problem since the accompanying information will be the same each time.
      -->
-    <param name="input" type="data" format="txt" label="Gene list to export:" >
+    <param name="input" type="data" format="html" label="Gene list to export:" >
       <!--
       This does not work with the older version of Galaxy that Globus uses.
       <validator type="empty_dataset" />

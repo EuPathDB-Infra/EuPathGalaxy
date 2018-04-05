@@ -60,7 +60,7 @@ class Export:
         :param args:
         :return:
         """
-        if len(args) < 5:
+        if len(args) < 6:
             raise ValidationException("The tool was passed an insufficient numbers of arguments.")
         self._dataset_name = args[0]
         self._summary = args[1]
@@ -76,6 +76,9 @@ class Export:
 
         # Used to find the configuration file containing IRODS url and credentials
         self._tool_directory = args[4]
+
+        # Output file
+        self._output = args[5]
 
 
     def collect_rest_data(self):
@@ -287,7 +290,8 @@ class Export:
                 else:
                     failure.raise_for_status()
             else:
-                print >> sys.stdout, "Your dataset has been successfully exported to EuPathDB\n"
+                self.output_success()
+                print >> sys.stdout, "Your dataset has been successfully exported to EuPathDB."
                 print >> sys.stdout, "Please visit an appropriate EuPathDB site to view your dataset."
         except (requests.exceptions.ConnectionError, TransferException) as e:
             print >> sys.stderr, "Error: " + str(e)
@@ -367,6 +371,28 @@ class Export:
             # Added the boolean arg because cannot remove top level of temp dir structure in
             # Globus Dev Galaxy instance and it will throw an Exception if the boolean, 'True', is not in place.
             shutil.rmtree(temp_path, True)
+
+    def output_success(self):
+        header = "<html><body><h1>Good news!</h1><br />"
+        msg = """
+        <h3>Your set of bigwig files has been exported as a User Data Set named """ + self._dataset_name + """
+        from Galaxy to your Workspace in EuPathDB.</h3><br />
+        Go to the appropriate EuPathDB site (links below) to see it (and all your User Datasets):<br \>
+        <a href='http://amoebadb.org/amoeba/app/workspace/datasets'>AmoebaDB</a><br />
+        <a href='http://cryptodb.org/cryptodb/app/workspace/datasets'>CryptoDB</a><br />
+        <a href='http://fungidb.org/fungidb/app/workspace/datasets'>FungiDB</a><br />
+        <a href='http://giardiadb.org/giardiadb/app/workspace/datasets'>GiardiaDB</a><br />
+        <a href='http://microsporidiadb.org/micro/app/workspace/datasets'>MicrosporidiaDB</a><br />
+        <a href='http://piroplasmadb.org/piro/app/workspace/datasets'>PiroplasmaDB</a><br />
+        <a href='http://plasmodb.org/plasmo/app/workspace/datasets'>PlasmoDB</a><br />
+        <a href='http://toxodb.org/toxo/app/workspace/datasets'>ToxoDB</a><br />
+        <a href='http://trichdb.org/trichdb/app/workspace/datasets'>TrichDB</a><br />
+        <a href='http://tritrypdb.org/tritrypdb/app/workspace/datasets'>TriTrypDB</a><br />
+        </body></html>
+        """
+        with open(self._output, 'w') as file:
+            file.write("%s%s" % (header,msg))
+
 
 
 class ValidationException(Exception):

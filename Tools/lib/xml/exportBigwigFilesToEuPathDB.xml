@@ -8,7 +8,7 @@
   
   <command interpreter="python" detect_errors="aggressive">
     <![CDATA[
-    ../../bin/exportBigwigFilesToEuPathDB "$dataset_name" "$summary" "$description" "$__user_email__" "$__tool_directory__"
+    ../../bin/exportBigwigFilesToEuPathDB "$dataset_name" "$summary" "$description" "$__user_email__" "$__tool_directory__" "$output"
 
     #for $bigwig_file in $bigwig_files
       "$bigwig_file" "$bigwig_file.name" "$bigwig_file.metadata.dbkey"
@@ -69,7 +69,7 @@
   </inputs>
   
   <outputs>
-      <data format="txt" name="output" label="exportToEuPathDBInfo.txt" />
+      <data format="html" name="output" label="exportToEuPathDBInfo.html" />
   </outputs>
 
   <help>

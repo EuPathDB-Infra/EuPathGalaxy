@@ -33,13 +33,13 @@ class GeneListExport(EupathExporter.Export):
                                        args)
 
         # For the gene list export, three parameters beyond generic 5 are required.
-        if len(args) < 8:
+        if len(args) < 9:
             raise EupathExporter.ValidationException("The tool was passed an insufficient numbers of arguments.")
 
         # Data for the input given by the user
-        self._dataset_file_path = args[5]
-        self._genome = ReferenceGenome.Genome(args[6])
-        self._datatype = args[7]
+        self._dataset_file_path = args[6]
+        self._genome = ReferenceGenome.Genome(args[7])
+        self._datatype = args[8]
 
     def identify_dependencies(self):
         """
