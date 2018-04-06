@@ -375,8 +375,11 @@ class Export:
     def output_success(self):
         header = "<html><body><h1>Good news!</h1><br />"
         msg = """
-        <h3>Your set of bigwig files has been exported as a User Data Set named """ + self._dataset_name + """
-        from Galaxy to your Workspace in EuPathDB.</h3><br />
+        <h2>Results of the EuPathDB Export Tool<br />Bigwig Files to EuPathDB</h2>
+        <h3>Your set of bigwig files was exported from Galaxy to your account in EuPathDB.
+         For file access and to view in GBrowse, go to My Data Sets in the appropriate EuPathDB site:
+        from Galaxy to your Workspace in EuPathDB.
+        </h3><br />
         Go to the appropriate EuPathDB site (links below) to see it (and all your User Datasets):<br \>
         <a href='http://amoebadb.org/amoeba/app/workspace/datasets'>AmoebaDB</a><br />
         <a href='http://cryptodb.org/cryptodb/app/workspace/datasets'>CryptoDB</a><br />
