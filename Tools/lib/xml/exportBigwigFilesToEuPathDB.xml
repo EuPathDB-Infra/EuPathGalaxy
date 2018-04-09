@@ -11,7 +11,7 @@
     ../../bin/exportBigwigFilesToEuPathDB "$dataset_name" "$summary" "$description" "$__user_email__" "$__tool_directory__" "$output"
 
     #for $bigwig_file in $bigwig_files
-      "$bigwig_file" "$bigwig_file.name" "$bigwig_file.metadata.dbkey"
+      "$bigwig_file" "$bigwig_file.name" "$overrideDbkey"
     #end for
     ]]>
     
@@ -27,8 +27,12 @@
       <validator type="length" message="Please restrict the name to 100 characters or less." max="100" />
     </param>
 
-    <param name="bigwig_files" type="data" multiple="true" format="bigwig" label="Bigwig files:">
+    <param name="bigwig_files" type="data" multiple="true" format="bigwig" label="Bigwig files:"
+           help="The files you select all have to have the same correct genome reference">
     </param>
+
+    <!-- I consider this a very bad idea -->
+    <param name="overrideDbkey" type="genomebuild" label="Genome" />
     
     <param name="summary" type="text" value=""
            label="EuPathDB dataset summary:"

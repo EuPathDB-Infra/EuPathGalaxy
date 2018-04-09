@@ -4,7 +4,7 @@
     <requirement type="package">pymodules</requirement>
   </requirements>
   <command interpreter="python" detect_errors="aggressive">
-    ../../bin/exportGeneListToEuPathDB "$dataset_name" "$summary" "$description" "$__user_email__" "$__tool_directory__" "$output" "$input" "$input.metadata.dbkey" "$input.datatype"
+    ../../bin/exportGeneListToEuPathDB "$dataset_name" "$summary" "$description" "$__user_email__" "$__tool_directory__" "$output" "$input" "$overrideDbkey" "$input.datatype"
   </command>
   <inputs>
     <param name="dataset_name" type="text" size="100" value=""
@@ -58,6 +58,8 @@
       <validator type="empty_dataset" />
       -->
     </param>
+    <!-- I consider this a very bad idea -->
+    <param name="overrideDbkey" type="genomebuild" label="Genome" />
   </inputs>
   <outputs>
       <data format="html" name="output" label="exportToEuPathDBInfo.txt" />
