@@ -378,7 +378,6 @@ class Export:
         <h2>Results of the EuPathDB Export Tool<br />Bigwig Files to EuPathDB</h2>
         <h3>Your set of bigwig files was exported from Galaxy to your account in EuPathDB.
          For file access and to view in GBrowse, go to My Data Sets in the appropriate EuPathDB site:
-        from Galaxy to your Workspace in EuPathDB.
         </h3><br />
         Go to the appropriate EuPathDB site (links below) to see it (and all your User Datasets):<br \>
         <a href='http://amoebadb.org/amoeba/app/workspace/datasets'>AmoebaDB</a><br />
