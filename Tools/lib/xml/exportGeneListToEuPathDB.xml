@@ -4,7 +4,7 @@
     <requirement type="package">pymodules</requirement>
   </requirements>
   <command interpreter="python" detect_errors="aggressive">
-    ../../bin/exportGeneListToEuPathDB "$dataset_name" "$summary" "$description" "$__user_email__" "$__tool_directory__" "$output" "$input" "$overrideDbkey" "$input.datatype"
+    ../../bin/exportGeneListToEuPathDB "$dataset_name" "$summary" "$description" "$__user_email__" "$__tool_directory__" "$output" "$overrideDbkey" "$input" "$input.metadata.dbkey" "$input.datatype"
   </command>
   <inputs>
     <param name="dataset_name" type="text" size="100" value=""

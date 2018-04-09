@@ -15,23 +15,30 @@ class BigwigFilesExport(EupathExporter.Export):
                                        None,
                                        args)
 
-        # beyond the standard 6 params, this exporter requires one or more pairs of args: dataset1 dataset1.refGenome
+        # beyond the standard 7 params, this exporter requires one or more pairs of args: dataset1 dataset1.refGenome
         # dataset2...
-        if len(args) < 9:
+        if len(args) < 10:
             raise EupathExporter.ValidationException("The tool was passed an insufficient numbers of arguments.")
 
-        # grab first provided ref genome, as the master
-        self._refGenome = ReferenceGenome.Genome(args[8])
+        # grab first dataset provided ref genome
+        self._initial_refGenome = args[9]
+
         self._datasetInfos = []
         
         # process variable number of [dataset refgenome] pairs.
         # confirm that all regenomes are identical.
-        for i in range(6, len(args), 3):   # start on 7th arg, increment by 2
+        for i in range(7, len(args), 3):   # start on 8th arg, increment by 3
             #if not args[i+1].endswith(".bigwig") and not args[i+1].endswith(".bw"):
             #    raise EupathExporter.ValidationException("All datafiles must have either the .bigwig or .bw extension.")
-            if args[i+2] != self._refGenome.identifier:
-                raise EupathExporter.ValidationException("All provided bigwig datasets must have the same reference genome.")
+            if args[i+2] != self._initial_refGenome:
+                raise EupathExporter.ValidationException("All provided bigwig datasets must have the same reference genome.  Found " + self._initial_refGenome + " and " + args[i+2])
             self._datasetInfos.append({"name": args[i+1], "path": args[i]})
+
+        # now override the dataset based ref genome with the one obtained from the form
+        self._refGenome = ReferenceGenome.Genome(args[6])
+
+        if len(args[6]) == 0:
+            raise EupathExporter.ValidationException("A reference genome must be selected.")
 
     def identify_dependencies(self):
         """
