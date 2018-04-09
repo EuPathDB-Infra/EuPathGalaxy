@@ -40,7 +40,7 @@ class GeneListExport(EupathExporter.Export):
         self._dataset_file_path = args[7]
 
         # Overriding the dataset genome reference with that provided via the form.
-        if len(args[6]) == 0:
+        if len(args[6].strip()) == 0:
             raise EupathExporter.ValidationException("A reference genome must be selected.")
         self._genome = ReferenceGenome.Genome(args[6])
         self._datatype = args[9]

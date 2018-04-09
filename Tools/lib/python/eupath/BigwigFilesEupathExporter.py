@@ -37,7 +37,7 @@ class BigwigFilesExport(EupathExporter.Export):
         # now override the dataset based ref genome with the one obtained from the form
         self._refGenome = ReferenceGenome.Genome(args[6])
 
-        if len(args[6]) == 0:
+        if len(args[6].strip()) == 0:
             raise EupathExporter.ValidationException("A reference genome must be selected.")
 
     def identify_dependencies(self):
