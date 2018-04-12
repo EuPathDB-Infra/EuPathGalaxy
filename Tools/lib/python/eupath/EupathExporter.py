@@ -48,7 +48,8 @@ class Export:
         # directory and to export both the tarball and the flag that triggers IRODS to process the tarball. By
         # convention, the dataset tarball is of the form dataset_uNNNNNN_tNNNNNNN.tgz where the NNNNNN following the _u
         # is the WDK user id and _t is the msec timestamp
-        self._export_file_root = 'dataset_u' + str(self._user_id) + '_t' + str(self._timestamp)
+        self._export_file_root = 'dataset_u' + str(self._user_id) + '_t' + str(self._timestamp) + '_p' + str(os.getpid())
+        print >> sys.stdout, "Export file root is " + self._export_file_root
 
         # Set up the configuration data
         (self._url, self._user, self._pwd, self._lz_coll, self._flag_coll) = self.collect_rest_data()
