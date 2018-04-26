@@ -79,12 +79,13 @@
 
 .. class:: infomark
 
-**What it does**   (Tutorial_)
+**What it does**   (check this Tutorial_!)
 
-This tool exports one or more bigwig files to a EuPathDB site creating a new My Data Set to contain them. The bigwig files will be available on any site for sharing and download, and on that site as Genome Browser tracks.
+This tool exports one or more bigwig files to a EuPathDB site creating a new My Data Set to contain them. Typically the bigwig files in your My Data Set should belong to one Study. The reference genome you specify determines which EuPathDB site the new My Data Set will be exported to. For example, if you choose P.falciparum 3D7 the export will be sent to PlasmoDB.org_.
 
-Typically the bigwig files in your data set should belong to one Study. The reference genome you specify determines which EuPathDB site the new My Data Set will be exported to. For example, if yu choose P.falciparum 3D7 the export will be sent to PlasmoDB.
+More accurately, your new My Data Set will be available on any EuPathDB site for you to share or download, but only in PlasmoDB you will be able to open the bigwig files as Genome Browser tracks, against any other publicly available PlasmoDB tracks.
 
+.. _PlasmoDB.org: http://plasmodb.org
 .. _Tutorial: http://www.youtube.com/watch?v=igQZHjRBqV0
   </help>
 </tool>
