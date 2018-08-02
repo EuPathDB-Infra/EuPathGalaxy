@@ -35,9 +35,11 @@ document.getElementById("eupath-workflows").innerHTML = "" +
         "Profile a transcriptome and analyze differential gene expression.<br>Tools: FastQC, Trimmomatic, TopHat2, HTseq, DESeq2.<br></p>" +
         "<p title=\"Click to run the workflow with your datasets\"><a id='workflow4' href='javascript:void(0)' onClick='import_and_run_workflow(\"b27bbd0e90a6bb84\")'>EuPathDB Workflow for Illumina paired-end RNA-seq, biological replicates</a><br>" +
         "Profile a transcriptome and analyze differential gene expression.<br>Tools: FastQC, Trimmomatic, TopHat2, CuffLinks, CuffDiff.<br></p>" +
-        "<p title=\"Click to run the workflow with your datasets\"><a id='workflow5' href='javascript:void(0)' onClick='import_and_run_workflow(\"59725c868c65b63f\")'>EuPathDB Workflow for Variant Calling, single-read sequencing</a><br>" +
+        "<p title=\"Click to run the workflow with your datasets\"><a id='workflow5' href='javascript:void(0)' onClick='import_and_run_workflow(\"54562ad7bccf41b2\")'>EuPathDB Workflow for Illumina paired-end RNA-seq, biological replicates</a><br>" +
+        "Profile a transcriptome and analyze differential gene expression.<br>Tools: Collections, FastQC, Trimmomatic, HISAT2, HTseq, DESeq2.<br></p>" +
+        "<p title=\"Click to run the workflow with your datasets\"><a id='workflow6' href='javascript:void(0)' onClick='import_and_run_workflow(\"59725c868c65b63f\")'>EuPathDB Workflow for Variant Calling, single-read sequencing</a><br>" +
         "Profile and analyse SNPs.<br>Tools: Sickle, Bowtie2, FreeBayes, and SnpEff<br></p>" +
-        "<p title=\"Click to run the workflow with your datasets\"><a id='workflow6' href='javascript:void(0)' onClick='import_and_run_workflow(\"5c09b80c25571781\")'>EuPathDB Workflow for Variant Calling, paired-end sequencing</a><br>" +
+        "<p title=\"Click to run the workflow with your datasets\"><a id='workflow7' href='javascript:void(0)' onClick='import_and_run_workflow(\"5c09b80c25571781\")'>EuPathDB Workflow for Variant Calling, paired-end sequencing</a><br>" +
         "Profile and analyse SNPs.<br>Tools: Sickle, Bowtie2, FreeBayes, SnpEff and SnpSift<br></p>";
        
 //        "<p title=\"Click to run the workflow with your datasets\"><a id='workflow6' href='javascript:void(0)' onClick='import_and_run_workflow(\"78f0ccbcef5e3211\")'>EuPathDB Workflow for Variant Calling, paired-end sequencing</a><br>" +
