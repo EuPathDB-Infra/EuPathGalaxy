@@ -94,7 +94,7 @@ class Export:
         # The tool directory path seems glitchy on Globus Dev Galaxy instance after service restarts.
         # Uncomment to check.
         #print >> sys.stdout, "self._tool_directory is " + self._tool_directory
-        with open(config_path, "r+") as config_file:
+        with open(config_path, "r") as config_file:
             config_json = json.load(config_file)
             return (config_json["url"], config_json["user"], config_json["password"], "lz", "flags")
 
