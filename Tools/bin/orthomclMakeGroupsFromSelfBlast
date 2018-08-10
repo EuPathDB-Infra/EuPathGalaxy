@@ -1,0 +1,116 @@
+#!/usr/bin/perl
+use strict;
+
+&usage() unless scalar(@ARGV) == 5;
+my ($selfSimilarityFile, $assignedProteinsFile, $taxonAbbrev, $outputDir, $log) = @ARGV;
+
+open(LOG, ">$log") || die "could not open log file '$log'";
+
+my $prevQueryId;
+my $runOfParalogs;
+my $paralogPairsHash;
+
+open(ASSIGNED, "$outputDir/assignedProteins");
+my $assignedProteins;
+while(<ASSIGNED>) {
+  chomp;
+  $assignedProteins->[$_] = 1;
+}
+close(ASSIGNED);
+
+open(PARA, ">$outputDir/paralogPairs") || die "Can't open paralogPairs file for writing\n";
+if ($selfSimilarityFile =~ m/\.gz$/) {
+  open(SS, "gunzip -c $selfSimilarityFile |") or die $!;
+}
+else {
+  open(SS, "<$selfSimilarityFile") or die $!;
+}
+
+print LOG "\nScanning self similarity file $selfSimilarityFile\n";
+$count = 0;
+while(<SS>) {
+  print LOG "|" if ($count++ % 100000) == 0;
+    my ($q_id, $s_id, $q_taxon, $s_taxon, $evalue_mant, $evalue_exp, $pctIdent, $pctMatch) = split(/\s/);
+
+
+    next if ($q_id eq $s_id) || ($pctMatch < 50) || ($assignedProteins->{$q_id});
+
+    $evalue_exp = -181 unless $evalue_exp;
+
+    my $bestOutSpeciesHit = $bestOutSpeciesHits->{$q_id};
+    if ($bestOutSpeciesHit->[1] > $evalue_exp
+       || ($bestOutSpeciesHit->[1] == $evalue_exp
+	  && $bestOutSpeciesHit->[0] > $evalue_mant)) {
+      handleParalogSim($q_id, $s_id, $evalue_mant, $evalue_exp);
+    }
+}
+print LOG "\n";
+close(PARA);
+
+
+#####################################################################
+# subroutines
+#####################################################################
+
+# 
+sub handleParalogSim {
+    my ($q_id, $s_id, $evalue_mant, $evalue_exp) = @_;
+
+    # if this pair was already seen in opposite direction
+    if ($paralogPairsHash->{$s_id} && $paralogPairsHash->{$s_id}->{$q_id}) {
+	my $firstSeenScore = $paralogPairsHash->{$s_id}->{$q_id};
+	my $score = computeParalogPairScore($firstSeenScore->{mant},
+					    $firstSeenScore->{exp},
+					    $evalue_mant, $evalue_exp);
+
+        # strip off taxon prefix before printing final result 
+        # (it may be a fake taxon prefix)
+	my $q_id2 = $q_id;
+	my $s_id2 = $s_id;
+	$q_id2 =~ s/$taxonAbbrev\|//;
+	$s_id2 =~ s/$taxonAbbrev\|//;
+	print PARA "$q_id2\t$s_id2\t$score\n";
+    }
+
+    # else, remember for next time
+    else {
+	$paralogPairsHash->{$q_id}->{$s_id} =
+	    {mant=>$evalue_mant, exp=>$evalue_exp} ;
+    }
+}
+
+sub computeParalogPairScore {
+    my ($mant1, $exp1, $mant2, $exp2) = @_;
+    # borrowed from orthomclPairs
+
+    # if either mant is approx 0, use only exp
+    if ($mant1 < 0.01 || $mant2 < 0.01) { return ($exp1 + $exp2) / -2; }
+
+    # ( -log10(evalue1) - log10(evalue2) ) / 2
+    return (log($mant1 * (10 ** $exp1))/log(10) + log($mant2 * (10 ** $exp2))/log(10)) / -2;
+}
+
+sub usage {
+    print STDERR "
+Make groups based on a self-self blast similarities file
+
+usage:  orthomclMapProteomeToGroups self_similarity_file assigned_proteins_file taxon_abbrev output_dir log
+
+where:
+  self_similarity_file:    concise (orthomcl-style) similarity output for input
+                           proteome v. input proteins, sorted by query_id,
+                           evalue (gzipped file supported).  Use 'NONE' to skip
+                           paralog processing and output.
+  assigned_proteins_file:  a newline delim list of protein IDs that have already been assigned to groups.
+  taxon_abbrev             taxon abbreviation that has been prepended to protein IDs
+  output_dir:              where to write output files
+  log                      log file path
+
+note: simseqs format output by blastSimilarity is sorted by query_id, evalue
+
+output:
+  output_dir/paralogPairs
+  output_dir/paralogGroups
+";
+    exit(1);
+}
