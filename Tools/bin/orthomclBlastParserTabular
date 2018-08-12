@@ -3,7 +3,7 @@
 use strict;
 
 my $blastFile = shift(@ARGV);
-my $fastaFilesDir = shift(@ARGV);
+my $taxonAbbrev = shift(@ARGV);
 
 usage() unless $blastFile;
 
@@ -33,7 +33,11 @@ my $queryShorter;
 
 while(<F>) {
     chomp;
-    my ($queryId, $subjectId, $percentIdentity, $length, $mismatches, $ngaps, $queryStart, $queryEnd, $subjectStart, $subjectEnd, $evalue, $bits) = split;
+    my @columns = split;
+   # my ($queryId, $subjectId, $percentIdentity, $length, $mismatches, $ngaps, $queryStart, $queryEnd, $subjectStart, $subjectEnd, $evalue, $bits) = split;
+    my ($queryId, $subjectId, $percentIdentity, $length, $dontcare1, $dontcare2, $queryStart, $queryEnd, $subjectStart, $subjectEnd, $evalue, $dontcare3) = @columns;
+    my $qLength = $columns[22];
+    my $sLength = $columns[23];
 
     if ($queryId ne $prevQueryId || $subjectId ne $prevSubjectId) {
 
@@ -47,7 +51,7 @@ while(<F>) {
 	$subject = {}; 
 	$subject->{queryId} = $queryId;
 	$subject->{subjectId} = $subjectId;
-	$subject->{queryShorter} = getTaxonAndLength($subject, $genes);
+	$subject->{queryShorter} = $qLength < $sLength;
 	
 	($subject->{evalueMant}, $subject->{evalueExp})
 	    = formatEvalue($evalue); # from first hsp
@@ -63,49 +67,6 @@ while(<F>) {
 printPreviousSubject($subject);
 
 ########################################################################################
-
-sub getGenesFromFasta {
-    my $fastaFilesDir = shift(@_);
-    my (@fastaFiles) = @_;
-
-    my $genes;
-    foreach my $fastaFile (@fastaFiles) {
-	next if $fastaFile =~ /^\./;
-	print STDERR "acquiring genes from $fastaFile\n";
-	$fastaFile =~ /(\w+).fasta/ || die "'$fastaFile' is not in 'taxon.fasta' format\n";
-	my $taxon = $1;
-	open(FF,"$fastaFilesDir/$fastaFile") || die "can't open fasta file '$fastaFilesDir/$fastaFile'";
-	my $gene;
-	my $length;
-	while (<FF>) {
-	    chomp;
-	    next if /^\s*$/;
-	    if (/\>(\S+)/) {
-		$genes->{$gene}->{length} = $length if $gene;
-		$genes->{$gene}->{taxon} = $taxon if $gene;
-		$gene = $1;
-		$length = 0;
-	    } else {
-		$length += length($_);
-	    }
-	}
-	$genes->{$gene}->{length} = $length if $gene;
-	$genes->{$gene}->{taxon} = $taxon if $gene;
-	close(FF);
-    }
-    return $genes;
-}
-
-sub getTaxonAndLength {
-    my ($subject, $genes) = @_;
-    $subject->{queryTaxon} = $genes->{$subject->{queryId}}->{taxon};
-    $subject->{subjectTaxon} = $genes->{$subject->{subjectId}}->{taxon};
-    $subject->{queryLength} = $genes->{$subject->{queryId}}->{length};
-    $subject->{subjectLength} = $genes->{$subject->{subjectId}}->{length};
-    die "couldn't find taxon for gene '$subject->{subjectId}'" unless $subject->{subjectTaxon};
-    die "couldn't find taxon for gene '$subject->{queryId}'" unless $subject->{queryTaxon};
-    return $subject->{queryLength} < $subject->{subjectLength};
-}
 
 sub printPreviousSubject {
     my ($subject) = @_;
@@ -171,18 +132,14 @@ sub getStartEnd {
 sub usage {
   print STDERR "
 
-orthomclBlastParser blast_file fasta_files_dir
+orthomclBlastParser blast_file taxon_abbrev
 
 where:
-  blast_file:       BLAST output in m8 format.
-  fasta_files_dir:  a directory of compliant fasta files as produced by
-                    orthomclAdjustFasta 
+  blast_file:         BLAST output in tabular format (as provided in Galaxy) (see below)
+  taxon_abbrev:       A single taxon abbreviation placeholder to use in the two taxon columns in the output (query and subject).  this parser assumes that 
+                      the subject and query are from the same taxon.
 
   
-m8 format has these columns:
-  query_name, hitname, pcid, len, mismatches, ngaps, start('query'), 
-  end('query'), start('hit'), end('hit'), evalue, bits
-
 output:
   tab delimited text file, with one row per query-subject match. the columns are:
      query_id, subject_id, query_taxon, subject_taxon,
@@ -190,9 +147,33 @@ output:
 
 (percent_match is computed by counting the number of bases or amino acids in the shorter sequence that are matched in any hsp, and dividing by the length of that shorter sequence)
 
-EXAMPLE: orthomclSoftware/bin/orthomclBlastParser my_blast_results my_orthomcl_dir/compliantFasta >> my_orthomcl_dir/similarSequences.txt
+Blast file columns:
 
-
+1 qaccver Query accession dot version
+2 saccver Subject accession dot version (database hit)
+3 pident Percentage of identical matches
+4 length Alignment length
+5 mismatch Number of mismatches
+6 gapopen Number of gap openings
+7 qstart Start of alignment in query
+8 qend End of alignment in query
+9 sstart Start of alignment in subject (database hit)
+10 send End of alignment in subject (database hit)
+11 evalue Expectation value (E-value)
+12 bitscore Bit score
+13 sallseqid All subject Seq-id(s), separated by a ';'
+14 score Raw score
+15 nident Number of identical matches
+16 positive Number of positive-scoring matches
+17 gaps Total number of gaps
+18 ppos Percentage of positive-scoring matches
+19 qframe Query frame
+20 sframe Subject frame
+21 qseq Aligned part of query sequence
+22 sseq Aligned part of subject sequence
+23 qlen Query sequence length
+24 slen Subject sequence length
+25 salltitles All subject title(s), separated by a '<>'
 ";
 
 
