@@ -5,26 +5,9 @@ use strict;
 my $blastFile = shift(@ARGV);
 my $taxonAbbrev = shift(@ARGV);
 
-usage() unless $blastFile;
-
-usage() unless $fastaFilesDir;
- 
-opendir(DIR, $fastaFilesDir) || die "Can't open fasta directory '$fastaFilesDir'\n";
-my @fastaFiles = readdir(DIR);
-closedir(DIR);
-
-my $genes = getGenesFromFasta($fastaFilesDir, @fastaFiles);
+usage() unless $blastFile && $taxonAbbrev;
 
 open(F,$blastFile) || die "can't open BLAST file '$blastFile'\n";
-
-=pod
-query_name, hitname, 
-$pcid, len, 
-mismatches, ngaps, 
-start('query'), end('query'),
-start('hit'), end('hit'),
-evalue, bits
-=cut
 
 my $prevSubjectId = 'blah';
 my $prevQueryId = 'blah';

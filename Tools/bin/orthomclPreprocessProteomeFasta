@@ -8,7 +8,7 @@ my ($_inputFasta, $_maxInputSequences, $_fakeTaxonAbbrev) = @ARGV;
 
 my %uniqueIds;
 
-validateProteomeFile($_inputFasta, $maxInputSequence);
+validateProteomeFile($_inputFasta, $_maxInputSequences);
 checkProteomeFileForFullMaskSeqs($_inputFasta);
 writeCorrectedFasta($_inputFasta, $_fakeTaxonAbbrev);
 
@@ -37,12 +37,14 @@ sub validateProteomeFile {
       die "Sequence ID '$id' is not unique in the input FASTA file\n" if $uniqueIds{$id};
       $uniqueIds{$id} = 1;
       $seqCount += 1;
+      last if $seqCount > $maxInput;
+    }
   }
   close(P);
   if ($badFirstLine || !$seqCount || $seqCount > $maxInput || $length > $seqCount * 5000) {
-    die	"The file must be in FASTA format, contain protein sequences, and have not more than 100,000 sequences.
+    die	"The file must be in FASTA format, contain protein sequences, and have not more than $maxInput sequences.
 The first line must be blank or be the description line for the first protein.\n";
-    }
+  }
 }
 
 # blastall fails on fully masked sequences - all X's .
@@ -109,7 +111,7 @@ sub writeCorrectedFasta {
 sub usage {
  die "
 Prepare a proteome fasta file for submission to the OrthoMCL Protome Analysis system.
-
+bb
 Usage: orthomclPreprocessProteomeFasta input_proteome_fasta_file max_allowed_input_seqs fake_taxon_abbrev> corrected_and_valid_fasta_file
 
 Where:
