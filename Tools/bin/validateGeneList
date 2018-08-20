@@ -20,12 +20,16 @@ def __main__():
     if len(dataset_file) != 1:
         error = "A gene list dataset should have only one file."
     else:
+        lines = 0
         with open(dataset_file[0]['path'],'r') as source_file:
             line = source_file.readline().strip()
-            if len(line.split()) == 0:
-                continue
             if re.search(r"\s", line):
                 error = "No lines in a gene list file should contain embedded whitespace."
+            lines += 1
+        my_set = set(open(dataset_file[0]['path'],'r'))
+        if len(my_set) != lines:
+            error = "Duplicate row found"
+
     if error is not None:
         print >> sys.stderr, "Error: " + error
         sys.exit(1)
