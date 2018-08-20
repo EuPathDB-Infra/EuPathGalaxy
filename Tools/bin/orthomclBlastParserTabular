@@ -35,7 +35,10 @@ while(<F>) {
 	$subject->{queryId} = $queryId;
 	$subject->{subjectId} = $subjectId;
 	$subject->{queryShorter} = $qLength < $sLength;
-	
+	$subject->{queryLength} = $qLength;
+	$subject->{subjectLength} = $sLength;
+	$subject->{queryTaxon} = $taxonAbbrev;
+	$subject->{subjectTaxon} = $taxonAbbrev;
 	($subject->{evalueMant}, $subject->{evalueExp})
 	    = formatEvalue($evalue); # from first hsp
     }
@@ -115,7 +118,9 @@ sub getStartEnd {
 sub usage {
   print STDERR "
 
-orthomclBlastParser blast_file taxon_abbrev
+Parse an NCBI tabular BLAST output file in the Similar Sequences format orthomcl requires.
+
+Usage: orthomclBlastParserTabluar blast_file taxon_abbrev
 
 where:
   blast_file:         BLAST output in tabular format (as provided in Galaxy) (see below)
