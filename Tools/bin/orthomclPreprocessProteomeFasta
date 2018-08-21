@@ -2,15 +2,15 @@
 
 use strict;
 
-my ($_inputFasta, $_maxInputSequences, $_fakeTaxonAbbrev) = @ARGV;
+my ($_inputFasta, $_maxInputSequences, $_fakeTaxonAbbrev, $outputFasta) = @ARGV;
 
-&usage() unless scalar(@ARGV) == 3;
+&usage() unless scalar(@ARGV) == 4;
 
 my %uniqueIds;
 
 validateProteomeFile($_inputFasta, $_maxInputSequences);
 checkProteomeFileForFullMaskSeqs($_inputFasta);
-writeCorrectedFasta($_inputFasta, $_fakeTaxonAbbrev);
+writeCorrectedFasta($_inputFasta, $_fakeTaxonAbbrev, $outputFasta);
 
 #########################################################################################################################
 
@@ -96,14 +96,16 @@ sub lineIsFullyMasked {
 # lose tab characters
 # and introduce fake taxon abbrev as prefix in defline (>xxxx|my defline).  taxon abbrev is required by orthomcl
 sub writeCorrectedFasta {
-  my ($proteomeFile, $fakeTaxonAbbrev) = @_;
+  my ($proteomeFile, $fakeTaxonAbbrev, $outputFile) = @_;
 
-  open(O, $proteomeFile) || die "can't open file $proteomeFile\n";
-  while (<O>) {
+  open(I, $proteomeFile) || die "can't open file $proteomeFile\n";
+  open(O, ">$outputFile") || die "can't open file $outputFile for writing\n";
+  while (<I>) {
     s/\t/ /g;		    # lose tab chars.  formatdb fails on them.
     s/\>/\>$fakeTaxonAbbrev\|/ if (/\>/);
-    print STDOUT $_;
+    print O $_;
   }
+  close(I);
   close(O);
 }
 
@@ -111,13 +113,14 @@ sub writeCorrectedFasta {
 sub usage {
  die "
 Prepare a proteome fasta file for submission to the OrthoMCL Protome Analysis system.
-bb
-Usage: orthomclPreprocessProteomeFasta input_proteome_fasta_file max_allowed_input_seqs fake_taxon_abbrev> corrected_and_valid_fasta_file
+
+Usage: orthomclPreprocessProteomeFasta input_proteome_fasta_file max_allowed_input_seqs fake_taxon_abbrev corrected_and_valid_fasta_file
 
 Where:
   - input_proteome_fasta_file: the input fasta!  Must have a unique ID in the first position of the definition line
   - max_allowed_input_seqs:  if the input has more than this number of sequences, fail the job
   - fake_taxon_abbrev:  a fake taxon abbreviation (eg xxxx) to prepend to the defline, for compatibility with orthomcl processing
+  - corrected_and_valid_fasta_file: the output file
 
 This program:
   - rejects inputs that:
