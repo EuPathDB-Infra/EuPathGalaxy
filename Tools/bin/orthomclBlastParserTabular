@@ -4,10 +4,12 @@ use strict;
 
 my $blastFile = shift(@ARGV);
 my $taxonAbbrev = shift(@ARGV);
+my $outputFile = shift(@ARGV);
 
-usage() unless $blastFile && $taxonAbbrev;
+usage() unless $blastFile && $taxonAbbrev && $outputFile;
 
 open(F,$blastFile) || die "can't open BLAST file '$blastFile'\n";
+open(OUT, ">$outputFile") || die "can't open output file '$blastFile' for writing\n";
 
 my $prevSubjectId = 'blah';
 my $prevQueryId = 'blah';
@@ -63,7 +65,7 @@ sub printPreviousSubject {
 	int($subject->{totalIdentities} / $subject->{totalLength} * 10 + .5)/10;
     my $shorterLength = $subject->{queryShorter}? $subject->{queryLength} : $subject->{subjectLength};
     my $percentMatch = int($nonOverlapMatchLen / $shorterLength * 1000 + .5) / 10;
-    print "$subject->{queryId}\t$subject->{subjectId}\t$subject->{queryTaxon}\t$subject->{subjectTaxon}\t$subject->{evalueMant}\t$subject->{evalueExp}\t$percentIdent\t$percentMatch\n";
+    print OUT "$subject->{queryId}\t$subject->{subjectId}\t$subject->{queryTaxon}\t$subject->{subjectTaxon}\t$subject->{evalueMant}\t$subject->{evalueExp}\t$percentIdent\t$percentMatch\n";
 }
 
 # this (corrected) version of formatEvalue provided by Robson de Souza

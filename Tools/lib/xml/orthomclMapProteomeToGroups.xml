@@ -1,34 +1,28 @@
 <tool id="orthomclMapProteomeToGroups" name="OrthoMCL Map Proteome to Groups" version="1.0.0">
   <description>Use BLAST results to map a proteome to OrthoMCL groups.</description>
   <command interpreter="perl" detect_errors="aggressive">
-    ../../bin/orthomclMapProteomeToGroupsGalaxy "$self_similarity_file" $similarity_file" "$groups_file" "TAXON"
+    ../../bin/orthomclMapProteomeToGroupsGalaxy "$self_similarity_file" $orthomcl_similarity_file" "$groups_file" TAXON "$outputGroupsFile" "$outputParalogsFile"
   </command>
   <inputs>
-    <param name="self_similarity_file" type="text" size="100" value=""
-           label="Self-similarity file:"
-           help="A BLAST result of the proteome against its self, in orthomcl similar sequences format">
-      <validator type="empty_field" />
-      <validator type="regex" message="Only letters, numbers, spaces and dashes are allowed in the name.">^[\w\d\s\-]*$</validator>
-      <validator type="length" message="Please restrict the name to 100 characters or less." max="100" />
+    <param name="self_similarity_file" type="data" format="text"
+           label="Self-self BLAST result (OrthoMCL format):"
+           help="">
     </param>
-    <param name="groups_similarity_file" type="text" size="100" value=""
-           label="Orthomcl similarity file"
-           help="A BLAST result of the proteome against OrthoMCL proteins, in orthomcl similar sequences format">
-      <validator type="empty_field" />
-      <validator type="regex" message="Only letters, numbers, spaces and dashes are allowed in the name.">^[\w\d\s\-]*$</validator>
-      <validator type="length" message="Please restrict the name to 100 characters or less." max="100" />
+
+    <param name="orthomcl_similarity_file" type="data" format="text"
+           label="OrthoMCL BLAST result (OrthoMCL format):"
+           help="">
     </param>
-    <param name="groups_file" type="text" size="100" value=""
-           label="OrthoMCL groups file"
-           help="A file of proteins organized into OrthoMCL groups, in OrthoMCL Groups format">
-      <validator type="empty_field" />
-      <validator type="regex" message="Only letters, numbers, spaces and dashes are allowed in the name.">^[\w\d\s\-]*$</validator>
-      <validator type="length" message="Please restrict the name to 100 characters or less." max="100" />
+
+    <param name="orthomcl_groups_file" type="data" format="text"
+           label="OrthoMCL Groups file:"
+           help="">
     </param>
+
   </inputs>
   <outputs>
-      <data format="text" name="output" label="orthologGroups.txt" />
-      <data format="text" name="output" label="paralogPairs.txt" />
+      <data format="text" name="outputGroupsFile" label="orthologGroups.txt" />
+      <data format="text" name="outputParalogsFile" label="paralogPairs.txt" />
   </outputs>
 
   <help>

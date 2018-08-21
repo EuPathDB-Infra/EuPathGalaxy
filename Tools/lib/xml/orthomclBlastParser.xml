@@ -1,15 +1,12 @@
 <tool id="orthomclBlastParser" name="OrthoMCL Blast Parser" version="1.0.0">
   <description>Parse an NCBI BLAST tabular output file into the tabular format required by OrthoMCL</description>
   <command interpreter="perl" detect_errors="aggressive">
-    ../../bin/orthomclBlastParserTabular "$ncbi_blast_file" "TAXON"
+    ../../bin/orthomclBlastParserTabular "$ncbi_blast_file" TAXON "$output"
   </command>
   <inputs>
-    <param name="ncbi_blast_file" type="text" size="100" value=""
+    <param name="ncbi_blast_file" type="data" format="text"
            label="NCBI BLAST tabular output:"
            help="An NCBI BLAST tabular output file">
-      <validator type="empty_field" />
-      <validator type="regex" message="Only letters, numbers, spaces and dashes are allowed in the name.">^[\w\d\s\-]*$</validator>
-      <validator type="length" message="Please restrict the name to 100 characters or less." max="100" />
     </param>
   </inputs>
   <outputs>

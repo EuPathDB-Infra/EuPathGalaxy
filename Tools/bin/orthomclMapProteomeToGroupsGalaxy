@@ -1,11 +1,13 @@
 #!/usr/bin/perl
 use strict;
 
-&usage() unless scalar(@ARGV) == 7;
+&usage() unless scalar(@ARGV) == 6;
 my $selfSimilarityFile = $ARGV[0];
 my $similarityFile = $ARGV[1];
 my $groupsFile = $ARGV[2];
 my $taxonAbbrev = $ARGV[3];
+my $outputGroupsFile = $ARGV[4];
+my $outputParalogsFile = $ARGV[5];
 
 my $threshold = -5;
 my $minPercentMatch = 50;
@@ -50,7 +52,7 @@ my $prevQueryId;
 my $bestOutSpeciesHits;
 my $assignedProteins;
 
-open(ORTHO, ">orthologGroups") || die "Can't open orthologGroups file for writing\n";
+open(ORTHO, ">$outputGroupsFile") || die "Can't open file '$outputGroupsFile' for writing\n";
 if ($similarityFile =~ m/\.gz$/) {
   open(S, "gunzip -c $similarityFile |") or die $!;
 }
@@ -95,7 +97,7 @@ my $prevQueryId;
 my $runOfParalogs;
 my $paralogPairsHash;
 
-open(PARA, ">paralogPairs") || die "Can't open paralogPairs file for writing\n";
+open(PARA, ">$outputParalogsFile") || die "Can't open file '$outputParalogsFile' for writing\n";
 if ($selfSimilarityFile =~ m/\.gz$/) {
   open(SS, "gunzip -c $selfSimilarityFile |") or die $!;
 }
@@ -169,9 +171,9 @@ sub computeParalogPairScore {
 
 sub usage {
     print STDERR "
-Map an input proteome to OrthoMCL groups.
+Map an input proteome to OrthoMCL groups.  Proteins that do not map to OrthoMCL groups are themselves grouped into paralog groups.
 
-usage:  orthomclMapProteomeToGroups self_similarity_file similarity_file groups_file taxon_abbrev
+usage:  orthomclMapProteomeToGroups self_similarity_file similarity_file groups_file taxon_abbrev output_groups_file output_paralogs_file
 
 where:
   similarity_file:         concise (orthomcl-style) similarity output for input
@@ -183,12 +185,11 @@ where:
                            paralog processing and output.
   groups_file              standard orthomcl groups file
   taxon_abbrev             taxon abbreviation that has been prepended to protein IDs
+  output_groups_file       input groups file updated to included mapped input proteins
+  output_paralogs_file     paralog groups formed from proteins that do not map to existing OrthoMCL groups
 
-note: simseqs format output by blastSimilarity is sorted by query_id, evalue
+Note: simseqs format output by blastSimilarity is sorted by query_id, evalue
 
-output files (in current directory)
-  orthologGroups
-  paralogPairs
 ";
     exit(1);
 }
