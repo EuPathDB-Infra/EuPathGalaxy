@@ -4,13 +4,13 @@
     ../../bin/orthomclBlastParserTabular "$ncbi_blast_file" TAXON "$output"
   </command>
   <inputs>
-    <param name="ncbi_blast_file" type="data" format="text"
+    <param name="ncbi_blast_file" type="data" format="tabular"
            label="NCBI BLAST tabular output:"
            help="An NCBI BLAST tabular output file">
     </param>
   </inputs>
   <outputs>
-      <data format="text" name="output" label="$ncbi_blast_file.orthomcl.txt" />
+      <data format="tabular" name="output" label="${ncbi_blast_file.name}.orthomcl" />
   </outputs>
 
   <help>
