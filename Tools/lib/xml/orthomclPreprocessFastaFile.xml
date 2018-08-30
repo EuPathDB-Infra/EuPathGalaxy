@@ -17,7 +17,7 @@
     </param>
   </inputs>
   <outputs>
-      <data format="fasta" name="output" label="orthomcl.fasta" />
+      <data format="fasta" name="output" label="${proteome_fasta_file.name}.orthomcl" />
   </outputs>
 
   <help>

@@ -1,7 +1,7 @@
 <tool id="orthomclMapProteomeToGroups" name="OrthoMCL Map Proteome to Groups" version="1.0.0">
   <description>Use BLAST results to map a proteome to OrthoMCL groups.</description>
   <command interpreter="perl" detect_errors="aggressive">
-    ../../bin/orthomclMapProteomeToGroupsGalaxy "$self_similarity_file" "$orthomcl_similarity_file" "$orthomcl_groups_file" TAXON "$outputGroupsFile" "$outputParalogsFile"
+    ../../bin/orthomclMapProteomeToGroupsGalaxy "$self_similarity_file" "$orthomcl_similarity_file" "${orthomcl_groups_file.fields.path}" TAXON "$outputGroupsFile" "$outputParalogsFile"                  
   </command>
   <inputs>
     <param name="self_similarity_file" type="data" format="tabular"
@@ -14,14 +14,13 @@
            help="">
     </param>
 
-    <param name="orthomcl_groups_file" type="data" format="text"
-           label="OrthoMCL Groups file:"
-           help="">
+    <param label="OrthoMCL Groups file" name="orthomcl_groups_file" type="select">
+      <options from_data_table="ortho_mcl"></options>
     </param>
 
   </inputs>
   <outputs>
-      <data format="text" name="outputGroupsFile" label="orthologGroups.txt" />
+      <data format="text" name="outputGroupsFile" label="proteinsMappedToGroups.txt" />
       <data format="tabular" name="outputParalogsFile" label="paralogPairs.txt" />
   </outputs>
 
