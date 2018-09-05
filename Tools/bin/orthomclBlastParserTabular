@@ -46,7 +46,7 @@ sub printRow {
     
     my $shorterLength = $row->{queryShorter}? $row->{queryLength} : $row->{subjectLength};
 
-    my $percentMatch = int($shorterMatchLength / shorterLength * 1000 + .5) / 10;
+    my $percentMatch = int($shorterMatchLength / $shorterLength * 1000 + .5) / 10;
     
     print OUT "$row->{queryId}\t$row->{subjectId}\t$row->{queryTaxon}\t$row->{subjectTaxon}\t$row->{evalueMant}\t$row->{evalueExp}\t$row->{percentIdentity}\t$percentMatch\n";
 }
