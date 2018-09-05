@@ -11,61 +11,44 @@ usage() unless $blastFile && $taxonAbbrev && $outputFile;
 open(F,$blastFile) || die "can't open BLAST file '$blastFile'\n";
 open(OUT, ">$outputFile") || die "can't open output file '$blastFile' for writing\n";
 
-my $prevSubjectId = 'blah';
-my $prevQueryId = 'blah';
-my $subject;  # hash to hold subject info
-my $queryShorter;
-
 while(<F>) {
     chomp;
     my @columns = split;
-   # my ($queryId, $subjectId, $percentIdentity, $length, $mismatches, $ngaps, $queryStart, $queryEnd, $subjectStart, $subjectEnd, $evalue, $bits) = split;
     my ($queryId, $subjectId, $percentIdentity, $length, $dontcare1, $dontcare2, $queryStart, $queryEnd, $subjectStart, $subjectEnd, $evalue, $dontcare3) = @columns;
     my $qLength = $columns[22];
     my $sLength = $columns[23];
 
-    if ($queryId ne $prevQueryId || $subjectId ne $prevSubjectId) {
+    my $row = {}; 
+    $row->{queryId} = $queryId;
+    $row->{subjectId} = $subjectId;
+    $row->{percentIdentity} = $percentIdentity;
+    $row->{queryShorter} = $qLength < $sLength;
+    $row->{queryLength} = $qLength;
+    $row->{subjectLength} = $sLength;
+    $row->{queryMatchLength} = $queryEnd - $queryStart + 1;
+    $row->{subjectMatchLength} = $subjectEnd - $subjectStart + 1;
+    $row->{queryTaxon} = $taxonAbbrev;
+    $row->{subjectTaxon} = $taxonAbbrev;
+    ($row->{evalueMant}, $row->{evalueExp})
+	= formatEvalue($evalue); # from first hsp
 
-	# print previous subject
-	printPreviousSubject($subject) if $subject;
-
-	# initialize new one from first HSP
-	$prevSubjectId = $subjectId;
-        $prevQueryId = $queryId;
-
-	$subject = {}; 
-	$subject->{queryId} = $queryId;
-	$subject->{subjectId} = $subjectId;
-	$subject->{queryShorter} = $qLength < $sLength;
-	$subject->{queryLength} = $qLength;
-	$subject->{subjectLength} = $sLength;
-	$subject->{queryTaxon} = $taxonAbbrev;
-	$subject->{subjectTaxon} = $taxonAbbrev;
-	($subject->{evalueMant}, $subject->{evalueExp})
-	    = formatEvalue($evalue); # from first hsp
-    }
-
-    # get additional info from subsequent HSPs
-    my $hspspan = [$subjectStart, $subjectEnd];
-    $hspspan = [$queryStart, $queryEnd] if $subject->{queryShorter};
-    push(@{$subject->{hspspans}}, $hspspan);
-    $subject->{totalIdentities} += $percentIdentity * $length;
-    $subject->{totalLength} += $length;
+    printRow($row);
 }
-printPreviousSubject($subject);
+
 
 ########################################################################################
 
-sub printPreviousSubject {
-    my ($subject) = @_;
+sub printRow {
+    my ($row) = @_;
 
-    my $nonOverlapMatchLen = computeNonOverlappingMatchLength($subject);
+    my $shorterMatchLength = $row->{queryMatchLength} < $row->{subjectMatchLength}?
+	$row->{queryMatchLength} : $row->{queryMatchLength};
+    
+    my $shorterLength = $row->{queryShorter}? $row->{queryLength} : $row->{subjectLength};
 
-    my $percentIdent =
-	int($subject->{totalIdentities} / $subject->{totalLength} * 10 + .5)/10;
-    my $shorterLength = $subject->{queryShorter}? $subject->{queryLength} : $subject->{subjectLength};
-    my $percentMatch = int($nonOverlapMatchLen / $shorterLength * 1000 + .5) / 10;
-    print OUT "$subject->{queryId}\t$subject->{subjectId}\t$subject->{queryTaxon}\t$subject->{subjectTaxon}\t$subject->{evalueMant}\t$subject->{evalueExp}\t$percentIdent\t$percentMatch\n";
+    my $percentMatch = int($shorterMatchLength / shorterLength * 1000 + .5) / 10;
+    
+    print OUT "$row->{queryId}\t$row->{subjectId}\t$row->{queryTaxon}\t$row->{subjectTaxon}\t$row->{evalueMant}\t$row->{evalueExp}\t$row->{percentIdentity}\t$percentMatch\n";
 }
 
 # this (corrected) version of formatEvalue provided by Robson de Souza
@@ -79,42 +62,6 @@ sub formatEvalue {
     $evalue_exp =~ s/\+//;
     $evalue_exp = 0 if ($evalue_exp eq '00');
     return ($evalue_mant, $evalue_exp);
-}
-
-sub computeNonOverlappingMatchLength {
-    my ($subject) = @_;
-
-    my @hsps = sort {$a->[0] <=> $b->[0]} @{$subject->{hspspans}};
-    my $first = shift @hsps;
-    return 0 unless $first;
-    my ($start, $end) = getStartEnd($first);
-    my $len = 0;
-    foreach my $h (@hsps){
-	my ($hspStart,$hspEnd) = getStartEnd($h);
-	
-	next if $hspEnd <= $end; ##does not extend
-	if ($hspStart <= $end) {  ##overlaps
-	    $end = $hspEnd;  #extend end ... already dealt with if new end is less
-	} else {  ##there is a gap in between ..
-	    $len += $end - $start + 1;
-	    $start = $hspStart;
-	    $end = $hspEnd;
-	}
-    }
-    $len += $end - $start + 1; # deal with the last one 
-    return $len
-}
-
-#  flip orientation if nec.
-sub getStartEnd {
-    my ($h) = @_;
-    my $hspStart = $h->[0];
-    my $hspEnd = $h->[1];
-    if ($hspStart > $hspEnd) {
-	$hspEnd = $h->[0];
-	$hspStart = $h->[1];
-    }
-    return($hspStart,$hspEnd);
 }
 
 sub usage {
@@ -132,8 +79,8 @@ where:
   
 output:
   tab delimited text file, with one row per query-subject match. the columns are:
-     query_id, subject_id, query_taxon, subject_taxon,
-     evalue_mant, evalue_exp, percent_ident, percent_match
+
+     query_id, subject_id, query_taxon, subject_taxon, evalue_mant, evalue_exp, percent_ident, percent_match
 
 (percent_match is computed by counting the number of bases or amino acids in the shorter sequence that are matched in any hsp, and dividing by the length of that shorter sequence)
 
@@ -151,19 +98,9 @@ Blast file columns:
 10 send End of alignment in subject (database hit)
 11 evalue Expectation value (E-value)
 12 bitscore Bit score
-13 sallseqid All subject Seq-id(s), separated by a ';'
-14 score Raw score
-15 nident Number of identical matches
-16 positive Number of positive-scoring matches
-17 gaps Total number of gaps
 18 ppos Percentage of positive-scoring matches
-19 qframe Query frame
-20 sframe Subject frame
-21 qseq Aligned part of query sequence
-22 sseq Aligned part of subject sequence
 23 qlen Query sequence length
 24 slen Subject sequence length
-25 salltitles All subject title(s), separated by a '<>'
 ";
 
 
