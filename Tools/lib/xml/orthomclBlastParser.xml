@@ -1,5 +1,5 @@
-<tool id="orthomclBlastParser" name="OrthoMCL Blast Parser" version="1.0.0">
-  <description>Parse an NCBI BLAST tabular output file into the tabular format required by OrthoMCL</description>
+<tool id="orthomclBlastParser" name="OrthoMCL Reformat Blast" version="1.0.0">
+  <description>Reformat an NCBI BLAST tabular output file into the tabular format required by OrthoMCL</description>
   <command interpreter="perl" detect_errors="aggressive">
     ../../bin/orthomclBlastParserTabular "$ncbi_blast_file" TAXON "$output"
   </command>
@@ -10,7 +10,7 @@
     </param>
   </inputs>
   <outputs>
-      <data format="tabular" name="output" label="${ncbi_blast_file.name}.orthomcl" />
+      <data format="tabular" name="output" label="reformat ${ncbi_blast_file.name}" />
   </outputs>
 
   <help>
