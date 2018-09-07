@@ -1,5 +1,5 @@
-<tool id="orthomclPreprocessFastaFile" name="OrthoMCL Prepare FASTA file" version="1.0.0">
-  <description>Prepare a FASTA file for use in OrthoMCL.  The input is a pre-existing proteome FASTA file.  The output is a proteome FASTA file that conforms to OrthoMCL requirements</description>
+<tool id="orthomclPreprocessFastaFile" name="OrthoMCL Clean FASTA file" version="1.0.0">
+  <description>Clean a FASTA file for use in OrthoMCL.  The input is a pre-existing proteome FASTA file.  The output is a proteome FASTA file that conforms to OrthoMCL requirements</description>
   <command interpreter="perl" detect_errors="aggressive">
     ../../bin/orthomclPreprocessProteomeFasta "$proteome_fasta_file" $max_input_sequences TAXON "$output"
   </command>
@@ -17,7 +17,7 @@
     </param>
   </inputs>
   <outputs>
-      <data format="fasta" name="output" label="${proteome_fasta_file.name}.orthomcl" />
+      <data format="fasta" name="output" label="${proteome_fasta_file.name}.clean" />
   </outputs>
 
   <help>
