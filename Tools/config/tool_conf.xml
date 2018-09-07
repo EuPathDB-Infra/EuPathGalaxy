@@ -1,0 +1,11 @@
+  <label text="EuPathDB Applications" id="eupathdb_apps" />
+  <section name="EuPathDB Export Tools" id="eupath_export">
+    <tool file="eupath/Tools/lib/xml/exportGeneListToEuPathDB.xml" />
+    <tool file="eupath/Tools/lib/xml/exportBigwigFilesToEuPathDB.xml" />
+    <tool file="eupath/Tools/lib/xml/exportRnaSeqToEuPathDB.xml" />
+  </section>
+  <section name="EuPathDB OrthoMCL Tools" id="eupath_orthomcl">
+    <tool file="eupath/Tools/lib/xml/orthomclPreprocessFastaFile.xml" />
+    <tool file="eupath/Tools/lib/xml/orthomclBlastParser.xml" />
+    <tool file="eupath/Tools/lib/xml/orthomclMapProteomeToGroups.xml" />
+  </section>
