@@ -20,7 +20,7 @@ class RnaSeqExport(EupathExporter.Export):
         # beyond the standard 7 params, this exporter requires one or more pairs of args: dataset1 dataset1.refGenome
         # dataset2...
         if len(args) < 10:
-            raise EupathExporter.ValidationException("The tool was passed too few  arguments.")
+            raise EupathExporter.ValidationException("The tool was passed too few arguments.")
 
         # grab first dataset provided ref genome
         self._initial_refGenome = args[9]
