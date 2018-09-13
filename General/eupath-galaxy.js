@@ -27,6 +27,9 @@ document.getElementById("eupath-links").innerHTML = "" +
 // Workflows content
 // Warning insure ids inside onClick events are correct for galaxy site to which this is deployed. 
 document.getElementById("eupath-workflows").innerHTML = "" +
+        "<h4>OrthoMCL</h4>" +
+        "<p title=\"Click to run the workflow with your datasets\"><a id='workflow8' href='javascript:void(0)' onClick='import_and_run_workflow(\"85c1bb4a4b70e2ac\")'>Map your proteins to OrthoMCL groups</a><br>" +
+        "This workflow uses BLASTP and the OrthoMCL algorithm to assign your set of proteins to OrthoMCL groups.<br></p>" +
         "<h4>RNA Sequencing</h4>" +
 	"<p title=\"Click to run the workflow with your datasets\"><a id='workflow1' href='javascript:void(0)' onClick='import_and_run_workflow(\"ea4c5f681769d783\")'>EuPathDB Workflow for Illumina paired-end RNA-seq, without replicates</a><br>" +
         "Profile a transcriptome and analyze differential gene expression.<br>Tools: FastQC, Sickle, GSNAP, CuffLinks, CuffDiff.</p>" +
@@ -42,10 +45,7 @@ document.getElementById("eupath-workflows").innerHTML = "" +
         "<p title=\"Click to run the workflow with your datasets\"><a id='workflow6' href='javascript:void(0)' onClick='import_and_run_workflow(\"59725c868c65b63f\")'>EuPathDB Workflow for Variant Calling, single-read sequencing</a><br>" +
         "Profile and analyse SNPs.<br>Tools: Sickle, Bowtie2, FreeBayes, and SnpEff<br></p>" +
         "<p title=\"Click to run the workflow with your datasets\"><a id='workflow7' href='javascript:void(0)' onClick='import_and_run_workflow(\"78f0ccbcef5e3211\")'>EuPathDB Workflow for Variant Calling, paired-end sequencing</a><br>" +
-        "Profile and analyse SNPs.<br>Tools: Sickle, Bowtie2, FreeBayes, SnpEff and SnpSift<br></p>" +
-        "<h4>OrthoMCL</h4>" +
-       "<p title=\"Click to run the workflow with your datasets\"><a id='workflow8' href='javascript:void(0)' onClick='import_and_run_workflow(\"85c1bb4a4b70e2ac\")'>Map your proteins to OrthoMCL groups</a><br>" +
-	"This workflow uses BLASTP and the OrthoMCL algorithm to assign your set of proteins to OrthoMCL groups.<br></p>";
+    "Profile and analyse SNPs.<br>Tools: Sickle, Bowtie2, FreeBayes, SnpEff and SnpSift<br></p>";
        
 //        "<p title=\"Click to run the workflow with your datasets\"><a id='workflow6' href='javascript:void(0)' onClick='import_and_run_workflow(\"\")'>EuPathDB Workflow for Variant Calling, paired-end sequencing</a><br>" +
 //        "Profile and analyse SNPs.<br>Tools: Sickle, Bowtie2, FreeBayes, and SnpEff<br></p>";
