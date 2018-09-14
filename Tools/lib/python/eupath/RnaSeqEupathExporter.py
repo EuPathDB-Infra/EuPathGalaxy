@@ -2,7 +2,7 @@ import EupathExporter
 import ReferenceGenome
 import sys
 import json
-
+import os
 
 class RnaSeqExport(EupathExporter.Export):
 
@@ -26,6 +26,10 @@ class RnaSeqExport(EupathExporter.Export):
         self._initial_refGenome = args[9]
 
         self._datasetInfos = []
+
+        # open manifest file
+        manifestPath = "/tmp/manifest." + os.getpid() + ".txt"
+        manifest = open(manifestPath, "w+")
         
         # process variable number of [dataset refgenome] pairs.
         # confirm that all dataset provided ref genomes are identical.
@@ -33,8 +37,12 @@ class RnaSeqExport(EupathExporter.Export):
             # if args[i+2] != self._initial_refGenome:
             #     raise EupathExporter.ValidationException("All provided bigwig datasets must have the same reference genome.  Found " + self._initial_refGenome + " and " + args[i+2])
             self._datasetInfos.append({"name": args[i+1], "path": args[i]})
+            print >> manifest, args[i+1] + "\i" + args[i]
             print >> sys.stderr, "name: " + args[i+1]
             print >> sys.stderr, "path: " + args[i]
+
+        manifest.close()
+        self._datasetInfos.append({"name": "manifest.txt", "path": manifestPath})
 
         # now override the dataset provided ref genome with the one obtained from the form assuming it is correctly
         # selected.  Otherwise throw an error.
