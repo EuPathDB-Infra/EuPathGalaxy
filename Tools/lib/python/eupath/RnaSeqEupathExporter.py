@@ -3,6 +3,7 @@ import ReferenceGenome
 import sys
 import json
 import os
+import re
 
 class RnaSeqExport(EupathExporter.Export):
 
@@ -28,16 +29,17 @@ class RnaSeqExport(EupathExporter.Export):
         self._datasetInfos = []
 
         # open manifest file
-        manifestPath = "/tmp/manifest." + os.getpid() + ".txt"
+        manifestPath = "/tmp/manifest." + str(os.getpid()) + ".txt"
         manifest = open(manifestPath, "w+")
-        
+
         # process variable number of [dataset refgenome] pairs.
         # confirm that all dataset provided ref genomes are identical.
-        for i in range(7, len(args), 3):   # start on 8th arg, increment by 3
+        for i in range(7, len(args), 4):   # start on 8th arg, increment by 4
             # if args[i+2] != self._initial_refGenome:
             #     raise EupathExporter.ValidationException("All provided bigwig datasets must have the same reference genome.  Found " + self._initial_refGenome + " and " + args[i+2])
-            self._datasetInfos.append({"name": args[i+1], "path": args[i]})
-            print >> manifest, args[i+1] + "\i" + args[i]
+            filename = re.sub(r"\s+", "_", args[i+1]) + "." + args[i+3]
+            self._datasetInfos.append({"name": filename, "path": args[i]})
+            print >> manifest, args[i+1] + "\t" + filename
             print >> sys.stderr, "name: " + args[i+1]
             print >> sys.stderr, "path: " + args[i]
 

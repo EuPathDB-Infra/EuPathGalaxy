@@ -11,11 +11,11 @@
     ../../bin/exportRnaSeqToEuPathDB "$dataset_name" "$summary" "$description" "$__user_email__" "$__tool_directory__" "$output" "$overrideDbkey"
 
     #for $key in $bigwig_collection.keys()
-      "$bigwig_collection[$key]" "$key" "$bigwig_collection[$key].metadata.dbkey"
+      "$bigwig_collection[$key]" "$key" "$bigwig_collection[$key].metadata.dbkey" bw
     #end for
 
     #for $key in $fpkm_collection.keys()
-      "$fpkm_collection[$key]" "$key" "$fpkm_collection[$key].metadata.dbkey"
+      "$fpkm_collection[$key]" "$key" "$fpkm_collection[$key].metadata.dbkey" txt
     #end for
     ]]>
     
