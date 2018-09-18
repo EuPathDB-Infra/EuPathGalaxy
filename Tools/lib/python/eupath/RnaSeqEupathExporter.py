@@ -39,7 +39,7 @@ class RnaSeqExport(EupathExporter.Export):
             #     raise EupathExporter.ValidationException("All provided bigwig datasets must have the same reference genome.  Found " + self._initial_refGenome + " and " + args[i+2])
             filename = re.sub(r"\s+", "_", args[i+1]) + "." + args[i+3]
             self._datasetInfos.append({"name": filename, "path": args[i]})
-            print >> manifest, args[i+1] + "\t" + filename
+            print >> manifest, args[i+1] + "\t" + filename + "\tunstranded"
             print >> sys.stderr, "name: " + args[i+1]
             print >> sys.stderr, "path: " + args[i]
 
