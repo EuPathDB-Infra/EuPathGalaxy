@@ -31,12 +31,12 @@
       <validator type="length" message="Please restrict the name to 100 characters or less." max="100" />
     </param>
 
-    <param name="bigwig_collection" type="data_collection" multiple="true" label="BigWig collection:"
+    <param name="bigwig_collection" type="data_collection" multiple="true" label="BigWig collection:" format="bigwig"
            help="Select the BigWig collection to include in the new EuPathDB My Data Set. The bigwig collection you select here must be mapped to the refreence genome that you select below.">
     </param>
 
-    <param name="fpkm_collection" type="data_collection" multiple="true" label="FPKM collection:"
-           help="Select the FPKM collection to include in the new EuPathDB My Data Set. The fpkm collection you select here must be mapped to the refreence genome that you select below.">
+    <param name="fpkm_collection" type="data_collection" multiple="true" label="FPKM collection:" format="tabular"
+           help="Select the FPKM collection. Its name should include the phrase 'gene expression'.">
     </param>
 
     <!-- I consider this a very bad idea -->
