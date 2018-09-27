@@ -33,26 +33,22 @@ class RnaSeqExport(EupathExporter.Export):
         manifest = open(manifestPath, "w+")
 
         # process variable number of [dataset refgenome] pairs.
-        # confirm that all dataset provided ref genomes are identical.
         for i in range(7, len(args), 4):   # start on 8th arg, increment by 4
-            # if args[i+2] != self._initial_refGenome:
-            #     raise EupathExporter.ValidationException("All provided bigwig datasets must have the same reference genome.  Found " + self._initial_refGenome + " and " + args[i+2])
+            # print >> sys.stderr, "args[" + str(i) + "] = " + args[i]
             filename = re.sub(r"\s+", "_", args[i+1]) + "." + args[i+3]
             self._datasetInfos.append({"name": filename, "path": args[i]})
             print >> manifest, args[i+1] + "\t" + filename + "\tunstranded"
-            print >> sys.stderr, "name: " + args[i+1]
-            print >> sys.stderr, "path: " + args[i]
 
         manifest.close()
         self._datasetInfos.append({"name": "manifest.txt", "path": manifestPath})
 
         # now override the dataset provided ref genome with the one obtained from the form assuming it is correctly
         # selected.  Otherwise throw an error.
-        if len(args[6].strip()) == 0:
-            raise EupathExporter.ValidationException("A reference genome must be selected.")
-        self._refGenome = ReferenceGenome.Genome(args[6])
+        # if len(args[6].strip()) == 0:
+        #     raise EupathExporter.ValidationException("A reference genome must be selected.")
+        self._refGenome = ReferenceGenome.Genome(args[9])
 
-        print >> sys.stderr, "datasetInfos: " + json.dumps(self._datasetInfos) + "<<- END OF datasetInfos"
+        # print >> sys.stderr, "datasetInfos: " + json.dumps(self._datasetInfos) + "<<- END OF datasetInfos"
 
     def identify_dependencies(self):
         """

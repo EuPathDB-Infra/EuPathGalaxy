@@ -8,7 +8,7 @@
   
   <command interpreter="python" detect_errors="aggressive">
     <![CDATA[
-    ../../bin/exportRnaSeqToEuPathDB "$dataset_name" "$summary" "$description" "$__user_email__" "$__tool_directory__" "$output" "$overrideDbkey"
+    ../../bin/exportRnaSeqToEuPathDB "$dataset_name" "$summary" "$description" "$__user_email__" "$__tool_directory__" "$output" "$summary"
 
     #for $key in $bigwig_collection.keys()
       "$bigwig_collection[$key]" "$key" "$bigwig_collection[$key].metadata.dbkey" bw
@@ -39,10 +39,6 @@
            help="Select the FPKM collection. Its name should include the phrase 'gene expression'.">
     </param>
 
-    <!-- I consider this a very bad idea -->
-    <param name="overrideDbkey" type="genomebuild" label="Reference genome:" 
-           help="The datasets you selected above must be mapped to the reference genome that you select here." />
-    
     <param name="summary" type="text" value=""
            label="My Data Set summary:">
       <validator type="empty_field" />
