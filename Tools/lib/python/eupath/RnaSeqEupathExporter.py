@@ -15,7 +15,7 @@ class RnaSeqExport(EupathExporter.Export):
         EupathExporter.Export.__init__(self,
                                        RnaSeqExport.TYPE,
                                        RnaSeqExport.VERSION,
-                                       None,
+                                       "validateRnaSeq",
                                        args)
 
         # beyond the standard 7 params, this exporter requires one or more pairs of args: dataset1 dataset1.refGenome
