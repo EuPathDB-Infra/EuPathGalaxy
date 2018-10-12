@@ -18,8 +18,8 @@ def __main__():
     my_set = set(open(dataset_file[0]['path'],'r'))
 
     print >> sys.stderr, "exporting " + str(len(dataset_file)) + " files"
-    for i in range(1, len(dataset_file)):
-      print >> sys.stderr, dataset_file[0]['path']
+    for i in range(0, len(dataset_file)):
+      print >> sys.stderr, dataset_file[i]['name'] + "\t" + dataset_file[i]['path']
 
     if error is not None:
         print >> sys.stderr, "Error: " + error
