@@ -28,7 +28,16 @@
 
 **What it does**
 
-Using self-similarity and similarity to OrthoMCL protiens, maps the input proteome to OrthoMCL groups.  Input proteins are mapped to the group containing the protein with highest similarity.  Proteins that have no significant similarity to OrthoMCL proteins are grouped as paralogs, using the OrthoMCL algorithm.
+Using self-similarity and similarity to OrthoMCL protiens, maps the input proteome to OrthoMCL groups.
+
+Each input protein is mapped to the OrthoMCL group containing its most similar protein in OrthoMCL. These mappings are output to the proteinsMappedToGroups file.
+
+Proteins that have no significant similarity to OrthoMCL proteins are output to the paralogPairs file.  This file shows scores between pairs of unmapped proteins.  The file is used as input for MCL, to cluster the paralogs
+
+OUTPUT
+proteinsMappedToGroups.txt - tab delimited, with these columns: your_protein_id, orthomcl_group_id, most_similar_orthomcl_protein_id, evalue_mantissa, evalue_exponent, percent_identity, percent_match
+
+paralogPairs.txt - tab delimited, with these columns: protein_1_id, protein_2_id, score
 
   </help>
 </tool>
