@@ -1,0 +1,160 @@
+<tool id="testtool" name="TestTool" version="TestTool 0">
+    <!-- tool development testbed -->
+    <description>a testbed for developing an FPKM (or TPM) tool</description>
+    <requirements>
+        <requirement type="package">cufflinks</requirement>
+    </requirements>
+    <command interpreter="python">
+        ../../bin/testTool
+            --input=$input
+            --assembled-isoforms-output=$assembled_isoforms
+            --num-threads=&quot;4&quot;
+            -I $max_intron_len
+            -F $min_isoform_fraction
+            -j $pre_mrna_fraction
+            
+            ## Include reference annotation?
+            #if $reference_annotation.use_ref == &quot;Use reference annotation&quot;:
+                #if $reference_annotation.genomeSource.refGenomeSource == "history":
+                    -G ${reference_annotation.genomeSource.ownFile}
+                #else:
+                    -G ${reference_annotation.genomeSource.annotation.fields.path}
+                #end if
+            #end if
+            #if $reference_annotation.use_ref == &quot;Use reference annotation guide&quot;:
+                #if $reference_annotation.genomeSource.refGenomeSource == "history":
+                    -g ${reference_annotation.genomeSource.ownFile}
+                #else:
+                    -g ${reference_annotation.genomeSource.annotation.fields.path}
+                #end if	
+            #end if
+
+            ## Normalization?
+            #if str($do_normalization) == &quot;Yes&quot;:
+            -N
+            #end if
+            
+            ## Bias correction?
+            #if $bias_correction.do_bias_correction == &quot;Yes&quot;:
+	           -b
+                #if $bias_correction.seq_source.index_source == &quot;history&quot;:
+                    --ref_file=$bias_correction.seq_source.ref_file
+                #else:
+                    --ref_file=&quot;None&quot;
+                #end if
+                --dbkey=${input.metadata.dbkey} 
+                --index_dir=${GALAXY_DATA_INDEX_DIR}
+            #end if
+
+            ## Multi-read correct?
+            #if str($multiread_correct) == &quot;Yes&quot;:
+            -u
+            #end if
+
+            ## Include global model if available.
+            #if $global_model:
+                --global_model=$global_model
+            #end if
+    </command>
+    <inputs>
+        <param format="sam,bam" help="" label="SAM or BAM file of aligned RNA-Seq reads" name="input" type="data"/>
+        <param help="" label="Max Intron Length" max="600000" min="1" name="max_intron_len" type="integer" value="300000"/>
+        <param help="" label="Min Isoform Fraction" max="1" min="0" name="min_isoform_fraction" type="float" value="0.10"/>
+        <param help="" label="Pre MRNA Fraction" max="1" min="0" name="pre_mrna_fraction" type="float" value="0.15"/>
+        <param help="Removes top 25% of genes from FPKM denominator to improve accuracy of differential expression calls for low abundance transcripts." label="Perform quartile normalization" name="do_normalization" type="select">
+            <option selected="true" value="No">No</option>
+            <option value="Yes">Yes</option>
+        </param>
+        <conditional name="reference_annotation">
+            <param label="Use Reference Annotation" name="use_ref" type="select">
+                <option selected="true" value="No">No</option>
+                <option value="Use reference annotation">Use reference annotation</option>
+                <option value="Use reference annotation guide">Use reference annotation as guide</option>
+            </param>
+            <when value="No"/>
+            <when value="Use reference annotation">
+                <conditional name="genomeSource">
+                    <param label="Will you select an annotation file from your history or use a built-in gff3 file?" name="refGenomeSource" type="select">
+                        <option value="indexed">Use a built-in annotation</option>
+                        <option value="history">Use one from the history</option>
+                    </param>
+                    <when value="indexed">
+                        <param label="Select a genome annotation" name="annotation" type="select">
+                            <options from_data_table="all_gff"></options>
+                        </param>
+                    </when>
+                    <when value="history">
+                        <param format="gff" label="Select a annotation file from history" name="ownFile" type="data"/>
+                    </when>
+                </conditional>
+                <!--param format="gff3,gtf" help="Gene annotation dataset in GTF or GFF3 format." label="Reference Annotation" name="reference_annotation_file" type="data"/-->
+            	</when>
+	        <when value="Use reference annotation guide">
+                <!--param format="gff3,gtf" help="Gene annotation dataset in GTF or GFF3 format." label="Reference Annotation" name="reference_annotation_guide_file" type="data"/-->
+                </when>
+        </conditional>
+        <conditional name="bias_correction">
+            <param help="Bias detection and correction can significantly improve accuracy of transcript abundance estimates." label="Perform Bias Correction" name="do_bias_correction" type="select">
+                <option selected="true" value="No">No</option>
+		            <option value="Yes">Yes</option>
+            </param>
+            <when value="Yes">
+                <conditional name="seq_source">
+                  <param label="Reference sequence data" name="index_source" type="select">
+                    <option selected="true" value="cached">Locally cached</option>
+                    <option value="history">History</option>
+                  </param>
+                  <when value="cached"/>
+                  <when value="history">
+                      <param format="fasta" label="Using reference file" name="ref_file" type="data"/>
+                  </when>
+                </conditional>
+            </when>
+            <when value="No"/>
+        </conditional>
+        
+        <param help="Tells Cufflinks to do an initial estimation procedure to more accurately weight reads mapping to multiple locations in the genome." label="Use multi-read correct" name="multiread_correct" type="select">
+            <option selected="true" value="No">No</option>
+            <option value="Yes">Yes</option>
+        </param>
+
+        <param label="Global model (for use in Trackster)" name="global_model" optional="True" type="hidden_data"/>
+    </inputs>
+
+    <outputs>
+        <data format="tabular" from_work_dir="genes.fpkm_tracking" label="${tool.name} on ${on_string}: gene expression" name="genes_expression"/>
+        <data format="tabular" from_work_dir="isoforms.fpkm_tracking" label="${tool.name} on ${on_string}: transcript expression" name="transcripts_expression"/>
+        <data format="gtf" label="${tool.name} on ${on_string}: assembled transcripts" name="assembled_isoforms"/>
+        <data format="txt" from_work_dir="global_model.txt" hidden="true" label="${tool.name} on ${on_string}: total map mass" name="total_map_mass"/>
+    </outputs>
+
+    <trackster_conf>
+        <action name="global_model" output_name="total_map_mass" type="set_param"/>
+    </trackster_conf>
+    
+    <tests>
+        <!--
+            Simple test that uses test data included with cufflinks.
+        <test>
+            <param name="input" value="cufflinks_in.bam"/>
+            <param name="max_intron_len" value="300000"/>
+            <param name="min_isoform_fraction" value="0.05"/>
+            <param name="pre_mrna_fraction" value="0.05"/>
+            <param name="use_ref" value="No"/>
+            <param name="do_normalization" value="No"/>
+            <param name="do_bias_correction" value="No"/>
+            <param name="multiread_correct" value="No"/>
+            <output file="cufflinks_out3.fpkm_tracking" format="tabular" lines_diff="2" name="genes_expression"/>
+            <output file="cufflinks_out2.fpkm_tracking" format="tabular" lines_diff="2" name="transcripts_expression"/>
+            <output file="cufflinks_out1.gtf" name="assembled_isoforms"/>
+            <output file="cufflinks_out4.txt" name="global_model"/>
+        </test>
+        -->
+    </tests>
+
+    <help>
+**Test tool Overview**
+
+this is the help text
+    </help>
+</tool>
