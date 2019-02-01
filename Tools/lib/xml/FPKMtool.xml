@@ -1,12 +1,9 @@
-<tool id="testtool" name="TestTool" version="TestTool 0">
-    <!-- tool development testbed -->
-    <description>a testbed for developing an FPKM (or TPM) tool</description>
-    <requirements>
-        <requirement type="package">cufflinks</requirement>
-    </requirements>
+<tool id="FPKMtool" name="FPKMtool" version="FPKMtool 1">
+    <!-- FPKMtool -->
+    <description>compute FPKM from per-gene read counts and reference genome</description>
 
     <command interpreter="python">
-        ../../bin/testTool
+        ../../bin/FPKMtool
             --input=$input
             
             #if $genomeSource.refGenomeSource == "history":
@@ -61,8 +58,7 @@
     </outputs>
 
     <help>
-**Test tool Overview**
-
-this is the help text
+**FPKMtool Overview**
+This tool computes per-gene FPKM values from a file (or sense-antisense pair of files) of per-gene read counts, together with a reference genome in GFF format
     </help>
 </tool>
