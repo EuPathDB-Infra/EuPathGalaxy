@@ -12,7 +12,7 @@
                 --genome ${genomeSource.annotation.fields.path}
             #end if
 
-            #if $stranded.double == "yes":
+            #if $stranded.double == "Yes":
                 --double_stranded y --antisense_input  ${stranded.antisense_input}
             #else:
                 --double_stranded n
