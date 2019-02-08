@@ -9,6 +9,6 @@
     <tool file="eupath/Tools/lib/xml/orthomclBlastParser.xml" />
     <tool file="eupath/Tools/lib/xml/orthomclMapProteomeToGroups.xml" />
   </section>
-  <section name="RNA-Seq Tools" id="eupath_rnaseq" organization_include="eupathdb,eupathdbdev,eupathdbstaging">
+  <section name="EuPathDB RNA-Seq Tools" id="eupath_rnaseq" organization_include="eupathdb,eupathdbdev,eupathdbstaging">
     <tool file="eupath/Tools/lib/xml/FPKMtool.xml" />
   </section>
