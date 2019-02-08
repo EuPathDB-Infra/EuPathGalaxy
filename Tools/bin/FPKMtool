@@ -152,7 +152,7 @@ def __main__():
                 if not gene in specialCounters.keys():
                     fpkm = count * billion / counts *  geneLength[ gene ]
                     antisenseOut.write( gene + '\t' + str(fpkm) + '\n' )
-    antisenseOut.close()
+        antisenseOut.close()
 
 
 if __name__=="__main__": __main__()
