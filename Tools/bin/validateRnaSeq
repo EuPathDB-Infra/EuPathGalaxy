@@ -18,9 +18,9 @@ def __main__():
     file_count = len(dataset_file)
     sample_count = (file_count - 1) / 2
 
-    # print >> sys.stderr, "exporting " + str(sample_count) + " samples using " + str(file_count) + " files"
-    # for i in range(0, file_count):
-    #  print >> sys.stderr, dataset_file[i]['name'] + "\t" + dataset_file[i]['path']
+    print >> sys.stderr, "exporting " + str(sample_count) + " samples using " + str(file_count) + " files"
+    for i in range(0, file_count):
+     print >> sys.stderr, dataset_file[i]['name'] + "\t" + dataset_file[i]['path']
 
     for i in range(0, sample_count):
       bigwig_name = dataset_file[i]['name']
@@ -31,20 +31,22 @@ def __main__():
       if bigwig_name != sample_name + ".bw":
         error = "Unexpected file name \"" + bigwig_name + "\" for BigWig file"
       elif fpkm_name != sample_name + ".txt":
-        error = "Unexpected file name \"" + fpkm_name + "\" for Cufflinks gene expression file corresponding toBigWig file \"" + bigwig_name + "\""
+        error = "Unexpected file name \"" + fpkm_name + "\" for gene expression file corresponding toBigWig file \"" + bigwig_name + "\""
 
       # check header record of FPKM file
-      EXPECT_HEADER = "tracking_id\tclass_code\tnearest_ref_id\tgene_id\tgene_short_name\ttss_id\tlocus\tlength\tcoverage\tFPKM\tFPKM_conf_lo\tFPKM_conf_hi\tFPKM_status"
+      CUFFLINKS_HEADER = "tracking_id\tclass_code\tnearest_ref_id\tgene_id\tgene_short_name\ttss_id\tlocus\tlength\tcoverage\tFPKM\tFPKM_conf_lo\tFPKM_conf_hi\tFPKM_status"
+      FPKMTOOL_HEADER = "gene_id\tFPKM"
       fpkm_file = open(dataset_file[i+sample_count]['path'])
       fpkm_header = fpkm_file.readline().strip()
-      if fpkm_header != EXPECT_HEADER:
-        error = "Unexpected header record in Cufflinks gene-expression file. Expected \"" + EXPECT_HEADER + "\" but got \"" + fpkm_header + "\""
+      if fpkm_header == CUFFLINKS_HEADER:
+        # look at first data record to confirm the "tracking_id" is the "gene_id"
+        # (which means it's the gene-expression file)
+        fpkm_data = fpkm_file.readline().strip().split("\t")
+        if fpkm_data[0] != fpkm_data[3]:
+          error = "Bad gene-expression file: tracking ID \"" + fpkm_data[0] + "\" does not match gene ID \"" + fpkm_data[3] + "\" for sample " + sample_name
 
-      # look at first data record to confirm the "tracking_id" is the "gene_id"
-      # (which means it's the gene-expression file)
-      fpkm_data = fpkm_file.readline().strip().split("\t")
-      if fpkm_data[0] != fpkm_data[3]:
-        error = "Bad gene-expression file: tracking ID \"" + fpkm_data[0] + "\" does not match gene ID \"" + fpkm_data[3] + "\" for sample " + sample_name
+      elif fpkm_header != FPKMTOOL_HEADER:
+        error = "Unexpected header record in gene-expression file: \"" + fpkm_header + "\""
 
     if error is not None:
         print >> sys.stderr, "Error: " + error
