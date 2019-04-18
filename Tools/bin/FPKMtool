@@ -144,7 +144,7 @@ def __main__():
 
     if double_stranded:
         antisenseOut = open( args.antisense_output, 'w' )
-        senseOut.write( 'gene_id\tFPKM\n' )
+        antisenseOut.write( 'gene_id\tFPKM\n' )
         for line in open( args.antisense_input ):
             # skip header
             if not line.startswith( '#ID' ):
