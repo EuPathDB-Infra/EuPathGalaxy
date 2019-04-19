@@ -11,5 +11,4 @@
   </section>
   <section name="EuPathDB RNA-Seq Tools" id="eupath_rnaseq" organization_include="eupathdb,eupathdbdev,eupathdbstaging">
     <tool file="eupath/Tools/lib/xml/FPKMtool.xml" />
-    <tool file="eupath/Tools/lib/xml/trimmomatic.xml" />
   </section>
