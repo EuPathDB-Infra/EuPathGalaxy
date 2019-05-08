@@ -57,6 +57,10 @@ def __main__():
     # use genome GFF file to find gene lengths
     for line in open( args.genome ):
         line = line.rstrip( '\r\n' )
+
+        if line.startswith( '##' ):
+            continue
+
         fields = line.split( '\t' )
 
         if fields[gffFeatureTypeCol] == 'gene':
@@ -64,7 +68,7 @@ def __main__():
             #  are together, with the "gene" record first
             txParent = {}
 
-        if fields[gffFeatureTypeCol] == 'transcript':
+        if fields[gffFeatureTypeCol] == 'transcript' or fields[gffFeatureTypeCol] == 'mRNA' or fields[gffFeatureTypeCol] == 'tRNA' or fields[gffFeatureTypeCol] == 'rRNA':
             id = None
             parent = None
             attributeString = fields[gffAttributeCol]
@@ -82,6 +86,7 @@ def __main__():
             if parent == None:
                 raise Exception('no parent found in transcript attribute string "' + attributeString + '"')
 
+            # print 'parent of "' + id + '" is "' + parent + '"'
             txParent[ id ] = parent;
 
         if fields[gffFeatureTypeCol] == 'exon':
