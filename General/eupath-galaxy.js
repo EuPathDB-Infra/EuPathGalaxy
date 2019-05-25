@@ -20,36 +20,36 @@ document.getElementById("eupath-intro").innerHTML = "" +
 /*
 document.getElementById("eupath-links").innerHTML = "" +
         "<li><a href='#'>Link A</a></li>" +
-		"<li><a href='#'>Link B</a></li>" +
-		"<li><a href='#'>Link C</a></li>";
+                "<li><a href='#'>Link B</a></li>" +
+                "<li><a href='#'>Link C</a></li>";
 */
 
 // Workflows content
 // Warning insure ids inside onClick events are correct for galaxy site to which this is deployed. 
 document.getElementById("eupath-workflows").innerHTML = "" +
         "<h4>OrthoMCL</h4>" +
-        "<p title=\"Click to run the workflow with your datasets\"><a id='workflow8' href='javascript:void(0)' onClick='import_and_run_workflow(\"85c1bb4a4b70e2ac\")'>Map your proteins to OrthoMCL groups</a><br>" +
-        "This workflow uses BLASTP and the OrthoMCL algorithm to assign your set of proteins to OrthoMCL groups. <a href='https://eupathdb.org/assets/MapProteinsOrthoMCL.pdf' target='_blank'>Explore this tutorial to learn more.</a> <br></p>" +
+        "<p title=\"Click to run the workflow with your datasets\"><a id='workflow8' href='javascript:void(0)' onClick='import_and_run_workflow(\"827ffb5096bfb29f\")'>Map your proteins to OrthoMCL groups</a><br>" +
+        "This workflow uses BLASTP and the OrthoMCL algorithm to assign your set of proteins to OrthoMCL groups. <a href='https://eupathdb.org/assets/MapProteinsOrthoMCL.pdf' target='_blank'>Explore this tutorial to learn more.</a><br></p>" +
         "<h4>RNA Sequencing</h4>" +
-        "<p title=\"Click to run the workflow with your datasets\"><a id='workflow9' href='javascript:void(0)' onClick='import_and_run_workflow(\"5cc0fee469ed66b5\")'>EuPathDB RNA-Seq paired-end: for RNAseq Export Tool</a><br>" +
-        "This workflow generates BigWig and Expression files that are compatible with the EuPathDB RNAseq Export Tool. <a href='https://eupathdb.org/assets/GalaxyRNASeqExportTool.pdf' target='_blank'>Explore this tutorial to learn more.</a> <br>Tools: FASTQ Groomer, Trimmomatic, HISAT2, Cufflinks, BAM to BigWig</p>" +
-	"<p title=\"Click to run the workflow with your datasets\"><a id='workflow1' href='javascript:void(0)' onClick='import_and_run_workflow(\"ea4c5f681769d783\")'>EuPathDB Workflow for Illumina paired-end RNA-seq, without replicates</a><br>" +
+        "<p title=\"Click to run the workflow with your datasets\"><a id='workflow9' href='javascript:void(0)' onClick='import_and_run_workflow(\"a932d4a0226e679a\")'>EuPathDB RNA-Seq paired-end: for RNAseq Export Tool</a><br>" +
+        "This workflow generates BigWig and Expression fils that are compatible with the EuPathDB RNAseq Export Tool. <a href='https://eupathdb.org/assets/GalaxyRNASeqExportTool.pdf' target='_blank'>Explore this tutorial to learn more.</a><br>Tools: FASTQ Groomer, Trimmomatic, HISAT2, Cufflinks, BAM to BigWig</p>" +
+        "<p title=\"Click to run the workflow with your datasets\"><a id='workflow1' href='javascript:void(0)' onClick='import_and_run_workflow(\"a712bdf3dba26f43\")'>EuPathDB Workflow for Illumina paired-end RNA-seq, without replicates</a><br>" +
         "Profile a transcriptome and analyze differential gene expression.<br>Tools: FastQC, Sickle, GSNAP, CuffLinks, CuffDiff.</p>" +
-        "<p title=\"Click to run the workflow with your datasets\"><a id='workflow2' href='javascript:void(0)' onClick='import_and_run_workflow(\"cf5cc2be67722f22\")'>EuPathDB Workflow for Illumina paired-end RNA-seq, without replicates</a><br>" +
+        "<p title=\"Click to run the workflow with your datasets\"><a id='workflow2' href='javascript:void(0)' onClick='import_and_run_workflow(\"3fcd9508ff32d4b8\")'>EuPathDB Workflow for Illumina paired-end RNA-seq, without replicates</a><br>" +
         "Profile a transcriptome and analyze differential gene expression.<br>Tools: FastQC, Trimmomatic, TopHat2, CuffLinks, CuffDiff.</p>" +
-        "<p title=\"Click to run the workflow with your datasets\"><a id='workflow3' href='javascript:void(0)' onClick='import_and_run_workflow(\"c065e7bd4a1680ca\")'>EuPathDB Workflow for Illumina paired-end RNA-seq, biological replicates</a><br>" +
+        "<p title=\"Click to run the workflow with your datasets\"><a id='workflow3' href='javascript:void(0)' onClick='import_and_run_workflow(\"875bf84eab8e59b5\")'>EuPathDB Workflow for Illumina paired-end RNA-seq, biological replicates</a><br>" +
         "Profile a transcriptome and analyze differential gene expression.<br>Tools: FastQC, Trimmomatic, TopHat2, HTseq, DESeq2.<br></p>" +
-        "<p title=\"Click to run the workflow with your datasets\"><a id='workflow4' href='javascript:void(0)' onClick='import_and_run_workflow(\"cd3b9dbf57044ead\")'>EuPathDB Workflow for Illumina paired-end RNA-seq, biological replicates</a><br>" +
+        "<p title=\"Click to run the workflow with your datasets\"><a id='workflow4' href='javascript:void(0)' onClick='import_and_run_workflow(\"b27bbd0e90a6bb84\")'>EuPathDB Workflow for Illumina paired-end RNA-seq, biological replicates</a><br>" +
         "Profile a transcriptome and analyze differential gene expression.<br>Tools: FastQC, Trimmomatic, TopHat2, CuffLinks, CuffDiff.<br></p>" +
-        "<p title=\"Click to run the workflow with your datasets\"><a id='workflow5' href='javascript:void(0)' onClick='import_and_run_workflow(\"cd3b9dbf57044ead\")'>EuPathDB Workflow for Illumina paired-end RNA-seq, biological replicates</a><br>" +
+        "<p title=\"Click to run the workflow with your datasets\"><a id='workflow5' href='javascript:void(0)' onClick='import_and_run_workflow(\"54562ad7bccf41b2\")'>EuPathDB Workflow for Illumina paired-end RNA-seq, biological replicates</a><br>" +
         "Profile a transcriptome and analyze differential gene expression.<br>Tools: Collections, FastQC, Trimmomatic, HISAT2, HTseq, DESeq2.<br></p>" +
         "<h4>Variant Calling</h4>" +
         "<p title=\"Click to run the workflow with your datasets\"><a id='workflow6' href='javascript:void(0)' onClick='import_and_run_workflow(\"59725c868c65b63f\")'>EuPathDB Workflow for Variant Calling, single-read sequencing</a><br>" +
         "Profile and analyse SNPs.<br>Tools: Sickle, Bowtie2, FreeBayes, and SnpEff<br></p>" +
-        "<p title=\"Click to run the workflow with your datasets\"><a id='workflow7' href='javascript:void(0)' onClick='import_and_run_workflow(\"78f0ccbcef5e3211\")'>EuPathDB Workflow for Variant Calling, paired-end sequencing</a><br>" +
-    "Profile and analyse SNPs.<br>Tools: Sickle, Bowtie2, FreeBayes, SnpEff and SnpSift<br></p>";
-       
-//        "<p title=\"Click to run the workflow with your datasets\"><a id='workflow6' href='javascript:void(0)' onClick='import_and_run_workflow(\"\")'>EuPathDB Workflow for Variant Calling, paired-end sequencing</a><br>" +
+        "<p title=\"Click to run the workflow with your datasets\"><a id='workflow7' href='javascript:void(0)' onClick='import_and_run_workflow(\"5c09b80c25571781\")'>EuPathDB Workflow for Variant Calling, paired-end sequencing</a><br>" +
+        "Profile and analyse SNPs.<br>Tools: Sickle, Bowtie2, FreeBayes, SnpEff and SnpSift<br></p>";
+
+//        "<p title=\"Click to run the workflow with your datasets\"><a id='workflow6' href='javascript:void(0)' onClick='import_and_run_workflow(\"78f0ccbcef5e3211\")'>EuPathDB Workflow for Variant Calling, paired-end sequencing</a><br>" +
 //        "Profile and analyse SNPs.<br>Tools: Sickle, Bowtie2, FreeBayes, and SnpEff<br></p>";
         
 /**
@@ -98,7 +98,5 @@ import_and_run_workflow = function(id) {
     });
   });  
 }
-
-
 
 
