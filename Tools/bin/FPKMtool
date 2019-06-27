@@ -143,7 +143,7 @@ def __main__():
             gene = fields[0]
             count = int(fields[1])
             if not gene in specialCounters.keys():
-                fpkm = count * billion / counts *  geneLength[ gene ]
+                fpkm = ( count * billion ) / ( counts *  geneLength[ gene ] )
                 senseOut.write( gene + '\t' + str(fpkm) + '\n' )
     senseOut.close()
 
