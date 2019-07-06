@@ -1,4 +1,4 @@
-<tool id="FPKMtool" name="FPKMtool" version="FPKMtool 1">
+<tool id="FPKMtool" name="HTSeqCountToFPKM" version="FPKMtool 1">
     <!-- FPKMtool -->
     <description>compute FPKM from per-gene read counts and reference genome</description>
 
