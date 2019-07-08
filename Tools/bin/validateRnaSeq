@@ -27,12 +27,6 @@ def __main__():
       fpkm_name = dataset_file[i+sample_count]['name']
       sample_name = re.sub("\.bw$", "", bigwig_name)
 
-      # check that .bw and .txt files have corresponding names
-      if bigwig_name != sample_name + ".bw":
-        error = "Unexpected file name \"" + bigwig_name + "\" for BigWig file"
-      elif fpkm_name != sample_name + ".txt":
-        error = "Unexpected file name \"" + fpkm_name + "\" for gene expression file corresponding toBigWig file \"" + bigwig_name + "\""
-
       # check header record of FPKM file
       CUFFLINKS_HEADER = "tracking_id\tclass_code\tnearest_ref_id\tgene_id\tgene_short_name\ttss_id\tlocus\tlength\tcoverage\tFPKM\tFPKM_conf_lo\tFPKM_conf_hi\tFPKM_status"
       FPKMTOOL_HEADER = "gene_id\tFPKM"
