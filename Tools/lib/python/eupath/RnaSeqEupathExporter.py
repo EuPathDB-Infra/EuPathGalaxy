@@ -43,16 +43,20 @@ class RnaSeqExport(EupathExporter.Export):
         fileNumber = 0
         for i in range(8, len(args), 4):   # start on args[8], increment by 4
             # print >> sys.stderr, "args[" + str(i) + "] = " + args[i]
-            filename = re.sub(r"\s+", "_", args[i+1]) + "." + args[i+3]
-            self._datasetInfos.append({"name": filename, "path": args[i]})
+            samplename = args[i+1]
+            suffix = args[i+3]
+            filename = re.sub(r"\s+", "_", samplename) + "." + suffix
             fileNumber += 1
             if strandednessParam == "stranded":
                 if filename[-4:] == ".txt":
+                    filename = re.sub("forward", "one", re.sub("reverse", "two", filename))
+                    samplename = re.sub("forward", "one", re.sub("reverse", "two", samplename))
                     strandedness = "sense" if (fileNumber % 2) == 1 else "antisense"
                 else:
                     strandedness =  "firststrand" if (fileNumber % 2) == 1 else "secondstrand"
 
-            print >> manifest, args[i+1] + "\t" + filename + "\t" + strandedness
+            self._datasetInfos.append({"name": filename, "path": args[i]})
+            print >> manifest, samplename + "\t" + filename + "\t" + strandedness
 
         manifest.close()
         self._datasetInfos.append({"name": "manifest.txt", "path": manifestPath})
