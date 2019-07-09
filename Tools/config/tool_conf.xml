@@ -1,6 +1,6 @@
   <label text="EuPathDB Applications" id="eupathdb_apps" organization_include="eupathdb,eupathdbdev,eupathdbstaging"/>
   <section name="EuPathDB Export Tools" id="eupath_export" organization_include="eupathdb,eupathdbdev,eupathdbstaging">
-    <tool file="eupath/Tools/lib/xml/exportGeneListToEuPathDB.xml" />
+    <!-- tool file="eupath/Tools/lib/xml/exportGeneListToEuPathDB.xml" / -->
     <tool file="eupath/Tools/lib/xml/exportBigwigFilesToEuPathDB.xml" />
     <tool file="eupath/Tools/lib/xml/exportRnaSeqToEuPathDB.xml" />
   </section>
