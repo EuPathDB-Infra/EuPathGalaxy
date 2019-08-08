@@ -90,10 +90,150 @@
       <div class="eupath-section">
         <h3 style="margin-bottom:0">Get started with pre-configured workflows:</h3>
         <div>
-          <p>(additional workflows will be added soon)</p>
-          <div id="eupath-workflows" >
-            (No workflows presently)
-          </div>
+        <h2>OrthoMCL</h2>
+        <p title=\"Click to run the workflow with your datasets\"><a id='workflow8' href='javascript:void(0)' onClick='import_and_run_workflow(\"827ffb5096bfb29f\")'>Map your proteins to OrthoMCL groups</a><br>
+        This workflow uses BLASTP and the OrthoMCL algorithm to assign your set of proteins to OrthoMCL groups. <a href='https://eupathdb.org/assets/MapProteinsOrthoMCL.pdf' target='_blank'>Explore this tutorial to learn more.</a><br></p>
+
+  
+  <h2>RNA-seq</h2>
+
+  Explore <a href='https://eupathdb.org/assets/GalaxyRNASeqExportTool.pdf' target='_blank'>this tutorial</a> to learn about exporting your workflow results to EuPathDB.
+  <br><br>
+
+  
+<table>
+  <tr>
+<th>Workflow #</th>
+<th>PE or SE</th>
+<th>Stranded</th>
+<th>Replicates</th>
+<th>Initial QC</th>
+<th>Mapping</th>
+<th>Quantification</th>
+<th>Export to EupathDB</th>
+  </tr>
+  <tr>
+<td><a id='workflow9' href='javascript:void(0)' onClick='import_and_run_workflow(\"7f4214a6361b472d\")'>1</a></td>
+<td>PE</td>
+<td>Y</td>
+<td>any number</td>
+<td>FASTQ Groomer, Trimmomatic</td>
+<td>HISAT2</td>
+<td>bamCoverage, htseq-count, HTSeqCountToFPKM</td>
+<td>BigWig and FPKM files</td>
+
+  </tr>
+    <tr>
+<td><a id='workflow9' href='javascript:void(0)' onClick='import_and_run_workflow(\"b8a14a696c13c285\")'>2</a></td>
+<td>PE</td>
+<td>N</td>
+<td>any number</td>
+<td>FASTQ Groomer, Trimmomatic</td>
+<td>HISAT2</td>
+<td>bamCoverage, htseq-count, HTSeqCountToFPKM</td>
+<td>BigWig and FPKM files</td>
+    </tr>
+  <tr>
+<td><a id='workflow9' href='javascript:void(0)' onClick='import_and_run_workflow(\"e07b26b1c7781e14\")'>3</a></td>
+<td>SE</td>
+<td>Y</td>
+<td>any number</td>
+<td>FASTQ Groomer, Trimmomatic</td>
+<td>HISAT2</td>
+<td>bamCoverage, htseq-count, HTSeqCountToFPKM</td>
+<td>BigWig and FPKM files</td>
+</tr>
+  <tr>
+<td><a id='workflow9' href='javascript:void(0)' onClick='import_and_run_workflow(\"5514d6a246152e4b\")'>4</a></td>
+<td>SE</td>
+<td>N</td>
+<td>any number</td>
+<td>FASTQ Groomer, Trimmomatic</td>
+<td>HISAT2</td>
+<td>bamCoverage, htseq-count, HTSeqCountToFPKM</td>
+<td>BigWig and FPKM files</td>
+  </tr>
+  <tr>
+<td><a id='workflow1' href='javascript:void(0)' onClick='import_and_run_workflow(\"a712bdf3dba26f43\")'>5</a></td>
+<td>PE</td>
+<td>?</td>
+<td>1</td>
+<td>FastQC, Sickle</td>
+<td>GSNAP</td>
+<td>CuffLinks, CuffDiff</td>
+<td>no</td>
+  </tr>
+  <tr>
+<td><a id='workflow2' href='javascript:void(0)' onClick='import_and_run_workflow(\"3fcd9508ff32d4b8\")'>6</a></td>
+<td>PE</td>
+<td>?</td>
+<td>1</td>
+<td>FastQC, Trimmomatic</td>
+<td>TopHat2</td>
+<td>CuffLinks, CuffDiff</td>
+<td>no</td>
+  </tr>
+  <tr>
+<td><a id='workflow3' href='javascript:void(0)' onClick='import_and_run_workflow(\"875bf84eab8e59b5\")'>7</a></td>
+<td>PE</td>
+<td>Y</td>
+<td>2</td>
+<td>FastQC, Trimmomatic</td>
+<td>TopHat2</td>
+<td>HTseq, DESeq2</td>
+<td>DESeq2 files*</td>
+  </tr>
+  <tr>
+<td><a id='workflow4' href='javascript:void(0)' onClick='import_and_run_workflow(\"b27bbd0e90a6bb84\")'>8</a></td>
+<td>PE</td>
+<td>N</td>
+<td>2</td>
+<td>FastQC, Trimmomatic</td>
+<td>TopHat2</td>
+<td>CuffLinks, CuffDiff</td>
+<td>no</td>
+  </tr>
+  <tr>
+<td><a id='workflow5' href='javascript:void(0)' onClick='import_and_run_workflow(\"54562ad7bccf41b2\")'>9</a></td>
+<td>PE</td>
+<td>Y</td>
+<td>any number</td>
+<td>FastQC, Trimmomatic</td>
+<td>HISAT2</td>
+<td>HTseq, DESeq2</td>
+<td>DESeq2 files*</td>
+  </tr>
+</table>
+
+
+<h2>Variant calling</h2>
+<table>
+  <tr>
+<th>Workflow #</th>
+<th>PE or SE</th>
+<th>Initial QC</th>
+<th>Mapping</th>
+<th>Mutation detection</th>
+<th>Export to EupathDB</th>
+  </tr>
+  <tr>
+<td><a id='workflow6' href='javascript:void(0)' onClick='import_and_run_workflow(\"59725c868c65b63f\")'>1</a></td>
+<td>SE</td>
+<td>Sickle</td>
+<td>Bowtie2</td>
+<td>Freebayes, SnpEff</td>
+<td>VCF file*</td>
+  </tr>
+  <tr>
+<td><a id='workflow7' href='javascript:void(0)' onClick='import_and_run_workflow(\"5c09b80c25571781\")'>2</a></td>
+<td>PE</td>
+<td>Sickle</td>
+<td>Bowtie2</td>
+<td>Freebayes, SnpEff, SnpSift</td>
+<td>VCF file*</td>
+  </tr>
+</table>
+
         </div> 
       </div>
 
@@ -171,9 +311,7 @@
     src="https://code.jquery.com/jquery-1.12.4.min.js"
     integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
     crossorigin="anonymous"></script>
-<!--
-  <script type="text/javascript" src="https://cbilsvn.pmacs.upenn.edu/svn/apidb/EuPathGalaxy/branches/build29/eupath-galaxy.js"></script>
--->
+
    <script type="text/javascript" src="./eupath-galaxy.js"></script>
 
 </body>
