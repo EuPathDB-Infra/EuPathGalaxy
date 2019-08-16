@@ -107,42 +107,33 @@
 	Use the following workflows to analyze your FASTQ files. The workflows use FASTQ groomer and Trimmomatic for preparation of reads, FASTQC for sequencing statistics, and HISAT2 for mapping reads to a EuPathDB reference genome. Choose the appropriate workflow based on your input data and your desired analysis. Explore <a href='https://eupathdb.org/assets/GalaxyRNASeqExportTool.pdf' target='_blank'>this tutorial</a> to learn about exporting your workflow results to EuPathDB.
 	<br><br>
 
-	<b>Examine coverage across the genome and calculate reads per gene</b>
+	<b>Examine coverage across the genome and calculate RPKM for each gene</b>
 	<br>
 	In addition to the tools described above, these workflows use three tools (bamCoverage, htseq-count, HTSeqCountToFPKM) to generate BigWig and FPKM files that can be analyzed on EuPathDB, in Galaxy, or on your computer. The workflows take any number of samples and process the samples in parallel.
 	</p>
 	<ul><ul>
 	  <li>
-	    <a id='workflow9' href='javascript:void(0)' onClick='import_and_run_workflow(\"7f4214a6361b472d\")'>Workflow for paired-end stranded reads</a>
+	    <a id='workflow9' href='javascript:void(0)' onClick='import_and_run_workflow(\"0f4813bb80e98613\")'>Workflow for paired-end stranded reads</a>
 	  </li>
 	  <li>
-	    <a id='workflow9' href='javascript:void(0)' onClick='import_and_run_workflow(\"b8a14a696c13c285\")'>Workflow for paired-end unstranded reads</a>
+	    <a id='workflow9' href='javascript:void(0)' onClick='import_and_run_workflow(\"c115f53f012c7417\")'>Workflow for paired-end unstranded reads</a>
 	  </li>
 	  <li>
-	    <a id='workflow9' href='javascript:void(0)' onClick='import_and_run_workflow(\"e07b26b1c7781e14\")'>Workflow for single-end stranded reads</a>
+	    <a id='workflow9' href='javascript:void(0)' onClick='import_and_run_workflow(\"43023950194bac30\")'>Workflow for single-end stranded reads</a>
 	  </li>
 	  <li>
-	    <a id='workflow9' href='javascript:void(0)' onClick='import_and_run_workflow(\"5514d6a246152e4b\")'>Workflow for single-end unstranded reads</a>
+	    <a id='workflow9' href='javascript:void(0)' onClick='import_and_run_workflow(\"6cb5def0526e23ff\")'>Workflow for single-end unstranded reads</a>
 	  </li>
 	</ul></ul>
 
 	<p style="margin-left: 40px">
-	<b>Identify genes that are differentially regulated between two samples</b>
+	<b>Identify genes with statistically significant expression differences between two samples</b>
 	<br>
-In addition to the tools described above, these workflows use two tools (HTseq, DESeq2) to generate a file containing read counts and p-values that can be analyzed on EuPathDB, in Galaxy, or on your computer. The workflows can take any number of replicates for 2 samples.
+This workflow inputs read count files, like those generated using HTseq in the above workflows. The output is a file containing fold-changes and p-values that can be analyzed in Galaxy or on your computer. The workflows can take any number of replicates for 2 samples. NOTE: Export to EuPathDB is not available yet, but will be soon.
 	</p>
 	<ul><ul>
 	  <li>
-	    <a id='workflow9' href='javascript:void(0)' onClick='import_and_run_workflow(\"e8dc30e4494f212f\")'>Workflow for paired-end stranded reads</a>
-	  </li>
-	  <li>
-	    <a id='workflow9' href='javascript:void(0)' onClick='import_and_run_workflow(\"b76cdaaa4db75ab1\")'>Workflow for paired-end unstranded reads</a>
-	  </li>
-	  <li>
-	    <a id='workflow9' href='javascript:void(0)' onClick='import_and_run_workflow(\"edc9a8362208f60d\")'>Workflow for single-end stranded reads</a>
-	  </li>
-	  <li>
-	    <a id='workflow9' href='javascript:void(0)' onClick='import_and_run_workflow(\"88448f4041633510\")'>Workflow for single-end unstranded reads</a>
+	    <a id='workflow9' href='javascript:void(0)' onClick='import_and_run_workflow(\"444a98f25eba1900\")'>Workflow to identify differential expression</a>
 	  </li>
 	  </ul></ul>
 
@@ -164,7 +155,7 @@ In addition to the tools described above, these workflows use two tools (HTseq, 
             <h3>Additional EuPathDB workflows</h3>
 
 <p style="margin-left: 40px">
-<a href="https://eupathdb.globusgenomics.org/workflow/list_published" target="_blank">Click here</a> for additional shared workflows. This page can also be accessed by clicking the 'Shared Data' menu above and then 'Workflows'.
+<a href="https://eupathdb.globusgenomics.org/workflow/list_published" target="_blank">Click here</a> for additional shared workflows. This page can also be accessed within the 'Shared Data' menu above by selecting 'Workflows'.
             <br>
 </p>
 
