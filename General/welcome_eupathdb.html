@@ -88,7 +88,7 @@
 
       <!-- WORKFOW LIST -->
       <div class="eupath-section">
-        <h2 style="margin-bottom:0">Get started with EupathDB pre-configured workflows:</h2>
+        <h2 style="margin-bottom:0">Get started with EuPathDB pre-configured workflows:</h2>
         <div>
         <h3>OrthoMCL</h3>
 	<p style="margin-left: 40px">
@@ -129,18 +129,27 @@
 	<p style="margin-left: 40px">
 	<b>Identify genes with statistically significant expression differences between two samples</b>
 	<br>
-This workflow inputs read count files like those generated using HTseq in the above workflows. Any number of replicates for the two samples can be used. Differential expression is determined using DESeq2. The output is a file containing fold-changes and p-values that can be analyzed in Galaxy or on your computer. NOTE: Export of DESeq2 results to EuPathDB will be available soon.
+	In addition to the tools described above, these workflows use three tools (htseq-count, DESeq2, Bam to BigWig) to determine whether each gene exhibits differential expression and to generate BigWig coverage files. The output files can be analyzed in Galaxy or on your computer. The workflows compare two samples with any number of replicates. NOTE: Export of DESeq2 results to EuPathDB will be available soon.
 	</p>
 	<ul><ul>
 	  <li>
-	    <a id='workflow9' href='javascript:void(0)' onClick='import_and_run_workflow(\"444a98f25eba1900\")'>Workflow to identify differential expression</a>
+            <a id='workflow9' href='javascript:void(0)' onClick='import_and_run_workflow(\"bc2033eba2ee1c28\")'>Workflow for paired-end stranded reads</a>
+          </li>
+          <li>
+            <a id='workflow9' href='javascript:void(0)' onClick='import_and_run_workflow(\"e39366c8e54cd4f4\")'>Workflow for paired-end unstranded reads</a>
+          </li>
+          <li>
+            <a id='workflow9' href='javascript:void(0)' onClick='import_and_run_workflow(\"5bb69a8e73a35546\")'>Workflow for single-end stranded reads</a>
+          </li>
+          <li>
+            <a id='workflow9' href='javascript:void(0)' onClick='import_and_run_workflow(\"beca2f1c56957c19\")'>Workflow for single-end unstranded reads</a>
 	  </li>
-	  </ul></ul>
+	</ul></ul>
 
 	    <h3>Variant calling</h3>
 
 <p style="margin-left: 40px">
-	    Use the following workflows to analyze your FASTQ files. The workflows use Sickle for preparation of reads, Bowtie2 for mapping reads to a EuPathDB reference genome, Freebayes for variant detection, SnpEff to evaluate the effect of variants, and SnpSift for filtering types of variants. Choose the appropriate workflow based on your input data. A VCF file is generated that can be downloaded to your computer or exported to EuPathDB.
+	    Use the following workflows to analyze your FASTQ files. The workflows use Sickle for preparation of reads, Bowtie2 for mapping reads to a EuPathDB reference genome, Freebayes for variant detection, SnpEff to evaluate the effect of variants, and SnpSift for filtering types of variants. Choose the appropriate workflow based on your input data. A VCF file is generated that can be analyzed in Galaxy or downloaded to your computer. NOTE: Export of VCF files to EuPathDB will be available soon.
 	    <br>
 </p>
 	    <ul><ul>
