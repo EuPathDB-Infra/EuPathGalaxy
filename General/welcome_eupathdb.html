@@ -65,7 +65,7 @@
         <table width="90%">
           <tbody><tr>
             <td><img class="topLogo" src="http://eupathdb.org/eupathdb/images/EuPathDB/title_s.png"></td>
-            <td class="logo_table_row">GG-v5.4</td>
+            <td class="logo_table_row">dev_eupathdb</td>
             <!--<td class="status"><div class="status_image" alt="Globus Genomics System Status"></div></td>-->
           </tr>
           <tr></tr><tr></tr>
@@ -79,7 +79,7 @@
 
       <!-- INTRO (help section)  -->
       <div class="eupath-section">
-        <h3>With EuPathDB Galaxy you can:</h3>
+        <h2>With EuPathDB Galaxy you can:</h2>
         <div id="eupath-intro">
           (Do nothing currently)
         </div>
@@ -88,19 +88,92 @@
 
       <!-- WORKFOW LIST -->
       <div class="eupath-section">
-        <h3 style="margin-bottom:0">Get started with pre-configured workflows:</h3>
+        <h2 style="margin-bottom:0">Get started with EuPathDB pre-configured workflows:</h2>
         <div>
-          <p>(additional workflows will be added soon)</p>
-          <div id="eupath-workflows" >
-            (No workflows presently)
-          </div>
+        <h3>OrthoMCL</h3>
+	<p style="margin-left: 40px">
+	This workflow uses BLASTP and the OrthoMCL algorithm to assign your set of proteins to OrthoMCL groups. <a href='https://eupathdb.org/assets/MapProteinsOrthoMCL.pdf' target='_blank'>Explore this tutorial to learn more.</a>
+	<br> </p>
+	<ul><ul>
+	  <li>
+	    <a id='workflow8' href='javascript:void(0)' onClick='import_and_run_workflow(\"827ffb5096bfb29f\")'>Workflow to map your proteins to OrthoMCL groups</a>
+	  </li>
+	</ul></ul>
+
+	<h3>RNA-seq</h3>
+
+	<p style="margin-left: 40px">
+
+	Use the following workflows to analyze your FASTQ files. The workflows use FASTQ groomer and Trimmomatic for preparation of reads, FASTQC for sequencing statistics, and HISAT2 for mapping reads to a EuPathDB reference genome. Choose the appropriate workflow based on your input data and your desired analysis. Explore <a href='https://eupathdb.org/assets/GalaxyRNASeqExportTool.pdf' target='_blank'>this tutorial</a> to learn about exporting your workflow results to EuPathDB.
+	<br><br>
+
+	<b>Examine coverage across the genome and calculate RPKM for each gene</b>
+	<br>
+	In addition to the tools described above, these workflows use three tools (bamCoverage, htseq-count, HTSeqCountToFPKM) to generate BigWig and FPKM files that can be analyzed on EuPathDB, in Galaxy, or on your computer. The workflows take any number of samples and process the samples in parallel.
+	</p>
+	<ul><ul>
+	  <li>
+	    <a id='workflow9' href='javascript:void(0)' onClick='import_and_run_workflow(\"0f4813bb80e98613\")'>Workflow for paired-end stranded reads</a>
+	  </li>
+	  <li>
+	    <a id='workflow9' href='javascript:void(0)' onClick='import_and_run_workflow(\"c115f53f012c7417\")'>Workflow for paired-end unstranded reads</a>
+	  </li>
+	  <li>
+	    <a id='workflow9' href='javascript:void(0)' onClick='import_and_run_workflow(\"43023950194bac30\")'>Workflow for single-end stranded reads</a>
+	  </li>
+	  <li>
+	    <a id='workflow9' href='javascript:void(0)' onClick='import_and_run_workflow(\"6cb5def0526e23ff\")'>Workflow for single-end unstranded reads</a>
+	  </li>
+	</ul></ul>
+
+	<p style="margin-left: 40px">
+	<b>Identify genes with statistically significant expression differences between two samples</b>
+	<br>
+	In addition to the tools described above, these workflows use three tools (htseq-count, DESeq2, Bam to BigWig) to determine whether each gene exhibits differential expression and to generate BigWig coverage files. The output files can be analyzed in Galaxy or on your computer. The workflows compare two samples with any number of replicates. NOTE: Export of DESeq2 results to EuPathDB will be available soon.
+	</p>
+	<ul><ul>
+	  <li>
+            <a id='workflow9' href='javascript:void(0)' onClick='import_and_run_workflow(\"bc2033eba2ee1c28\")'>Workflow for paired-end stranded reads</a>
+          </li>
+          <li>
+            <a id='workflow9' href='javascript:void(0)' onClick='import_and_run_workflow(\"e39366c8e54cd4f4\")'>Workflow for paired-end unstranded reads</a>
+          </li>
+          <li>
+            <a id='workflow9' href='javascript:void(0)' onClick='import_and_run_workflow(\"5bb69a8e73a35546\")'>Workflow for single-end stranded reads</a>
+          </li>
+          <li>
+            <a id='workflow9' href='javascript:void(0)' onClick='import_and_run_workflow(\"beca2f1c56957c19\")'>Workflow for single-end unstranded reads</a>
+	  </li>
+	</ul></ul>
+
+	    <h3>Variant calling</h3>
+
+<p style="margin-left: 40px">
+	    Use the following workflows to analyze your FASTQ files. The workflows use Sickle for preparation of reads, Bowtie2 for mapping reads to a EuPathDB reference genome, Freebayes for variant detection, SnpEff to evaluate the effect of variants, and SnpSift for filtering types of variants. Choose the appropriate workflow based on your input data. A VCF file is generated that can be analyzed in Galaxy or downloaded to your computer. NOTE: Export of VCF files to EuPathDB will be available soon.
+	    <br>
+</p>
+	    <ul><ul>
+	      <li>
+		<a id='workflow9' href='javascript:void(0)' onClick='import_and_run_workflow(\"59725c868c65b63f\")'>Workflow for single-end reads</a>
+	      </li>
+	      <li>
+		<a id='workflow9' href='javascript:void(0)' onClick='import_and_run_workflow(\"5c09b80c25571781\")'>Workflow for paired-end reads</a>
+	      </li>
+	      </ul></ul>
+
+            <h3>Additional EuPathDB workflows</h3>
+
+<p style="margin-left: 40px">
+<a href="https://eupathdb.globusgenomics.org/workflow/list_published" target="_blank">Click here</a> for additional shared workflows. This page can also be accessed within the 'Shared Data' menu above by selecting 'Workflows'.
+            <br>
+</p>
+
         </div> 
       </div>
-
     </div>  <!-- end document -->
 
     <!-- FOOTER -->
-    <hr style="margin-bottom:0"><p style="font-size:70%;background-color:white;padding:5px 5px 0;text-align:left">EuPathDB Galaxy workspaces are provided free of charge. We encrypt data transfers and storage but ultimately we cannot guarantee the security of data transmissions between EuPathDB, Globus and affiliates, Amazon Cloud Services, and the user. It is your responsibility to backup your data and obtain any required permissions from your study and/or institution prior to uploading data for analyses on the EuPathDB Galaxy platform. Do not use, transmit, upload or share any human identifiable information in the files you analyze. EuPathDB, Globus and affiliates, University of Georgia, University of Pennsylvania, University of Liverpool, and Amazon Cloud Services do not take any responsibility and are not liable for the loss and/or release of any data you analyze via the EuPathDB Galaxy platform. <a href="http://eupathdb.org/documents/EuPathDB_Website_Privacy_Policy.shtml" target="_blank">See the EuPathDB privacy policy.</a></p>
+    <hr style="margin-bottom:0"><p style="font-size:70%;background-color:white;padding:5px 5px 0;text-align:left">EuPathDB Galaxy workspaces are provided free of charge. We encrypt data transfers and storage but ultimately we cannot guarantee the security of data transmissions between EuPathDB, Globus and affiliates, Amazon Cloud Services, and the user. It is your responsibility to backup your data and obtain any required permissions from your study and institution prior to uploading data for analyses on the EuPathDB Galaxy platform. Do not use, transmit, upload or share any human identifiable information in the files you analyze. EuPathDB, Globus and affiliates, University of Georgia, University of Pennsylvania, University of Liverpool, and Amazon Cloud Services do not take any responsibility and are not liable for the loss or release of any data you analyze via the EuPathDB Galaxy platform. <a href="http://eupathdb.org/documents/EuPathDB_Website_Privacy_Policy.shtml" target="_blank">See the EuPathDB privacy policy.</a></p>
    
     <footer class="eupath-footer">
       <div class="container">
@@ -171,9 +244,7 @@
     src="https://code.jquery.com/jquery-1.12.4.min.js"
     integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
     crossorigin="anonymous"></script>
-<!--
-  <script type="text/javascript" src="https://cbilsvn.pmacs.upenn.edu/svn/apidb/EuPathGalaxy/branches/build29/eupath-galaxy.js"></script>
--->
+
    <script type="text/javascript" src="./eupath-galaxy.js"></script>
 
 </body>

@@ -1,0 +1,39 @@
+#!/usr/bin/python
+
+import sys
+import os
+import json
+from subprocess import Popen
+
+
+def main():
+    # use vcf tools to validate VCF file.
+    # print >> sys.stdout, "At validateVCF"
+
+    #test_json = '[{"path": "/home/ross/dataset_16008.dat", "name": "SampleFileName.vcf"}, {"path": "/tmp/manifest.2615389.txt", "name": "manifest.txt"}]'
+
+    dataset_file_json = sys.stdin.read()
+    dataset_file = json.loads(dataset_file_json)
+
+    file_count = len(dataset_file) - 1
+
+    for i in range(0, file_count):
+        #print >> sys.stdout, "Here 1"
+        file = dataset_file[i]['path']
+        #print >> sys.stdout, file
+        #TODO will need to update this path.
+        test = os.popen('/opt/galaxy/tools/eupath/Tools/lib/perl/vcf-validator -u ' + file).read()
+
+        #os.system('head ' + file)
+        print >> sys.stdout, test
+
+        if "\n\n------------------------\nSummary:\n\t0 errors total \n\n" in test:
+            print "File ok."
+        else:
+            print >> sys.stderr, "Error: " + test
+            sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
+
