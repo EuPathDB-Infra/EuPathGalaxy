@@ -16,8 +16,8 @@ def __main__():
     parser.add_argument('--input', dest='input', help=' counts of RNA-Seq read (sense) alignments.' )
     parser.add_argument('--antisense_input', dest='antisense_input', help=' counts of RNA-Seq read anti-sense alignments.' )
     parser.add_argument('--genome', dest='genome', help=' file of reference genome in GFF3 format.' )
-    parser.add_argument('--output', help='output file of (sense) FPMK data')
-    parser.add_argument('--antisense_output', help='output file of anti-sense FPMK data')
+    parser.add_argument('--output', help='output file of (sense) FPKM data')
+    parser.add_argument('--antisense_output', help='output file of anti-sense FPKM data')
     parser.add_argument('--double_stranded', help='is this a double-stranded dataset?')
     args = parser.parse_args()
 
@@ -143,8 +143,9 @@ def __main__():
             gene = fields[0]
             count = int(fields[1])
             if not gene in specialCounters.keys():
-                fpkm = ( count * billion ) / ( counts *  geneLength[ gene ] )
-                senseOut.write( gene + '\t' + str(fpkm) + '\n' )
+                fpkm = ( float(count) * billion ) / ( counts *  geneLength[ gene ] )
+                outline = "%s\t%.12f\n" % (gene, fpkm)
+                senseOut.write( outline )
     senseOut.close()
 
     if double_stranded:
@@ -157,8 +158,9 @@ def __main__():
                 gene = fields[0]
                 count = int(fields[1])
                 if not gene in specialCounters.keys():
-                    fpkm = ( count * billion ) / ( counts *  geneLength[ gene ] )
-                    antisenseOut.write( gene + '\t' + str(fpkm) + '\n' )
+                    fpkm = ( float(count) * billion ) / ( counts *  geneLength[ gene ] )
+                    outline = "%s\t%.12f\n" % (gene, fpkm)
+                    antisenseOut.write( outline )
         antisenseOut.close()
 
 
