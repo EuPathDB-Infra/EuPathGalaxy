@@ -38,36 +38,37 @@ def main():
         TYPE = "VCFFile"
         VERSION = "1.0"
 
-
-        # def __init__(self, args):
-        #     # NewEupathExporter.BaseFileHandler.__init__(self,
-        #     #                                 VCFFileHandler.TYPE,
-        #     #                                 VCFFileHandler.VERSION,
-        #     #                                 # 'NewEupathExporter.FileCollector',
-        #     #                                 # 'NewEupathExporter.Exporter',
-        #     #                                 # 'FileValidator',
-        #     #                                 # args
-        #     #                                 )
-        #     pass
-
+        def __init__(self):
+            NewEupathExporter.BaseFileHandler.__init__(self, 
+            VCFFileHandler.TYPE, 
+            VCFFileHandler.VERSION,
+            NewEupathExporter.FileCollector,
+            NewEupathExporter.Exporter,
+            FileValidator,
+            args
+            )
 
 
         def validation(self):
             try:
                 print >> sys.stdout, "Try export."
-                FileValidator.validate(FileCollector.files)
+                # FileValidator.validate(FileCollector.files)
                 print >> sys.stdout, "Validation success."
             except:
-                print >> sys.stdout, "Fail 1."
+                print >> sys.stdout, "Fail 1."    
 
-        
+            # print >> sys.stdout, self.TYPE 
 
+            print >> sys.stdout, self._type
+            print >> sys.stdout, self._version
+            print >> sys.stdout, self._filecollector
+            print >> sys.stdout, self._exporter
+            print >> sys.stdout, self._validator
 
-            print >> sys.stdout, VCFFileHandler.TYPE
-            print >> sys.stdout, VCFFileHandler.VERSION
 
 
     worker = VCFFileHandler()
+    worker
     worker.validation()
         
 
