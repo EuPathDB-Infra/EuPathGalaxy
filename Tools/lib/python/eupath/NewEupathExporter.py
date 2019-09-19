@@ -26,6 +26,62 @@ Have a class that is a handler for a data type.
 """
 
 
+class BaseFileHandler:
+
+
+    def __init__(self): #, dataset_type, version, filecollector, exporter, validator,  args):
+        pass
+        # self._type = dataset_type
+        # self._version = version
+        # self._filecollector = filecollector
+        # self._exporter = exporter
+        # self._validator = validator
+
+    def output_success(self):
+        header = "<html><body><h1>Good news!</h1><br />"
+        msg = """
+        <h2>Results of the EuPathDB Export Tool<br />Bigwig Files to EuPathDB</h2>
+        <h3>Your set of bigwig files was exported from Galaxy to your account in EuPathDB.
+            For file access and to view in GBrowse, go to My Data Sets in the appropriate EuPathDB site:
+        </h3><br />
+        Go to the appropriate EuPathDB site (links below) to see it (and all your User Datasets):<br \>
+        <a href='http://amoebadb.org/amoeba/app/workspace/datasets'>AmoebaDB</a><br />
+        <a href='http://cryptodb.org/cryptodb/app/workspace/datasets'>CryptoDB</a><br />
+        <a href='http://fungidb.org/fungidb/app/workspace/datasets'>FungiDB</a><br />
+        <a href='http://giardiadb.org/giardiadb/app/workspace/datasets'>GiardiaDB</a><br />
+        <a href='http://hostdb.org/hostdb/app/workspace/datasets'>HostDB</a><br />
+        <a href='http://microsporidiadb.org/micro/app/workspace/datasets'>MicrosporidiaDB</a><br />
+        <a href='http://piroplasmadb.org/piro/app/workspace/datasets'>PiroplasmaDB</a><br />
+        <a href='http://plasmodb.org/plasmo/app/workspace/datasets'>PlasmoDB</a><br />
+        <a href='http://schistodb.net/schisto/app/workspace/datasets'>SchistoDB</a><br />
+        <a href='http://toxodb.org/toxo/app/workspace/datasets'>ToxoDB</a><br />
+        <a href='http://trichdb.org/trichdb/app/workspace/datasets'>TrichDB</a><br />
+        <a href='http://tritrypdb.org/tritrypdb/app/workspace/datasets'>TriTrypDB</a><br />
+        </body></html>
+        """
+        with open(self._output, 'w') as file:
+            file.write("%s%s" % (header,msg))
+
+
+class FileCollector:    
+    """
+    Identify the files that are to be validated/exported. Have the files stored as an attribute that can be overwritten if needed.
+    """
+    def __init__(self):
+        self.files = []
+
+
+
+class Exporter:
+    """
+    Gets the file info from the FileCollector attribute. 
+    """
+    pass
+
+
+### -------------------OLD EXPORTER CLASS---------------------- 
+
+
 class Export:
     """
     This is a generic EuPathDB export tool for Galaxy.  It is abstract and so must be subclassed by more
@@ -386,30 +442,7 @@ class Export:
             # Globus Dev Galaxy instance and it will throw an Exception if the boolean, 'True', is not in place.
             shutil.rmtree(temp_path, True)
 
-    def output_success(self):
-        header = "<html><body><h1>Good news!</h1><br />"
-        msg = """
-        <h2>Results of the EuPathDB Export Tool<br />Bigwig Files to EuPathDB</h2>
-        <h3>Your set of bigwig files was exported from Galaxy to your account in EuPathDB.
-         For file access and to view in GBrowse, go to My Data Sets in the appropriate EuPathDB site:
-        </h3><br />
-        Go to the appropriate EuPathDB site (links below) to see it (and all your User Datasets):<br \>
-        <a href='http://amoebadb.org/amoeba/app/workspace/datasets'>AmoebaDB</a><br />
-        <a href='http://cryptodb.org/cryptodb/app/workspace/datasets'>CryptoDB</a><br />
-        <a href='http://fungidb.org/fungidb/app/workspace/datasets'>FungiDB</a><br />
-        <a href='http://giardiadb.org/giardiadb/app/workspace/datasets'>GiardiaDB</a><br />
-        <a href='http://hostdb.org/hostdb/app/workspace/datasets'>HostDB</a><br />
-        <a href='http://microsporidiadb.org/micro/app/workspace/datasets'>MicrosporidiaDB</a><br />
-        <a href='http://piroplasmadb.org/piro/app/workspace/datasets'>PiroplasmaDB</a><br />
-        <a href='http://plasmodb.org/plasmo/app/workspace/datasets'>PlasmoDB</a><br />
-        <a href='http://schistodb.net/schisto/app/workspace/datasets'>SchistoDB</a><br />
-        <a href='http://toxodb.org/toxo/app/workspace/datasets'>ToxoDB</a><br />
-        <a href='http://trichdb.org/trichdb/app/workspace/datasets'>TrichDB</a><br />
-        <a href='http://tritrypdb.org/tritrypdb/app/workspace/datasets'>TriTrypDB</a><br />
-        </body></html>
-        """
-        with open(self._output, 'w') as file:
-            file.write("%s%s" % (header,msg))
+
 
 
 
