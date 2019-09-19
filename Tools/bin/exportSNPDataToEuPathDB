@@ -8,29 +8,38 @@ from eupath import EupathExporter
 import optparse
 import sys
 import re
+from subprocess import check_output
+
+
+# This is stupid. The classes should not be composed like this. 
 
 
 def main():
     """
       The following program is a Galaxy Tool for exporting VCF files from Galaxy to EuPathDB via iRODS.
 
-      It takes the standard exporter params (see EuPathExporter superclass), pluse the arguments declared in it
+      It takes the standard exporter params (see EuPathExporter superclass), plus the arguments declared in it
     """
     
     parser = optparse.OptionParser()
-    (options, args) = parser.parse_args()
-
-    
-
-    # Have the args as the default that are needed with the files having their own flag??? 
+    (options, args) = parser.parse_args()    
 
     # So users are greeted with a bewildering traceback
     sys.tracebacklimit = 0
 
     exporter = VCFFileEuPathExporter.VCFFileExport(args)
+    file_name = args[6]
+    print >> sys.stdout, file_name
     try:
         print >> sys.stdout, "Try export."
-        exporter.export()
+        exporter.validate_datasets() 
+
+        # edit the args to export the zipped file....
+
+        # delete the zipped file. 
+        # mv the file with original to get back the original name. 
+
+
     except EupathExporter.ValidationException as ve:
         print >> sys.stderr, str(ve)
         sys.exit(1)

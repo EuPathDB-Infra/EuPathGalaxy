@@ -28,12 +28,12 @@ class VCFFileExport(EupathExporter.Export):
             print >> sys.stdout, i, args[i]
             samplename = args[i+1]
             #filename = samplename + "." + args[i+2]
-        ## Note in the xml this will need the right variables passed in - e.g. sample name, file format.
-        
 
+            # Add the file name here even though not made it yet... dumb but will work. 
+
+            ## Note in the xml this will need the right variables passed in - e.g. sample name, file format.
             self._datasetInfos.append({"name": samplename, "path": args[i]})
-            print >> manifest, samplename # + "\t" + filename 
-                
+            #print >> manifest, "SAMPLE NAME", samplename # + "\t" + filename                 
 
         self._datasetInfos.append({"name": "manifest.txt", "path": manifestPath})
         
@@ -50,6 +50,8 @@ class VCFFileExport(EupathExporter.Export):
         :return: A list containing the dataset files accompanied by their EuPathDB designation.
         """
         return self._datasetInfos
+
+    # Have a method to identify the zipped data file in tmp???? 
 
 
     def identify_projects(self):

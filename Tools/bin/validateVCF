@@ -3,7 +3,8 @@
 import sys
 import os
 import json
-from subprocess import Popen
+import re
+from subprocess import Popen, check_output
 
 
 def main():
@@ -17,21 +18,84 @@ def main():
 
     file_count = len(dataset_file) - 1
 
+    # if the path is in tmp and ends in .gz.tbi then skip the val. If not 
+    # ..... this is stupid as the validator will have to fake a pass. 
+
     for i in range(0, file_count):
         #print >> sys.stdout, "Here 1"
-        file = dataset_file[i]['path']
-        #print >> sys.stdout, file
-        #TODO will need to update this path.
-        test = os.popen('/opt/galaxy/tools/eupath/Tools/lib/perl/vcf-validator -u ' + file).read()
+        file_name = dataset_file[i]['path']
 
-        #os.system('head ' + file)
-        print >> sys.stdout, test
+        # #### Old vcf-validator.  Headers caused issued with parsing the file. ####
+        # test = os.popen('/home/ross/EuPathGalaxy/Tools/lib/perl/vcf-validator -u ' + file).read()
+        # #os.system('head ' + file)
 
-        if "\n\n------------------------\nSummary:\n\t0 errors total \n\n" in test:
-            print "File ok."
-        else:
-            print >> sys.stderr, "Error: " + test
-            sys.exit(1)
+        # if "\n\n------------------------\nSummary:\n\t0 errors total \n\n" in test:
+        #     print "File ok."
+
+        # else:
+        #     print >> sys.stderr, "Error: " + test
+        #     sys.exit(1)
+
+        with open(file_name, mode='r') as file:
+
+            bad_lines = []
+
+            for line in file: 
+                #while i < 1000:
+                #line = next(file)                    
+                #print unicode(line[0:100], 'utf-8')
+                #if re.match(r"^.*\t\d*\t.*\t[ATGC]*\t[ATGC]*\t(\d*\.\d*|\d*)\t(\w*|\.)\t.*$", line):
+                if re.match(r"^.*\t\d*\t.*\t((([ATGCN]*),){1,}([ATGCN]*)|([ATGCN]*))\t((([ATGCN]*),){1,}([ATGCN]*)|([ATGCN]*))\t((\d*.\d*e-\d*)|(\d*\.\d*)|(\d*))\t(\w*|\.)\t.*$", line):
+                    # This is attempting to match a line in the file where the data is stored. It assumes that the data is
+                    # in the same order as above. Looking for string, tab, number, tab, sting, tab, ATC or G, tab ATC or G, tab
+                    # int/float, tab
+                    #print "-----", line
+                    #print "Line ", i, " ok." 
+                    pass
+                
+                elif unicode(line[0:2], 'utf-8') == '##':
+                    # This is to ignore the headers that are added to the file, Jbrowse only cares about certain col headers
+                    # and the data. VCFTools vcf-validator was too rigid to work here, kept failing due to the header being
+                    # incorrect (even though the data looked like it was formatted correctly.)
+                    pass
+
+                elif re.match(r"^#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\t.*$", line):
+                #elif '#CHROM' in line:
+                    # This is testing for the header of the data. Note the wildcard at the end that will match any additions 
+                    # by other programs that are not using the usual cols. 
+                    # The order should not be an issue as it seems to be rigid.         
+                    #print "-----", line
+                    pass
+                    
+                else:
+                    bad_lines.append(line)
+
+                i = i+1
+
+            if len(bad_lines) > 0:    
+                print >> sys.stderr,  "###### Error: Can't validate the file. ######"
+                print >> sys.stderr, "Hint: Is the data header formmatted: #CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\t ?"
+                print >> sys.stderr,  "###### These lines are not in the correct format for Jbrowse to read the data. ######"
+                for bad in bad_lines:            
+                    print >> sys.stderr,  bad
+                sys.exit(1)
+
+            elif len(bad_lines) == 0:
+                print >> sys.stderr, "File looks ok."
+
+                # Getting only the file name.
+                rev_file = file_name[::-1]
+                rev_file = rev_file.split('/')[0]
+                rev_file = rev_file[::-1]
+
+                print >> sys.stdout, rev_file
+                # do bgzip op on temp.
+                # original file is still in place. 
+
+                tmp_file = '/tmp/' + rev_file
+                check_output(['cp', file_name, tmp_file])
+                # check_output(['bgzip', tmp_file])
+                # check_output(['tabix', '-p', 'vcf', tmp_file + '.gz']) # .tbi also after this.
 
 
 if __name__ == "__main__":
