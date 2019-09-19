@@ -29,13 +29,12 @@ Have a class that is a handler for a data type.
 class BaseFileHandler:
 
 
-    def __init__(self): #, dataset_type, version, filecollector, exporter, validator,  args):
-        pass
-        # self._type = dataset_type
-        # self._version = version
-        # self._filecollector = filecollector
-        # self._exporter = exporter
-        # self._validator = validator
+    def __init__(self, dataset_type, version, filecollector, exporter, validator, args):
+        self._type = dataset_type
+        self._version = version
+        self._filecollector = filecollector
+        self._exporter = exporter
+        self._validator = validator
 
     def output_success(self):
         header = "<html><body><h1>Good news!</h1><br />"
