@@ -9,13 +9,30 @@ import sys
 import re
 from subprocess import check_output
 
+"""
+python EuPathGalaxy/Tools/bin/exportSNPDataToEuPathDB TestSetDataName DataSetSummary DataSetDescription ross.madden.333934643@eupathdb.org /home/ross/EuPathGalaxy/Tools/lib/python exportToEuPathDBInfo.html /scratch/galaxy/files/016/dataset_16008.dat  SampleFileName
 
+python EuPathGalaxy/Tools/bin/NewexportSNPDataToEuPathDB TestSetDataName DataSetSummary DataSetDescription ross.madden.333934643@eupathdb.org /home/ross/EuPathGalaxy/Tools/lib/python exportToEuPathDBInfo.html /scratch/galaxy/files/016/dataset_16008.dat  SampleFileName
+
+
+args = "$dataset_name" 
+    "$summary" 
+    "$description"
+    "$__user_email__" 
+    "$__tool_directory__" 
+    "$output" 
+"""
 
 
 def main():
 
     parser = optparse.OptionParser()
-    (options, args) = parser.parse_args()    
+    (options, args) = parser.parse_args()   
+
+    for i in args:
+        print >> sys.stdout, i  
+
+    # print >> sys.stdout, file_name    
 
     # So users are greeted with a bewildering traceback
     sys.tracebacklimit = 0
@@ -27,13 +44,10 @@ def main():
         def __init__(self):
             self.test = [0,1,2,3]
 
-        def test_print(self):
-            print >> sys.stdout, "Test print."
-
-        def validate(self):
-            print >> sys.stdout, "At validate." 
-            
-
+        def validate(self, file):
+            print >> sys.stdout, "File to validate: ", file
+            print >> sys.stdout, "---At validate. Beep boop.---" 
+            # raise ValueError('All broken!')
             # some logic for an error message. 
 
 
@@ -44,39 +58,55 @@ def main():
         The validator should be bespoke to a file type.
         """
 
-
         # Constants
         TYPE = "VCFFile"
         VERSION = "1.0"
 
-        # will I need to later add args to specify the files? etc.
         def __init__(self, validator):
+
+            self.parse_params(args)            
+
             NewEupathExporter.BaseFileHandler.__init__(self, 
             VCFFileHandler.TYPE, 
             VCFFileHandler.VERSION,
-            NewEupathExporter.FileCollector(),
-            NewEupathExporter.Exporter(),
+            NewEupathExporter.FileCollector(self._other_params[0], self._other_params[1]),
+            NewEupathExporter.Exporter(self._tool_directory),
             validator,
             args
             )
-        
-        # print >> sys.stdout, self._validator.test_print()
 
-        def validation(self):
             try:
-                print >> sys.stdout, "Try export."
-                self._validator.validate()
-                print >> sys.stdout, self._filecollector.files
-                print >> sys.stdout, "Validation success."
+                self.validation(self._other_params[0])
             except:
-                print >> sys.stdout, "Fail 1."  
+                raise Exception("Validation failed.")
 
-            # print >> sys.stdout, self.TYPE
-            # print >> sys.stdout, self._type
-            # print >> sys.stdout, self._version            
-            # print >> sys.stdout, self._filecollector
-            # print >> sys.stdout, self._exporter         
+            # print >> sys.stderr, 'Other params:', self._other_params 
 
+        def test(self):
+            # Works
+            print >> sys.stdout, "_tool_directory:", self._exporter._tool_directory
+            # print >> sys.stdout, "_tool_directory:", self._exporter.collect_rest_data()
+            # print >> sys.stdout, "_tool_directory:", self._dataset_name  
+
+            # Testing
+
+            # print >> sys.stdout, "_datasetInfos:", self._filecollector._datasetInfos  
+             
+        def validation(self, file):
+                print >> sys.stdout, "---Try validation.---"
+                self._validator.validate(file)
+                print >> sys.stdout, "---Validation success.---" 
+
+        def index_and_zip(self):
+            """
+            If the validation is succesful this overwites the _datasetInfos with the path of the zipped and indexed file.
+            This is then used for the export and the original file is left for Galaxy uses.
+            """
+            print >> sys.stdout, "---Zip and index.---", self._other_params[0]
+            file_to_export = "New file path."
+            self._filecollector._datasetInfos[0]['path'] = file_to_export
+            print >> sys.stdout, self._filecollector._datasetInfos          
+            return file_to_export      
 
     validator_class = FileValidator()
 
@@ -84,8 +114,28 @@ def main():
     worker = VCFFileHandler(validator_class)
     worker
 
+    worker._exporter.export(worker.index_and_zip())
+
+
+
+    # worker.test()
+
+
+
+
     # Calls the validation method.
-    worker.validation()    
+    # try: 
+    #     worker.validation(worker._filecollector.file_path)
+    #     # This file can be manually changed to export a zipped and indexed file 
+    #     # The original file is left in place for user viewing/download.   
+    #     # 
+    #     # This will likely be dependent on the identify_dataset_files() method.
+    #     print >> sys.stderr, worker.path_file_to_export    
+    #     print >> sys.stderr, worker._filecollector._datasetInfos          
+    #     worker._exporter.export(worker._filecollector._datasetInfos)
+    # except:
+    #     return Exception('Validator failed.')
+
 
 
 if __name__ == "__main__":
