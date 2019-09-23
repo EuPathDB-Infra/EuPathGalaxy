@@ -13,7 +13,6 @@ from subprocess import check_output
 
 
 def main():
-    pass
 
     parser = optparse.OptionParser()
     (options, args) = parser.parse_args()    
@@ -24,55 +23,69 @@ def main():
     # This class/function can be made in a new file where the file handler below can be created. 
     # maybe in Tools/bin/exportSNPDataToEuPathDB
     class FileValidator():
+        #pass
+        def __init__(self):
+            self.test = [0,1,2,3]
 
-        def validate(files): 
-            pass
+        def test_print(self):
+            print >> sys.stdout, "Test print."
+
+        def validate(self):
+            print >> sys.stdout, "At validate." 
+            
 
             # some logic for an error message. 
 
 
-
     class VCFFileHandler(NewEupathExporter.BaseFileHandler):
+        """
+        A class for handling the export of VCF file.
+        The FileCollector and the Exporter can be overwritten if needed. 
+        The validator should be bespoke to a file type.
+        """
+
 
         # Constants
         TYPE = "VCFFile"
         VERSION = "1.0"
 
-        def __init__(self):
+        # will I need to later add args to specify the files? etc.
+        def __init__(self, validator):
             NewEupathExporter.BaseFileHandler.__init__(self, 
             VCFFileHandler.TYPE, 
             VCFFileHandler.VERSION,
-            NewEupathExporter.FileCollector,
-            NewEupathExporter.Exporter,
-            FileValidator,
+            NewEupathExporter.FileCollector(),
+            NewEupathExporter.Exporter(),
+            validator,
             args
             )
-
+        
+        # print >> sys.stdout, self._validator.test_print()
 
         def validation(self):
             try:
                 print >> sys.stdout, "Try export."
-                # FileValidator.validate(FileCollector.files)
+                self._validator.validate()
+                print >> sys.stdout, self._filecollector.files
                 print >> sys.stdout, "Validation success."
             except:
-                print >> sys.stdout, "Fail 1."    
+                print >> sys.stdout, "Fail 1."  
 
-            # print >> sys.stdout, self.TYPE 
-
-            print >> sys.stdout, self._type
-            print >> sys.stdout, self._version
-            print >> sys.stdout, self._filecollector
-            print >> sys.stdout, self._exporter
-            print >> sys.stdout, self._validator
+            # print >> sys.stdout, self.TYPE
+            # print >> sys.stdout, self._type
+            # print >> sys.stdout, self._version            
+            # print >> sys.stdout, self._filecollector
+            # print >> sys.stdout, self._exporter         
 
 
+    validator_class = FileValidator()
 
-    worker = VCFFileHandler()
+    # Makes a class composed of the validator.
+    worker = VCFFileHandler(validator_class)
     worker
-    worker.validation()
-        
 
-
+    # Calls the validation method.
+    worker.validation()    
 
 
 if __name__ == "__main__":

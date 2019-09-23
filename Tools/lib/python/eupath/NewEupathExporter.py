@@ -27,7 +27,10 @@ Have a class that is a handler for a data type.
 
 
 class BaseFileHandler:
-
+    """
+    A base file handler class.
+    This will be composed of a filecollector, exporter and validator.
+    """
 
     def __init__(self, dataset_type, version, filecollector, exporter, validator, args):
         self._type = dataset_type
@@ -67,7 +70,7 @@ class FileCollector:
     Identify the files that are to be validated/exported. Have the files stored as an attribute that can be overwritten if needed.
     """
     def __init__(self):
-        self.files = []
+        self.files = ["Test files"]
 
 
 
