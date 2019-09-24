@@ -29,8 +29,8 @@ def main():
     parser = optparse.OptionParser()
     (options, args) = parser.parse_args()   
 
-    for i in args:
-        print >> sys.stdout, i  
+    # for i in args:
+    #     print >> sys.stdout, i  
 
     # print >> sys.stdout, file_name    
 
@@ -62,25 +62,38 @@ def main():
         TYPE = "VCFFile"
         VERSION = "1.0"
 
+        
+
         def __init__(self, validator):
 
-            self.parse_params(args)            
+            self.parse_params(args)
+
+            print >> sys.stderr, "TEST:", self._user_id
 
             NewEupathExporter.BaseFileHandler.__init__(self, 
             VCFFileHandler.TYPE, 
             VCFFileHandler.VERSION,
             NewEupathExporter.FileCollector(self._other_params[0], self._other_params[1]),
-            NewEupathExporter.Exporter(self._tool_directory),
+            NewEupathExporter.Exporter(self._tool_directory, self.TYPE, self.VERSION, self._user_id),
             validator,
             args
             )
 
+        
             try:
                 self.validation(self._other_params[0])
             except:
                 raise Exception("Validation failed.")
 
             # print >> sys.stderr, 'Other params:', self._other_params 
+
+
+
+
+################### TODO need to implement identify_dataset_file in the exporter
+
+
+
 
         def test(self):
             # Works
@@ -115,28 +128,7 @@ def main():
     worker
 
     worker._exporter.export(worker.index_and_zip())
-
-
-
     # worker.test()
-
-
-
-
-    # Calls the validation method.
-    # try: 
-    #     worker.validation(worker._filecollector.file_path)
-    #     # This file can be manually changed to export a zipped and indexed file 
-    #     # The original file is left in place for user viewing/download.   
-    #     # 
-    #     # This will likely be dependent on the identify_dataset_files() method.
-    #     print >> sys.stderr, worker.path_file_to_export    
-    #     print >> sys.stderr, worker._filecollector._datasetInfos          
-    #     worker._exporter.export(worker._filecollector._datasetInfos)
-    # except:
-    #     return Exception('Validator failed.')
-
-
 
 if __name__ == "__main__":
     sys.exit(main())
