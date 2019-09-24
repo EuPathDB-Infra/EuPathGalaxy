@@ -27,8 +27,6 @@ Have a class that is a handler for a data type.
 
 
 
-
-
 class BaseFileHandler:
     """
     A base file handler class.
@@ -36,11 +34,14 @@ class BaseFileHandler:
     """
 
     def __init__(self, dataset_type, version, filecollector, exporter, validator, args):
+       
         self._type = dataset_type
         self._version = version
         self._filecollector = filecollector
         self._exporter = exporter
         self._validator = validator
+
+        
 
     def parse_params(self, input_args):
         """
@@ -139,8 +140,27 @@ class Exporter:
     META_JSON = "meta.json"
     DATAFILES = "datafiles"
 
-    def __init__(self, tool_directory):
+    def __init__(self, tool_directory, dataset_type, version, user_id):
         self._tool_directory = tool_directory
+        self._type = dataset_type
+        self._version = version
+        self._user_id = user_id
+
+        # This msec timestamp is used to denote both the created and modified times.
+        self._timestamp = int(time.time() * 1000)
+
+        # This is the name of the file to be exported sans extension.  It will be used to designate a unique temporary
+        # directory and to export both the tarball and the flag that triggers IRODS to process the tarball. By
+        # convention, the dataset tarball is of the form dataset_uNNNNNN_tNNNNNNN.tgz where the NNNNNN following the _u
+        # is the WDK user id and _t is the msec timestamp
+        self._export_file_root = 'dataset_u' + str(self._user_id) + '_t' + str(self._timestamp) + '_p' + str(os.getpid())
+        print >> sys.stdout, "Export file root is " + self._export_file_root
+
+        # Set up the configuration data
+        (self._url, self._user, self._pwd, self._lz_coll, self._flag_coll) = self.collect_rest_data()
+
+           
+
     
 #--------- CHECKED
     def collect_rest_data(self):
@@ -309,6 +329,56 @@ class Exporter:
         except Exception as e:
             print >> sys.stderr, "Diagnostic Error: " + str(e)        
 
+    
+    def identify_dependencies(self):
+        """
+        An abstract method to be addressed by a specialized export tool that furnishes a dependency json list.
+        :return: The dependency json list to be returned should look as follows:
+        [dependency1, dependency2, ... ]
+        where each dependency is written as a json object as follows:
+        {
+          "resourceIdentifier": <value>,
+          "resourceVersion": <value>,
+          "resourceDisplayName": <value
+        }
+        Where no dependencies exist, an empty list is returned
+        """
+        raise NotImplementedError(
+            "The method 'identify_dependencies(self)' needs to be implemented in the specialized export module.")
+
+    def identify_projects(self):
+        """
+        An abstract method to be addressed by a specialized export tool that furnishes a EuPathDB project list.
+        :return: The project list to be returned should look as follows:
+        [project1, project2, ... ]
+        At least one valid EuPathDB project must be listed
+        """
+        raise NotImplementedError(
+            "The method 'identify_project(self)' needs to be implemented in the specialized export module.")
+
+    def identify_supported_projects(self):
+        """
+        Override this method to provide a non-default list of projects.
+
+        Default is None, interpreted as all projects are ok, ie, no constraints.
+        """
+        return None;
+
+    def identify_dataset_files(self):
+        """
+        An abstract method to be addressed by a specialized export tool that furnishes a json list
+        containing the dataset data files and the EuPath file names they must have in the tarball.
+        :return: The dataset file list to be returned should look as follows:
+        [dataset file1, dataset file2, ... ]
+        where each dataset file is written as a json object as follows:
+        {
+          "name":<filename that EuPathDB expects>,
+          "path":<Galaxy path to the dataset file>
+        At least one valid EuPathDB dataset file must be listed
+        """
+        raise NotImplementedError(
+            "The method 'identify_dataset_file(self)' needs to be implemented in the specialized export module.")
+
 
 
     def export(self, file):
@@ -319,7 +389,6 @@ class Exporter:
 
         print >> sys.stdout, "---EXPORTING!!!!---", file
 
-        """
         # We need to save the current working directory so we can get back to it when we are
         # finished working in our temporary directory.
         orig_path = os.getcwd()
@@ -340,7 +409,7 @@ class Exporter:
             # self.connection_diagnostic()
 
             # Call the iRODS rest service to drop the tarball into the iRODS workspace landing zone
-            self.process_request(self._lz_coll, self._export_file_root + ".tgz")
+            # self.process_request(self._lz_coll, self._export_file_root + ".tgz")
 
             # Create a empty (flag) file corresponding to the tarball
             open(self._export_file_root + ".txt", "w").close()
@@ -354,7 +423,24 @@ class Exporter:
 
             # We exit the temporary directory prior to removing it, back to the original working directory.
             os.chdir(orig_path)
-     """
+
+    @contextlib.contextmanager
+    def temporary_directory(self, dir_name):
+        """
+        This method creates a temporary directory such that removal is assured once the
+        program completes.
+        :param dir_name: The name of the temporary directory
+        :return: The full path to the temporary directory
+        """
+        temp_path = tempfile.mkdtemp(dir_name)
+        try:
+            yield temp_path
+        finally:
+            # Added the boolean arg because cannot remove top level of temp dir structure in
+            # Globus Dev Galaxy instance and it will throw an Exception if the boolean, 'True', is not in place.
+            shutil.rmtree(temp_path, True)
+
+
 
 
 
