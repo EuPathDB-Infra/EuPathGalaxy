@@ -166,12 +166,13 @@ def main():
             print >> sys.stderr, tmp_file
 
             # Copy to /tmp/galaxy. Zip and index. 
+            # Must be a better way to reference samtools - tabix and bgzip. - Works as is though.
             print >> sys.stderr, 'Copy to /tmp'
             call(['cp', self._other_params[0], tmp_file])
             print >> sys.stderr, 'Zipping....'
-            call(['bgzip', tmp_file])
+            call(['/mnt/galaxyTools/tools/tabix/0.2.6/bgzip', tmp_file])
             print >> sys.stderr, 'Indexing....'
-            call(['tabix', '-p', 'vcf', tmp_file + '.gz']) # .tbi also after this.
+            call(['/mnt/galaxyTools/tools/tabix/0.2.6/tabix', '-p', 'vcf', tmp_file + '.gz']) # .tbi also after this.
 
             # New file path is updated in the _datasetInfos attribute. 
             file_to_export = tmp_file + '.gz' + '.tbi' # TODO - update to new file location.
