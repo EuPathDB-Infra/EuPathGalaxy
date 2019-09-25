@@ -14,18 +14,6 @@ import optparse
 from requests.auth import HTTPBasicAuth
 from subprocess import Popen, PIPE
 
-"""
-Have a class that is a handler for a data type. 
-    - This is then composed of:
-        - a file collector 
-        - a file validator
-        - the exporter -  this will be blind to the files that are upstream and export anything that it is passed. 
-
-    Qs:
-        - How tangled is the exporter code to the files that are passed in currently - particularly the methods that are associated  with the export iRODS step. 
-"""
-
-
 
 class BaseFileHandler:
     """
@@ -39,9 +27,7 @@ class BaseFileHandler:
         self._version = version
         self._filecollector = filecollector
         self._exporter = exporter
-        self._validator = validator
-
-        
+        self._validator = validator        
 
     def parse_params(self, input_args):
         """
@@ -174,9 +160,6 @@ class Exporter:
 
         # Set up the configuration data
         (self._url, self._user, self._pwd, self._lz_coll, self._flag_coll) = self.collect_rest_data()
-
-           
-
     
 #--------- CHECKED
     def collect_rest_data(self):
@@ -196,204 +179,187 @@ class Exporter:
             return (config_json["url"], config_json["user"], config_json["password"], "lz", "flags")
 
 
-
 #--------- TO CHECK - need to add in the option for another file to be exported. 
 
-    # def create_dataset_json_file(self, temp_path):
-    #         """ Create and populate the dataset.json file that must be included in the tarball."""
+    def create_dataset_json_file(self, temp_path):
+            """ Create and populate the dataset.json file that must be included in the tarball."""
 
-    #         # Get the total size of the dataset files (needed for the json file)
-    #         size = sum(os.stat(dataset_file['path']).st_size for dataset_file in self._dataset_files_for_export)
+            # Get the total size of the dataset files (needed for the json file)
+            size = sum(os.stat(dataset_file['path']).st_size for dataset_file in self._dataset_files_for_export)
 
-    #         if self.identify_supported_projects() != None:
-    #             for (project) in self.identify_projects():
-    #                 if project not in self.identify_supported_projects():
-    #                     raise ValidationException("Sorry, you cannot export this kind of data to " + project)
+            if self.identify_supported_projects() != None:
+                for (project) in self.identify_projects():
+                    if project not in self.identify_supported_projects():
+                        raise ValidationException("Sorry, you cannot export this kind of data to " + project)
 
-    #         dataset_path = temp_path + "/" + self.DATASET_JSON
-    #         with open(dataset_path, "w+") as json_file:
-    #             json.dump({
-    #             "type": {"name": self._type, "version": self._version},
-    #             "dependencies": self.identify_dependencies(),
-    #             "projects": self.identify_projects(),
-    #             "dataFiles": self.create_data_file_metadata(),
-    #             "owner": self._user_id,
-    #             "size": size,
-    #             "created": self._timestamp
-    #             }, json_file, indent=4)
+            dataset_path = temp_path + "/" + self.DATASET_JSON
+            with open(dataset_path, "w+") as json_file:
+                json.dump({
+                "type": {"name": self._type, "version": self._version},
+                "dependencies": self.identify_dependencies(),
+                "projects": self.identify_projects(),
+                "dataFiles": self.create_data_file_metadata(),
+                "owner": self._user_id,
+                "size": size,
+                "created": self._timestamp
+                }, json_file, indent=4)
 
-    # def create_metadata_json_file(self, temp_path):
-    #     """" Create and populate the meta.json file that must be included in the tarball."""
-    #     meta_path = temp_path + "/" + self.META_JSON
-    #     with open(meta_path, "w+") as json_file:
-    #         json.dump({"name": self._dataset_name,
-    #                    "summary": self._summary,
-    #                    "description": self._description
-    #                    }, json_file, indent=4)
+    def create_metadata_json_file(self, temp_path):
+        """" Create and populate the meta.json file that must be included in the tarball."""
+        meta_path = temp_path + "/" + self.META_JSON
+        with open(meta_path, "w+") as json_file:
+            json.dump({"name": self._dataset_name,
+                       "summary": self._summary,
+                       "description": self._description
+                       }, json_file, indent=4)
 
-    # def create_data_file_metadata(self):
-    #     """
-    #     Create a json object holding metadata for an array of dataset files.
-    #     :return: json object to be inserted into dataset.json
-    #     """
-    #     dataset_files_metadata = []
-    #     for dataset_file in self._dataset_files_for_export:
-    #         dataset_file_metadata = {}
-    #         dataset_file_metadata["name"] = re.sub(r"\s+", "_", dataset_file['name'])
-    #         dataset_file_metadata["file"] = os.path.basename(dataset_file['path'])
-    #         dataset_file_metadata["size"] = os.stat(dataset_file['path']).st_size
-    #         dataset_files_metadata.append(dataset_file_metadata)
-    #     return dataset_files_metadata
+    def create_data_file_metadata(self):
+        """
+        Create a json object holding metadata for an array of dataset files.
+        :return: json object to be inserted into dataset.json
+        """
+        dataset_files_metadata = []
+        for dataset_file in self._dataset_files_for_export:
+            dataset_file_metadata = {}
+            dataset_file_metadata["name"] = re.sub(r"\s+", "_", dataset_file['name'])
+            dataset_file_metadata["file"] = os.path.basename(dataset_file['path'])
+            dataset_file_metadata["size"] = os.stat(dataset_file['path']).st_size
+            dataset_files_metadata.append(dataset_file_metadata)
+        return dataset_files_metadata
 
-    # def package_data_files(self, temp_path):
-    #     """
-    #     Copies the user's dataset files to the datafiles folder of the temporary dir and changes each
-    #     dataset filename conferred by Galaxy to a filename expected by EuPathDB
-    #     """
-    #     os.mkdir(temp_path + "/" + self.DATAFILES)
-    #     for dataset_file in self._dataset_files_for_export:
-    #         shutil.copy(dataset_file['path'], temp_path + "/" + self.DATAFILES + "/" + re.sub(r"\s+", "_", dataset_file['name']))
+    def package_data_files(self, temp_path):
+        """
+        Copies the user's dataset files to the datafiles folder of the temporary dir and changes each
+        dataset filename conferred by Galaxy to a filename expected by EuPathDB
+        """
+        os.mkdir(temp_path + "/" + self.DATAFILES)
+        for dataset_file in self._dataset_files_for_export:
+            shutil.copy(dataset_file['path'], temp_path + "/" + self.DATAFILES + "/" + re.sub(r"\s+", "_", dataset_file['name']))
 
-    # def create_tarball(self):
-    #     """
-    #     Package the tarball - contains meta.json, dataset.json and a datafiles folder containing the
-    #     user's dataset files
-    #     """
-    #     with tarfile.open(self._export_file_root + ".tgz", "w:gz") as tarball:
-    #         for item in [self.META_JSON, self.DATASET_JSON, self.DATAFILES]:
-    #             tarball.add(item)
+    def create_tarball(self):
+        """
+        Package the tarball - contains meta.json, dataset.json and a datafiles folder containing the
+        user's dataset files
+        """
+        with tarfile.open(self._export_file_root + ".tgz", "w:gz") as tarball:
+            for item in [self.META_JSON, self.DATASET_JSON, self.DATAFILES]:
+                tarball.add(item)
 
-    # def process_request(self, collection, source_file):
-    #     """
-    #     This method wraps the iRODS rest request into a try/catch to insure that bad responses are
-    #     reflected back to the user.
-    #     :param collection: the name of the workspaces collection to which the file is to be uploaded
-    #     :param source_file: the name of the file to be uploaded to iRODS
-    #     """
-    #     rest_response = self.send_request(collection, source_file)
-    #     try:
-    #         rest_response.raise_for_status()
-    #     except requests.exceptions.HTTPError as e:
-    #         print >> sys.stderr, "Error: " + str(e)
-    #         sys.exit(1)
+    def process_request(self, collection, source_file):
+        """
+        This method wraps the iRODS rest request into a try/catch to insure that bad responses are
+        reflected back to the user.
+        :param collection: the name of the workspaces collection to which the file is to be uploaded
+        :param source_file: the name of the file to be uploaded to iRODS
+        """
+        rest_response = self.send_request(collection, source_file)
+        try:
+            rest_response.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            print >> sys.stderr, "Error: " + str(e)
+            sys.exit(1)
 
-    # def send_request(self, collection, source_file):
-    #     """
-    #     This request is intended as a multi-part form post containing one file to be uploaded.  iRODS Rest
-    #     does an iput followed by an iget, apparently.  So the response can be used to insure proper
-    #     delivery.
-    #     :param collection: the name of the workspaces collection to which the file is to be uploaded
-    #     :param source_file: the name of the file to be uploaded to iRODS
-    #     :return: the http response from an iget of the uploaded file
-    #     """
-    #     request = self._url + collection + "/" + source_file
-    #     headers = {"Accept": "application/json"}
-    #     upload_file = {"uploadFile": open(source_file, "rb")}
-    #     auth = HTTPBasicAuth(self._user, self._pwd)
-    #     try:
-    #         response = requests.post(request, auth=auth, headers=headers, files=upload_file)
-    #         response.raise_for_status()
-    #     except Exception as e:
-    #         print >> sys.stderr, "Error: The dataset export could not be completed at this time.  The EuPathDB" \
-    #                              " workspace may be unavailable presently. " + str(e)
-    #         sys.exit(2)
-    #     return response
+    def send_request(self, collection, source_file):
+        """
+        This request is intended as a multi-part form post containing one file to be uploaded.  iRODS Rest
+        does an iput followed by an iget, apparently.  So the response can be used to insure proper
+        delivery.
+        :param collection: the name of the workspaces collection to which the file is to be uploaded
+        :param source_file: the name of the file to be uploaded to iRODS
+        :return: the http response from an iget of the uploaded file
+        """
+        request = self._url + collection + "/" + source_file
+        headers = {"Accept": "application/json"}
+        upload_file = {"uploadFile": open(source_file, "rb")}
+        auth = HTTPBasicAuth(self._user, self._pwd)
+        try:
+            response = requests.post(request, auth=auth, headers=headers, files=upload_file)
+            response.raise_for_status()
+        except Exception as e:
+            print >> sys.stderr, "Error: The dataset export could not be completed at this time.  The EuPathDB" \
+                                 " workspace may be unavailable presently. " + str(e)
+            sys.exit(2)
+        return response
 
-    # def get_flag(self, collection, source_file):
-    #     """
-    #     This method picks up any flag (success or failure) from the flags collection in iRODs related to the dataset
-    #     exported to determine whether the export was successful.  If not, the nature of the failure is reported to the
-    #     user.  The failure report will normally be very general unless the problem is one that can possibly be remedied
-    #     by the user (e.g., going over quota).
-    #     :param collection: The iRODS collection holding the status flags
-    #     :param source_file: The dataset tarball name sans extension
-    #     """
-    #     time.sleep(5)  # arbitrary wait period before one time check for a flag.
-    #     auth = HTTPBasicAuth(self._user, self._pwd)
-    #     # Look for the presence of a success flag first and if none found, check for a failure flag.  If neither
-    #     # found, assume that to be a failure also.
-    #     try:
-    #         request = self._url + collection + "/" + "success_" + source_file
-    #         success = requests.get(request, auth=auth, timeout=5)
-    #         if success.status_code == 404:
-    #             request = self._url + collection + "/" + "failure_" + source_file
-    #             failure = requests.get(request, auth=auth, timeout=5)
-    #             if failure.status_code != 404:
-    #                 raise TransferException(failure.content)
-    #             else:
-    #                 failure.raise_for_status()
-    #         else:
-    #             self.output_success()
-    #             print >> sys.stdout, "Your dataset has been successfully exported to EuPathDB."
-    #             print >> sys.stdout, "Please visit an appropriate EuPathDB site to view your dataset."
-    #     except (requests.exceptions.ConnectionError, TransferException) as e:
-    #         print >> sys.stderr, "Error: " + str(e)
-    #         sys.exit(1)
+    def get_flag(self, collection, source_file):
+        """
+        This method picks up any flag (success or failure) from the flags collection in iRODs related to the dataset
+        exported to determine whether the export was successful.  If not, the nature of the failure is reported to the
+        user.  The failure report will normally be very general unless the problem is one that can possibly be remedied
+        by the user (e.g., going over quota).
+        :param collection: The iRODS collection holding the status flags
+        :param source_file: The dataset tarball name sans extension
+        """
+        time.sleep(5)  # arbitrary wait period before one time check for a flag.
+        auth = HTTPBasicAuth(self._user, self._pwd)
+        # Look for the presence of a success flag first and if none found, check for a failure flag.  If neither
+        # found, assume that to be a failure also.
+        try:
+            request = self._url + collection + "/" + "success_" + source_file
+            success = requests.get(request, auth=auth, timeout=5)
+            if success.status_code == 404:
+                request = self._url + collection + "/" + "failure_" + source_file
+                failure = requests.get(request, auth=auth, timeout=5)
+                if failure.status_code != 404:
+                    raise TransferException(failure.content)
+                else:
+                    failure.raise_for_status()
+            else:
+                self.output_success()
+                print >> sys.stdout, "Your dataset has been successfully exported to EuPathDB."
+                print >> sys.stdout, "Please visit an appropriate EuPathDB site to view your dataset."
+        except (requests.exceptions.ConnectionError, TransferException) as e:
+            print >> sys.stderr, "Error: " + str(e)
+            sys.exit(1)
         
-    # def connection_diagnostic(self):
-    #     """
-    #     Used to insure that the calling ip is the one expected (i.e., the one for which the
-    #     firewall is opened).  In Globus Dev Galaxy instance calling the tool outside of Galaxy
-    #     versus inside Galaxy resulted in different calling ip addresses.
-    #     """
-    #     request = "http://ifconfig.co"
-    #     headers = {"Accept": "application/json"}
-    #     try:
-    #         response = requests.get(request, headers=headers)
-    #         response.raise_for_status()
-    #         print >> sys.stdout, "Diagnostic Result: " + response.content
-    #     except Exception as e:
-    #         print >> sys.stderr, "Diagnostic Error: " + str(e)        
+    def connection_diagnostic(self):
+        """
+        Used to insure that the calling ip is the one expected (i.e., the one for which the
+        firewall is opened).  In Globus Dev Galaxy instance calling the tool outside of Galaxy
+        versus inside Galaxy resulted in different calling ip addresses.
+        """
+        request = "http://ifconfig.co"
+        headers = {"Accept": "application/json"}
+        try:
+            response = requests.get(request, headers=headers)
+            response.raise_for_status()
+            print >> sys.stdout, "Diagnostic Result: " + response.content
+        except Exception as e:
+            print >> sys.stderr, "Diagnostic Error: " + str(e)        
    
-    # def identify_dependencies(self):
-    #     """
-    #     An abstract method to be addressed by a specialized export tool that furnishes a dependency json list.
-    #     :return: The dependency json list to be returned should look as follows:
-    #     [dependency1, dependency2, ... ]
-    #     where each dependency is written as a json object as follows:
-    #     {
-    #       "resourceIdentifier": <value>,
-    #       "resourceVersion": <value>,
-    #       "resourceDisplayName": <value
-    #     }
-    #     Where no dependencies exist, an empty list is returned
-    #     """
-    #     raise NotImplementedError(
-    #         "The method 'identify_dependencies(self)' needs to be implemented in the specialized export module.")
+    def identify_dependencies(self):
+        """
+        An abstract method to be addressed by a specialized export tool that furnishes a dependency json list.
+        :return: The dependency json list to be returned should look as follows:
+        [dependency1, dependency2, ... ]
+        where each dependency is written as a json object as follows:
+        {
+          "resourceIdentifier": <value>,
+          "resourceVersion": <value>,
+          "resourceDisplayName": <value
+        }
+        Where no dependencies exist, an empty list is returned
+        """
+        raise NotImplementedError(
+            "The method 'identify_dependencies(self)' needs to be implemented in the specialized export module.")
 
-    # def identify_projects(self):
-    #     """
-    #     An abstract method to be addressed by a specialized export tool that furnishes a EuPathDB project list.
-    #     :return: The project list to be returned should look as follows:
-    #     [project1, project2, ... ]
-    #     At least one valid EuPathDB project must be listed
-    #     """
-    #     raise NotImplementedError(
-    #         "The method 'identify_project(self)' needs to be implemented in the specialized export module.")
+    def identify_projects(self):
+        """
+        An abstract method to be addressed by a specialized export tool that furnishes a EuPathDB project list.
+        :return: The project list to be returned should look as follows:
+        [project1, project2, ... ]
+        At least one valid EuPathDB project must be listed
+        """
+        raise NotImplementedError(
+            "The method 'identify_project(self)' needs to be implemented in the specialized export module.")
 
-    # def identify_supported_projects(self):
+    def identify_supported_projects(self):
         """
         Override this method to provide a non-default list of projects.
 
         Default is None, interpreted as all projects are ok, ie, no constraints.
         """
         return None;
-
-    # def identify_dataset_files(self):
-    #     """
-    #     An abstract method to be addressed by a specialized export tool that furnishes a json list
-    #     containing the dataset data files and the EuPath file names they must have in the tarball.
-    #     :return: The dataset file list to be returned should look as follows:
-    #     [dataset file1, dataset file2, ... ]
-    #     where each dataset file is written as a json object as follows:
-    #     {
-    #       "name":<filename that EuPathDB expects>,
-    #       "path":<Galaxy path to the dataset file>
-    #     At least one valid EuPathDB dataset file must be listed
-    #     """
-    #     raise NotImplementedError(
-    #         "The method 'identify_dataset_file(self)' needs to be implemented in the specialized export module.")
-
 
 
     def export(self, file):
@@ -408,36 +374,36 @@ class Exporter:
         # finished working in our temporary directory.
         orig_path = os.getcwd()
 
-        # We need to create a temporary directory in which to assemble the tarball.
-        with self.temporary_directory(self._export_file_root) as temp_path:
+        # # We need to create a temporary directory in which to assemble the tarball.
+        # with self.temporary_directory(self._export_file_root) as temp_path:
 
-            # Need to temporarily work inside the temporary directory to properly construct and
-            # send the tarball
-            os.chdir(temp_path)
+        #     # Need to temporarily work inside the temporary directory to properly construct and
+        #     # send the tarball
+        #     os.chdir(temp_path)
 
-            self.package_data_files(temp_path)
-            self.create_metadata_json_file(temp_path)
-            self.create_dataset_json_file(temp_path)
-            self.create_tarball()
+        #     self.package_data_files(temp_path)
+        #     self.create_metadata_json_file(temp_path)
+        #     self.create_dataset_json_file(temp_path)
+        #     self.create_tarball()
             
-            # Uncomment to check the calling ip address for this tool.
-            # self.connection_diagnostic()
+        #     # Uncomment to check the calling ip address for this tool.
+        #     # self.connection_diagnostic()
 
-            # Call the iRODS rest service to drop the tarball into the iRODS workspace landing zone
-            # self.process_request(self._lz_coll, self._export_file_root + ".tgz")
+        #     # Call the iRODS rest service to drop the tarball into the iRODS workspace landing zone
+        #     # self.process_request(self._lz_coll, self._export_file_root + ".tgz")
 
-            # Create a empty (flag) file corresponding to the tarball
-            open(self._export_file_root + ".txt", "w").close()
+        #     # Create a empty (flag) file corresponding to the tarball
+        #     open(self._export_file_root + ".txt", "w").close()
 
-            # Call the iRODS rest service to drop a flag into the IRODS workspace flags collection.  This flag
-            # triggers the iRODS PEP that unpacks the tarball and posts the event to Jenkins
-      ##      self.process_request(self._flag_coll, self._export_file_root + ".txt")
+        #     # Call the iRODS rest service to drop a flag into the IRODS workspace flags collection.  This flag
+        #     # triggers the iRODS PEP that unpacks the tarball and posts the event to Jenkins
+        #     self.process_request(self._flag_coll, self._export_file_root + ".txt")
 
-            # Look for a success/fail indication from IRODS.
-            self.get_flag(self._flag_coll, self._export_file_root)
+        #     # Look for a success/fail indication from IRODS.
+        #     self.get_flag(self._flag_coll, self._export_file_root)
 
-            # We exit the temporary directory prior to removing it, back to the original working directory.
-            os.chdir(orig_path)
+        #     # We exit the temporary directory prior to removing it, back to the original working directory.
+        #     os.chdir(orig_path)
 
     @contextlib.contextmanager
     def temporary_directory(self, dir_name):
@@ -454,9 +420,6 @@ class Exporter:
             # Added the boolean arg because cannot remove top level of temp dir structure in
             # Globus Dev Galaxy instance and it will throw an Exception if the boolean, 'True', is not in place.
             shutil.rmtree(temp_path, True)
-
-
-
 
 
 class ValidationException(Exception):

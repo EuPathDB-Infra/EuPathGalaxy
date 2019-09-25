@@ -1,18 +1,18 @@
 # !/usr/bin/env python
 
 import sys
-sys.path.insert(1, "/home/ross/EuPathGalaxy/Tools/lib/python/")
-#sys.path.insert(0, "/opt/galaxy/tools/eupath/Tools/lib/python")
+#sys.path.insert(1, "/home/ross/EuPathGalaxy/Tools/lib/python/")
+sys.path.insert(0, "/opt/galaxy/tools/eupath/Tools/lib/python")
 from eupath import NewEupathExporter
 import optparse
 import sys
 import re
-from subprocess import check_output
+from subprocess import check_output, call
 
 """
-python EuPathGalaxy/Tools/bin/exportSNPDataToEuPathDB TestSetDataName DataSetSummary DataSetDescription ross.madden.333934643@eupathdb.org /home/ross/EuPathGalaxy/Tools/lib/python exportToEuPathDBInfo.html /scratch/galaxy/files/016/dataset_16008.dat  SampleFileName
+python EuPathGalaxy/Tools/bin/exportSNPDataToEuPathDB TestSetDataName DataSetSummary DataSetDescription ross.madden.333934643@eupathdb.org /home/ross/EuPathGalaxy/Tools/lib/python exportToEuPathDBInfo.html /scratch/galaxy/files/016/dataset_16005.dat  SampleFileName
 
-python EuPathGalaxy/Tools/bin/NewexportSNPDataToEuPathDB TestSetDataName DataSetSummary DataSetDescription ross.madden.333934643@eupathdb.org /home/ross/EuPathGalaxy/Tools/lib/python exportToEuPathDBInfo.html /scratch/galaxy/files/016/dataset_16008.dat  SampleFileName
+python EuPathGalaxy/Tools/bin/NewexportSNPDataToEuPathDB TestSetDataName DataSetSummary DataSetDescription ross.madden.333934643@eupathdb.org /home/ross/EuPathGalaxy/Tools/lib/python exportToEuPathDBInfo.html /scratch/galaxy/files/016/dataset_16005.dat  SampleFileName
 
 
 args = "$dataset_name" 
@@ -115,6 +115,7 @@ def main():
 
             self.parse_params(args)
             # print >> sys.stderr, "TEST:", self._user_id
+            # print >> sys.stderr, 'Other params:', self._other_params 
 
             NewEupathExporter.BaseFileHandler.__init__(self, 
             VCFFileHandler.TYPE, 
@@ -130,7 +131,6 @@ def main():
             except:
                 raise Exception("Validation failed.")
 
-            # print >> sys.stderr, 'Other params:', self._other_params 
 
         def test(self):
             # Works
@@ -153,34 +153,37 @@ def main():
             This is then used for the export and the original file is left for Galaxy uses.
             """
             print >> sys.stdout, "--- Zip and index .---", self._other_params[0]
-            file_to_export = self._other_params[0] # TODO - update to new file location.
+           
+            # Getting only the file name.
+            rev_file = str(self._other_params[0])
+            rev_file = rev_file.split('/')[-1]
 
-                    # # Getting only the file name.
-                    # rev_file = file_to_val[::-1]
-                    # rev_file = rev_file.split('/')[0]
-                    # rev_file = rev_file[::-1]
+            print >> sys.stderr, 'Rev_file', rev_file
+            # # do bgzip op on temp.
+            # # original file is still in place. 
 
-                    # print >> sys.stderr, rev_file
-                    # # do bgzip op on temp.
-                    # # original file is still in place. 
+            tmp_file = '/tmp/' + rev_file
+            print >> sys.stderr, tmp_file
 
-                    # # tmp_file = '/tmp/' + rev_file
-                    # # check_output(['cp', file_name, tmp_file])
-                    # # # check_output(['bgzip', tmp_file])
-                    # # # check_output(['tabix', '-p', 'vcf', tmp_file + '.gz']) # .tbi also after this.
+            # Copy to /tmp/galaxy. Zip and index. 
+            print >> sys.stderr, 'Copy to /tmp'
+            call(['cp', self._other_params[0], tmp_file])
+            print >> sys.stderr, 'Zipping....'
+            call(['bgzip', tmp_file])
+            print >> sys.stderr, 'Indexing....'
+            call(['tabix', '-p', 'vcf', tmp_file + '.gz']) # .tbi also after this.
 
             # New file path is updated in the _datasetInfos attribute. 
+            file_to_export = tmp_file + '.gz' + '.tbi' # TODO - update to new file location.
             self._filecollector._datasetInfos[0]['path'] = file_to_export
-
 
             return self._filecollector._datasetInfos
 
         def identify_dataset_files(self):
             """This must return as list formatted as BaseFileHandler.identify_dataset_files() states."""
 
+            # Note that index_and_zip is updating self._filecollector._datasetInfos[0]['path']
             return self.index_and_zip()
-    
-
     
 
     # Makes a FileHandler class composed of the validator.

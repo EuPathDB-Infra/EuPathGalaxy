@@ -8,7 +8,7 @@
   
   <command interpreter="python" detect_errors="aggressive">
     <![CDATA[
-    ../../bin/exportSNPDataToEuPathDB "$dataset_name" "$summary" "$description" "$__user_email__" "$__tool_directory__" "$output" 
+    ../../bin/NewexportSNPDataToEuPathDB "$dataset_name" "$summary" "$description" "$__user_email__" "$__tool_directory__" "$output" 
 
     #for $vcf_file in $vcf_files
       "$vcf_file" "$vcf_file.name"
