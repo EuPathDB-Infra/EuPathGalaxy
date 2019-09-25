@@ -30,8 +30,7 @@ def main():
     (options, args) = parser.parse_args()   
 
     # for i in args:
-    #     print >> sys.stdout, i  
-
+    #     print >> sys.stdout, i 
     # print >> sys.stdout, file_name    
 
     # So users are greeted with a bewildering traceback
@@ -40,35 +39,82 @@ def main():
     # This class/function can be made in a new file where the file handler below can be created. 
     # maybe in Tools/bin/exportSNPDataToEuPathDB
     class FileValidator():
-        #pass
-        def __init__(self):
-            self.test = [0,1,2,3]
 
-        def validate(self, file):
-            print >> sys.stdout, "File to validate: ", file
-            print >> sys.stdout, "---At validate. Beep boop.---" 
-            # raise ValueError('All broken!')
-            # some logic for an error message. 
+        def __init__(self):
+            self.temp = ''
+
+        def validate(self, file_to_val):
+
+            print >> sys.stdout, "File to validate: ", file_to_val
+            print >> sys.stdout, "---At validate. Beep boop.---"
+
+            with open(file_to_val, mode='r') as file:
+
+                bad_lines = []
+
+                for line in file: 
+                    #while i < 1000:
+                    #line = next(file)                    
+                    #print unicode(line[0:100], 'utf-8')
+                    #if re.match(r"^.*\t\d*\t.*\t[ATGC]*\t[ATGC]*\t(\d*\.\d*|\d*)\t(\w*|\.)\t.*$", line):
+                    if re.match(r"^.*\t\d*\t.*\t((([ATGCN]*),){1,}([ATGCN]*)|([ATGCN]*))\t((([ATGCN]*),){1,}([ATGCN]*)|([ATGCN]*))\t((\d*.\d*e-\d*)|(\d*\.\d*)|(\d*))\t(\w*|\.)\t.*$", line):
+                        # This is attempting to match a line in the file where the data is stored. It assumes that the data is
+                        # in the same order as above. Looking for string, tab, number, tab, sting, tab, ATC or G, tab ATC or G, tab
+                        # int/float, tab
+                        #print "-----", line
+                        #print "Line ", i, " ok." 
+                        pass
+                    
+                    elif unicode(line[0:2], 'utf-8') == '##':
+                        # This is to ignore the headers that are added to the file, Jbrowse only cares about certain col headers
+                        # and the data. VCFTools vcf-validator was too rigid to work here, kept failing due to the header being
+                        # incorrect (even though the data looked like it was formatted correctly.)
+                        pass
+
+                    elif re.match(r"^#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\t.*$", line):
+                        #elif '#CHROM' in line:
+                        # This is testing for the header of the data. Note the wildcard at the end that will match any additions 
+                        # by other programs that are not using the usual cols. 
+                        # The order should not be an issue as it seems to be rigid.         
+                        #print "-----", line
+                        pass
+                        
+                    else:
+                        bad_lines.append(line)
+
+                if len(bad_lines) > 0:    
+                    print >> sys.stderr,  "###### Error: Can't validate the file. ######"
+                    print >> sys.stderr, "Hint: Is the data header formmatted: #CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT ?????"
+                    print >> sys.stderr,  "###### These lines are not in the correct format for Jbrowse to read the data. ######"
+                    for bad in bad_lines:            
+                        print >> sys.stderr,  bad
+                    raise ValueError(bad_lines)
+
+                    # Redundancy.
+                    sys.exit(1)
+
+                elif len(bad_lines) == 0:
+                    print >> sys.stderr, "File looks ok."                  
+                    
+                # raise ValueError('All broken!')
+
 
 
     class VCFFileHandler(NewEupathExporter.BaseFileHandler):
         """
         A class for handling the export of VCF file.
         The FileCollector and the Exporter can be overwritten if needed. 
-        The validator should be bespoke to a file type.
+        The validator should be bespoke to a file type - this runs on intilization for this class. .
         """
 
         # Constants
         TYPE = "VCFFile"
-        VERSION = "1.0"
-
-        
+        VERSION = "1.0"        
 
         def __init__(self, validator):
 
             self.parse_params(args)
-
-            print >> sys.stderr, "TEST:", self._user_id
+            # print >> sys.stderr, "TEST:", self._user_id
 
             NewEupathExporter.BaseFileHandler.__init__(self, 
             VCFFileHandler.TYPE, 
@@ -78,7 +124,6 @@ def main():
             validator,
             args
             )
-
         
             try:
                 self.validation(self._other_params[0])
@@ -86,14 +131,6 @@ def main():
                 raise Exception("Validation failed.")
 
             # print >> sys.stderr, 'Other params:', self._other_params 
-
-
-
-
-################### TODO need to implement identify_dataset_file in the exporter
-
-
-
 
         def test(self):
             # Works
@@ -106,28 +143,52 @@ def main():
             # print >> sys.stdout, "_datasetInfos:", self._filecollector._datasetInfos  
              
         def validation(self, file):
-                print >> sys.stdout, "---Try validation.---"
+                print >> sys.stdout, "--- Try validation. ---"
                 self._validator.validate(file)
-                print >> sys.stdout, "---Validation success.---" 
+                print >> sys.stdout, "--- Validation success. ---" 
 
         def index_and_zip(self):
             """
             If the validation is succesful this overwites the _datasetInfos with the path of the zipped and indexed file.
             This is then used for the export and the original file is left for Galaxy uses.
             """
-            print >> sys.stdout, "---Zip and index.---", self._other_params[0]
-            file_to_export = "New file path."
+            print >> sys.stdout, "--- Zip and index .---", self._other_params[0]
+            file_to_export = self._other_params[0] # TODO - update to new file location.
+
+                    # # Getting only the file name.
+                    # rev_file = file_to_val[::-1]
+                    # rev_file = rev_file.split('/')[0]
+                    # rev_file = rev_file[::-1]
+
+                    # print >> sys.stderr, rev_file
+                    # # do bgzip op on temp.
+                    # # original file is still in place. 
+
+                    # # tmp_file = '/tmp/' + rev_file
+                    # # check_output(['cp', file_name, tmp_file])
+                    # # # check_output(['bgzip', tmp_file])
+                    # # # check_output(['tabix', '-p', 'vcf', tmp_file + '.gz']) # .tbi also after this.
+
+            # New file path is updated in the _datasetInfos attribute. 
             self._filecollector._datasetInfos[0]['path'] = file_to_export
-            print >> sys.stdout, self._filecollector._datasetInfos          
-            return file_to_export      
 
+
+            return self._filecollector._datasetInfos
+
+        def identify_dataset_files(self):
+            """This must return as list formatted as BaseFileHandler.identify_dataset_files() states."""
+
+            return self.index_and_zip()
+    
+
+    
+
+    # Makes a FileHandler class composed of the validator.
     validator_class = FileValidator()
-
-    # Makes a class composed of the validator.
     worker = VCFFileHandler(validator_class)
-    worker
 
-    worker._exporter.export(worker.index_and_zip())
+    # Runs the export. 
+    worker._exporter.export(worker.identify_dataset_files())
     # worker.test()
 
 if __name__ == "__main__":
