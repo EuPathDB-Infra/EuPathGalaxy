@@ -13,7 +13,7 @@ import re
 import optparse
 from requests.auth import HTTPBasicAuth
 from subprocess import Popen, PIPE
-
+from . import ReferenceGenome
 
 class BaseFileHandler:
     """
@@ -21,13 +21,14 @@ class BaseFileHandler:
     This will be composed of a filecollector, exporter and validator.
     """
 
-    def __init__(self, dataset_type, version, filecollector, exporter, validator, args):
+    def __init__(self, dataset_type, version, filecollector, exporter, validator, refGenome, args):
        
         self._type = dataset_type
         self._version = version
         self._filecollector = filecollector
         self._exporter = exporter
-        self._validator = validator        
+        self._validator = validator
+    	self._refGenome = ReferenceGenome.Genome(refGenome)
 
     def parse_params(self, input_args):
         """
@@ -42,7 +43,7 @@ class BaseFileHandler:
         if len(args) < 6:
             raise ValidationException("The tool was passed an insufficient numbers of arguments.")
         self._dataset_name = args[0]
-        self._summary = args[1]
+	self._summary = args[1]
         self._description = args[2]
 
         # WDK user id is derived from the user email
@@ -62,6 +63,8 @@ class BaseFileHandler:
         # Other non-standard params e.g. file names referred in the xml wrapper. 
         self._other_params = args[6:]
         print >> sys.stderr, "Other args", args[6:]
+
+    
 
     def output_success(self):
         header = "<html><body><h1>Good news!</h1><br />"
@@ -141,13 +144,15 @@ class Exporter:
     META_JSON = "meta.json"
     DATAFILES = "datafiles"
 
-    def __init__(self, tool_directory, dataset_type, version, user_id):
+    def __init__(self, tool_directory, dataset_type, version, user_id, dataset_name, summary, description):
         self._tool_directory = tool_directory
         self._type = dataset_type
-        self._version = \
+        self._version = version
         self._user_id = user_id
+	self._dataset_name = dataset_name
         self._dataset_files_for_export = '' # update in methods.
-
+	self._summary = summary
+	self._description = description
         # This msec timestamp is used to denote both the created and modified times.
         self._timestamp = int(time.time() * 1000)
 
@@ -374,36 +379,36 @@ class Exporter:
         # finished working in our temporary directory.
         orig_path = os.getcwd()
 
-        # # We need to create a temporary directory in which to assemble the tarball.
-        # with self.temporary_directory(self._export_file_root) as temp_path:
+        # We need to create a temporary directory in which to assemble the tarball.
+        with self.temporary_directory(self._export_file_root) as temp_path:
 
-        #     # Need to temporarily work inside the temporary directory to properly construct and
-        #     # send the tarball
-        #     os.chdir(temp_path)
+            # Need to temporarily work inside the temporary directory to properly construct and
+            # send the tarball
+            os.chdir(temp_path)
 
-        #     self.package_data_files(temp_path)
-        #     self.create_metadata_json_file(temp_path)
-        #     self.create_dataset_json_file(temp_path)
-        #     self.create_tarball()
+            self.package_data_files(temp_path)
+            self.create_metadata_json_file(temp_path)
+            self.create_dataset_json_file(temp_path)
+            self.create_tarball()
             
-        #     # Uncomment to check the calling ip address for this tool.
-        #     # self.connection_diagnostic()
+            # Uncomment to check the calling ip address for this tool.
+            # self.connection_diagnostic()
 
-        #     # Call the iRODS rest service to drop the tarball into the iRODS workspace landing zone
-        #     # self.process_request(self._lz_coll, self._export_file_root + ".tgz")
+            # Call the iRODS rest service to drop the tarball into the iRODS workspace landing zone
+            # self.process_request(self._lz_coll, self._export_file_root + ".tgz")
 
-        #     # Create a empty (flag) file corresponding to the tarball
-        #     open(self._export_file_root + ".txt", "w").close()
+            # Create a empty (flag) file corresponding to the tarball
+            open(self._export_file_root + ".txt", "w").close()
 
-        #     # Call the iRODS rest service to drop a flag into the IRODS workspace flags collection.  This flag
-        #     # triggers the iRODS PEP that unpacks the tarball and posts the event to Jenkins
-        #     self.process_request(self._flag_coll, self._export_file_root + ".txt")
+            # Call the iRODS rest service to drop a flag into the IRODS workspace flags collection.  This flag
+            # triggers the iRODS PEP that unpacks the tarball and posts the event to Jenkins
+            self.process_request(self._flag_coll, self._export_file_root + ".txt")
 
-        #     # Look for a success/fail indication from IRODS.
-        #     self.get_flag(self._flag_coll, self._export_file_root)
+            # Look for a success/fail indication from IRODS.
+            self.get_flag(self._flag_coll, self._export_file_root)
 
-        #     # We exit the temporary directory prior to removing it, back to the original working directory.
-        #     os.chdir(orig_path)
+            # We exit the temporary directory prior to removing it, back to the original working directory.
+            os.chdir(orig_path)
 
     @contextlib.contextmanager
     def temporary_directory(self, dir_name):

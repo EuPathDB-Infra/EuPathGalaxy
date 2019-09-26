@@ -11,7 +11,7 @@
     ../../bin/NewexportSNPDataToEuPathDB "$dataset_name" "$summary" "$description" "$__user_email__" "$__tool_directory__" "$output" 
 
     #for $vcf_file in $vcf_files
-      "$vcf_file" "$vcf_file.name"
+      "$vcf_file" "$vcf_file.name" "$vcf_file.metadata.dbkey"
     #end for
     ]]>
     
@@ -30,6 +30,9 @@
     <param name="vcf_files" type="data" multiple="true" label="VCF file:" format="vcf"
            help="Select the VCF file to include in the new EuPathDB My Data Set. The vcf file you select here must be mapped to the refreence genome that you select below.">
     </param>
+
+    <param name="overrideDbkey" type="genomebuild" label="Reference genome:" 
+           help="The bigwig files you selected above must be mapped to the reference genome that you select here." />
 
     <param name="summary" type="text" value=""
            label="My Data Set summary:">
