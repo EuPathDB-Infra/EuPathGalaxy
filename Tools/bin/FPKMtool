@@ -68,7 +68,7 @@ def __main__():
             #  are together, with the "gene" record first
             txParent = {}
 
-        if fields[gffFeatureTypeCol] == 'transcript' or fields[gffFeatureTypeCol] == 'mRNA' or fields[gffFeatureTypeCol] == 'tRNA' or fields[gffFeatureTypeCol] == 'rRNA':
+        if fields[gffFeatureTypeCol] == 'transcript' or fields[gffFeatureTypeCol].endswith('RNA'):
             id = None
             parent = None
             attributeString = fields[gffAttributeCol]
@@ -96,6 +96,10 @@ def __main__():
             for attr in attributeString.split( ';' ):
                 if attr.startswith( 'Parent=' ):
                     parent = attr[7:]
+
+                    # if we get a comma-separated list of transcripts as parents, use the first one
+                    if ',' in parent:
+                        parent = parent[:parent.find(',')]
 
                     if not parent in txParent:
                         raise Exception('no parent gene found for transcript "' + parent + '"')
