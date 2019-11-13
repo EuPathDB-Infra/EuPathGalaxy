@@ -53,6 +53,8 @@ def __main__():
 
     txParent = {}
     geneLength = {}
+    geneCount = {}
+    geneAntiCount = {}
 
     # use genome GFF file to find gene lengths
     for line in open( args.genome ):
@@ -63,10 +65,8 @@ def __main__():
 
         fields = line.split( '\t' )
 
-        if fields[gffFeatureTypeCol] == 'gene':
-            # this optimization is OK as long as all the records from a gene
-            #  are together, with the "gene" record first
-            txParent = {}
+        # if fields[gffFeatureTypeCol] == 'gene':
+            # txParent = {}
 
         if fields[gffFeatureTypeCol] == 'transcript' or fields[gffFeatureTypeCol].endswith('RNA'):
             id = None
@@ -107,6 +107,8 @@ def __main__():
                     gene = txParent[ parent ]
                     if not gene in geneLength:
                         geneLength[ gene ] = 0
+                        geneCount[ gene ] = 0
+                        geneAntiCount[ gene ] = 0
 
                     geneLength[ gene ] = geneLength[ gene ] + length
 
@@ -124,47 +126,68 @@ def __main__():
         # skip header
         if not line.startswith( '#ID' ):
             fields = line.split( '\t' )
-            if not fields[0] in specialCounters.keys():
-                counts += int(fields[1])
+            id = fields[0]
+
+            # if we get a comma-separated list of transcripts as parents, use the first one
+            if ',' in id:
+                id = id[:id.find(',')]
+
+            if not id in specialCounters.keys():
+                count = int(fields[1])
+                counts += count
+
+                if id in geneLength:
+                    gene = id
+                elif id in txParent:
+                    gene = txParent[ id ]
+                else:
+                    raise Exception('ID "' + id + '" in counts file not recognized as gene or transcript ID')
+
+                geneCount [ gene ] += count
             
     if double_stranded:
         for line in open( args.antisense_input ):
             # skip header
             if not line.startswith( '#ID' ):
                 fields = line.split( '\t' )
-                if not fields[0] in specialCounters.keys():
-                    counts += int(fields[1])
+                id = fields[0]
+
+                # if we get a comma-separated list of transcripts as parents, use the first one
+                if ',' in id:
+                    id = id[:id.find(',')]
+
+                if not id in specialCounters.keys():
+                    count = int(fields[1])
+                    counts += count
+
+                    if id in geneLength:
+                        gene = id
+                    elif id in txParent:
+                        gene = txParent[ id ]
+                    else:
+                        raise Exception('ID "' + id + '" in counts file not recognized as gene or transcript ID')
+
+                    geneAntiCount [ gene ] += count
 
     print "total count is", counts
 
     billion = 10 ** 9
     senseOut = open( args.output, 'w' )
     senseOut.write( 'gene_id\tFPKM\n' )
-    for line in open( args.input ):
-        # skip header
-        if not line.startswith( '#ID' ):
-            fields = line.split( '\t' )
-            gene = fields[0]
-            count = int(fields[1])
-            if not gene in specialCounters.keys():
-                fpkm = ( float(count) * billion ) / ( counts *  geneLength[ gene ] )
-                outline = "%s\t%.12f\n" % (gene, fpkm)
-                senseOut.write( outline )
+    for gene in geneLength.keys():
+        fpkm = ( float( geneCount[ gene ] ) * billion ) / ( counts * geneLength[ gene ] )
+        outline = "%s\t%.12f\n" % (gene, fpkm)
+        senseOut.write( outline )
     senseOut.close()
 
     if double_stranded:
         antisenseOut = open( args.antisense_output, 'w' )
         antisenseOut.write( 'gene_id\tFPKM\n' )
-        for line in open( args.antisense_input ):
-            # skip header
-            if not line.startswith( '#ID' ):
-                fields = line.split( '\t' )
-                gene = fields[0]
-                count = int(fields[1])
-                if not gene in specialCounters.keys():
-                    fpkm = ( float(count) * billion ) / ( counts *  geneLength[ gene ] )
-                    outline = "%s\t%.12f\n" % (gene, fpkm)
-                    antisenseOut.write( outline )
+        for gene in geneLength.keys():
+            fpkm = ( float( geneAntiCount[ gene ] ) * billion ) / ( counts * geneLength[ gene ] )
+            outline = "%s\t%.12f\n" % (gene, fpkm)
+            antisenseOut.write( outline )
+
         antisenseOut.close()
 
 
