@@ -207,13 +207,18 @@ class Export:
         dataset_files_metadata = []
         for dataset_file in self.identify_dataset_files():
             dataset_file_metadata = {}
-            dataset_file_metadata["name"] = re.sub(r"\s+", "_", dataset_file['name'])
+            dataset_file_metadata["name"] = self.clean_file_name(dataset_file['name'])
             dataset_file_metadata["file"] = os.path.basename(dataset_file['path'])
             dataset_file_metadata["size"] = os.stat(dataset_file['path']).st_size
             dataset_files_metadata.append(dataset_file_metadata)
         return dataset_files_metadata
 
-
+    
+    # replace undesired characters with underscore
+    def clean_file_name(self, file_name):
+        s = str(file_name).strip().replace(' ', '_')
+        return re.sub(r'(?u)[^-\w.]', '_', s)
+        
     def package_data_files(self, temp_path):
         """
         Copies the user's dataset files to the datafiles folder of the temporary dir and changes each
@@ -221,7 +226,7 @@ class Export:
         """
         os.mkdir(temp_path + "/" + self.DATAFILES)
         for dataset_file in self.identify_dataset_files():
-            shutil.copy(dataset_file['path'], temp_path + "/" + self.DATAFILES + "/" + re.sub(r"\s+", "_", dataset_file['name']))
+            shutil.copy(dataset_file['path'], temp_path + "/" + self.DATAFILES + "/" + self.clean_file_name(dataset_file['name']))
 
     def create_tarball(self):
         """
