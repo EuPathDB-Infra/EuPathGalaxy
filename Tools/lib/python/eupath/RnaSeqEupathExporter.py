@@ -45,7 +45,8 @@ class RnaSeqExport(EupathExporter.Export):
             # print >> sys.stderr, "args[" + str(i) + "] = " + args[i]
             samplename = args[i+1]
             suffix = args[i+3]
-            filename = re.sub(r"\s+", "_", samplename) + "." + suffix
+            filename = self.clean_file_name(re.sub(r"\s+", "_", samplename) + "." + suffix)
+
             fileNumber += 1
             if strandednessParam == "stranded":
                 if filename[-4:] == ".txt":
