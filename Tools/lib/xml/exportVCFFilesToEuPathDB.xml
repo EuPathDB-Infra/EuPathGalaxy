@@ -11,10 +11,11 @@
     ../../bin/NewexportSNPDataToEuPathDB "$dataset_name" "$summary" "$description" "$__user_email__" "$__tool_directory__" "$output" 
 
     #for $vcf_file in $vcf_files
-      "$vcf_file" "$vcf_file.name" "$vcf_file.metadata.dbkey"
+      "$vcf_file" "$vcf_file.name"
     #end for
-    ]]>
     
+    "$overrideDbkey"
+    ]]>    
   </command>
   
   <inputs>
@@ -27,12 +28,13 @@
       <validator type="length" message="Please restrict the name to 100 characters or less." max="100" />
     </param>
 
+    <!-- Apparently multiple needs to be set to true or there is an error in the class DatasetFilenameWrapper -->
     <param name="vcf_files" type="data" multiple="true" label="VCF file:" format="vcf"
            help="Select the VCF file to include in the new EuPathDB My Data Set. The vcf file you select here must be mapped to the refreence genome that you select below.">
     </param>
 
     <param name="overrideDbkey" type="genomebuild" label="Reference genome:" 
-           help="The bigwig files you selected above must be mapped to the reference genome that you select here." />
+           help="The VCF files you selected above must be mapped to the reference genome that you select here." />
 
     <param name="summary" type="text" value=""
            label="My Data Set summary:">

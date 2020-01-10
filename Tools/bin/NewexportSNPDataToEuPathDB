@@ -1,18 +1,19 @@
 # !/usr/bin/env python
 
 import sys
-sys.path.insert(1, "/home/ross/EuPathGalaxy/Tools/lib/python/")
-#sys.path.insert(0, "/opt/galaxy/tools/eupath/Tools/lib/python")
+#sys.path.insert(1, "/home/ross/EuPathGalaxy/Tools/lib/python/")
+sys.path.insert(0, "/opt/galaxy/tools/eupath/Tools/lib/python")
 from eupath import NewEupathExporter, ReferenceGenome
 import optparse
 import sys
 import re
+import os
 from subprocess import check_output, call
 
 """
-python EuPathGalaxy/Tools/bin/exportSNPDataToEuPathDB TestSetDataName DataSetSummary DataSetDescription ross.madden.333934643@eupathdb.org /home/ross/EuPathGalaxy/Tools/lib/python exportToEuPathDBInfo.html /scratch/galaxy/files/016/dataset_16005.dat  SampleFileName
+python EuPathGalaxy/Tools/bin/exportSNPDataToEuPathDB TestSetDataName DataSetSummary DataSetDescription rmadden.433744323@eupathdb.org /home/ross/EuPathGalaxy/Tools/lib/python exportToEuPathDBInfo.html /scratch/galaxy/files/016/dataset_16366.dat  SampleFileName
 
-python EuPathGalaxy/Tools/bin/NewexportSNPDataToEuPathDB TestSetDataName DataSetSummary DataSetDescription ross.madden.333934644@eupathdb.org /home/ross/EuPathGalaxy/Tools/lib/python exportToEuPathDBInfo.html /scratch/galaxy/files/016/dataset_16005.dat  SampleFileName TriTrypDB-39_TbruceiTREU927_Genome
+python EuPathGalaxy/Tools/bin/NewexportSNPDataToEuPathDB TestSetDataName DataSetSummary DataSetDescription rmadden.433744323@eupathdb.org /home/ross/EuPathGalaxy/Tools/lib/python exportToEuPathDBInfo.html /scratch/galaxy/files/016/dataset_16366.dat  SampleFileName TriTrypDB-29_TbruceiLister427_Genome
 
 
 
@@ -100,12 +101,11 @@ def main():
                 # raise ValueError('All broken!')
 
 
-
     class VCFFileHandler(NewEupathExporter.BaseFileHandler):
         """
         A class for handling the export of VCF file.
         The FileCollector and the Exporter can be overwritten if needed. 
-        The validator should be bespoke to a file type - this runs on intilization for this class. .
+        The validator should be bespoke to a file type - this runs on intilization for this class.
         """
 
         # Constants
@@ -115,17 +115,17 @@ def main():
         def __init__(self, validator):
 
             self.parse_params(args)
-            print >> sys.stderr, 'Other params:', self._other_params 
-	    print >> sys.stderr, "Genome", self._other_params[3]
-	    
-            
+            print >> sys.stderr, 'Other params:', self._other_params
+
+	    print >> sys.stderr, "Genome", self._other_params[2]
+	                
 	    NewEupathExporter.BaseFileHandler.__init__(self, 
             VCFFileHandler.TYPE, 
             VCFFileHandler.VERSION,
             NewEupathExporter.FileCollector(self._other_params[0], self._other_params[1]),
-            NewEupathExporter.Exporter(self._tool_directory, self.TYPE, self.VERSION, self._user_id, self._dataset_name, self._summary, self._description),
+            # TODO - better output sucess page handling.
+            NewEupathExporter.Exporter(self._tool_directory, self._output, self.TYPE, self.VERSION, self._user_id, self._dataset_name, self._summary, self._description, self._other_params[2]),
             validator,
-	    self._other_params[3],
             args
             )
         
@@ -139,17 +139,19 @@ def main():
             # Works
             print >> sys.stdout, "_tool_directory:", self._exporter._tool_directory
             # print >> sys.stdout, "_tool_directory:", self._exporter.collect_rest_data()
-            print >> sys.stdout, "_dataset_name:", self._dataset_name  
-	    print >> sys.stderr, self.identify_dependencies()
-	    print >> sys.stderr, self.identify_projects()
+            print >> sys.stdout, "_dataset_name:", self._dataset_name
+	        # print >> sys.stderr, "ID dep:", self.identify_dependencies()
+	        # print >> sys.stderr, "ID project", self.identify_projects()
             # Testing
+            self.identify_dataset_files()
+            print >> sys.stderr, self._filecollector._datasetInfos
 
             # print >> sys.stdout, "_datasetInfos:", self._filecollector._datasetInfos  
              
         def validation(self, file):
-                print >> sys.stdout, "--- Try validation. ---"
-                self._validator.validate(file)
-                print >> sys.stdout, "--- Validation success. ---" 
+            print >> sys.stdout, "--- Try validation. ---"
+            self._validator.validate(file)
+            print >> sys.stdout, "--- Validation success. ---" 
 
         def index_and_zip(self):
             """
@@ -163,55 +165,99 @@ def main():
             rev_file = rev_file.split('/')[-1]
 
             print >> sys.stderr, 'Rev_file', rev_file
-            # # do bgzip op on temp.
+
             # # original file is still in place. 
 
-            tmp_file = '/tmp/' + rev_file
+            tmp_file = '/tmp/' + self._user_id + '/' +  rev_file
             print >> sys.stderr, tmp_file
 
             # Copy to /tmp/galaxy. Zip and index. 
+            # Have a dir with unique user ID. 
+            call(['mkdir', '/tmp/' + self._user_id])
             # Must be a better way to reference samtools - tabix and bgzip. - Works as is though.
             print >> sys.stderr, 'Copy to /tmp'
             call(['cp', self._other_params[0], tmp_file])
+
+            # Rename file. 
+            renamed_file = '/tmp/' + self._user_id + '/' + self._other_params[1] + '.vcf'
+            call(['mv', tmp_file, renamed_file])
             print >> sys.stderr, 'Zipping....'
-            call(['/mnt/galaxyTools/tools/tabix/0.2.6/bgzip', '-f', tmp_file])
+            call(['/mnt/galaxyTools/tools/tabix/0.2.6/bgzip', '-f', renamed_file])
             print >> sys.stderr, 'Indexing....'
-            call(['/mnt/galaxyTools/tools/tabix/0.2.6/tabix', '-pf', 'vcf', tmp_file + '.gz']) # .tbi also after this.
+            
+            try:
+                call(['/mnt/galaxyTools/tools/tabix/0.2.6/tabix', '-p', 'vcf', renamed_file + '.gz']) 
+            except:
+                call(['/mnt/galaxyTools/tools/tabix/0.2.6/tabix', '-pf', 'vcf', renamed_file + '.gz']) 
 
-            # New file path is updated in the _datasetInfos attribute. 
-            file_to_export = tmp_file + '.gz' + '.tbi' 
-            self._filecollector._datasetInfos[0]['path'] = file_to_export
+            print >> sys.stderr, 'Indexed'
+            
+            # Updating the _datasetInfos data.
+            # New file path is updated in the _datasetInfos attribute.
+            zipped_file_to_export = renamed_file + '.gz'
+            index_file_to_export = renamed_file + '.gz' + '.tbi' 
+            # print >> sys.stderr, self._filecollector._datasetInfos
+            self._filecollector._datasetInfos[0]['path'] = zipped_file_to_export
 
-            return self._filecollector._datasetInfos
+            vcf_data = {'path': zipped_file_to_export , 'name': self._other_params[1]}
+            index_data = {'path': index_file_to_export, 'name': self._other_params[1] + "_index"}
+
+            self._filecollector._datasetInfos = [vcf_data, index_data]
+
+
+            # open manifest file
+            manifestPath = "/tmp/manifest." + str(os.getpid()) + ".txt"
+            # print >> sys.stderr, 'Manifest:',  manifestPath
+            manifest = open(manifestPath, "w+")
+
+            ## Note in the xml this will need the right variables passed in - e.g. sample name, file format.
+            print >> manifest, zipped_file_to_export  + "\t" + self._other_params[1]
+            print >> manifest, index_file_to_export + "\t" + self._other_params[1] + "_index"               
+            self._filecollector._datasetInfos.append({"name": "manifest.txt", "path": manifestPath})
+            # print >> sys.stderr, "DATASETINFOS", self._filecollector._datasetInfos 
+            manifest.close()
+
+
+
+
+            # print >> sys.stderr, self._filecollector._datasetInfos[0]['path']
+            # self._filecollector._datasetInfos.insert(1, self._filecollector._datasetInfos[0])
+            # print >> sys.stderr, 'EXPORT DATA', self._filecollector._datasetInfos
+            # self._filecollector._datasetInfos[1]['path'] = index_file_to_export
+            # print >> sys.stderr, 'EXPORT DATA', self._filecollector._datasetInfos
+
+            return self._filecollector._datasetInfos 
+
+            #TODO export zipped and index files and link on other side.
 
         def identify_dataset_files(self):
             """This must return as list formatted as BaseFileHandler.identify_dataset_files() states."""
 
             # Note that index_and_zip is updating self._filecollector._datasetInfos[0]['path']
-            return self.index_and_zip()
+            return self.index_and_zip()       
     
-
-	def identify_dependencies(self):
-	    """
-       	    The appropriate dependency(ies) will be determined by the reference genome selected - only one for now. Ross - this could be moved into the parent class if it never changes
-            """
-            return [{
-            	"resourceIdentifier": self._refGenome.identifier,
-            	"resourceVersion": self._refGenome.version,
-            	"resourceDisplayName": self._refGenome.display_name
-        	}]
-
-    	def identify_projects(self):
-        	return [self._refGenome.project]
-
 
     # Makes a FileHandler class composed of the validator.
     validator_class = FileValidator()
     worker = VCFFileHandler(validator_class)
 
+
+
+    print >> sys.stderr, '-----NAMES:', worker._exporter._dataset_files_for_export
+
+    # Updates for value for method in exporter. 
+    # need to update this.
+    worker._exporter._dataset_files_for_export = worker._filecollector._datasetInfos
+
+
+    print >> sys.stderr, '-----NAMES:', worker._filecollector._datasetInfos
+    print >> sys.stderr, '-----NAMES:', worker._exporter._dataset_files_for_export
+    files = worker.identify_dataset_files()
+    print >> sys.stderr, '-----NAMES a:', files
+
     # Runs the export. 
-    #worker._exporter.export(worker.identify_dataset_files())
-    worker.test()
+    worker._exporter.export(files)
+    # worker.test()
 
 if __name__ == "__main__":
     sys.exit(main())

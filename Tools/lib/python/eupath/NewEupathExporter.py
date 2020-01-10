@@ -21,14 +21,14 @@ class BaseFileHandler:
     This will be composed of a filecollector, exporter and validator.
     """
 
-    def __init__(self, dataset_type, version, filecollector, exporter, validator, refGenome, args):
+    def __init__(self, dataset_type, version, filecollector, exporter, validator, args):
        
         self._type = dataset_type
         self._version = version
         self._filecollector = filecollector
         self._exporter = exporter
         self._validator = validator
-    	self._refGenome = ReferenceGenome.Genome(refGenome)
+    	
 
     def parse_params(self, input_args):
         """
@@ -43,7 +43,7 @@ class BaseFileHandler:
         if len(args) < 6:
             raise ValidationException("The tool was passed an insufficient numbers of arguments.")
         self._dataset_name = args[0]
-	self._summary = args[1]
+        self._summary = args[1]
         self._description = args[2]
 
         # WDK user id is derived from the user email
@@ -64,32 +64,6 @@ class BaseFileHandler:
         self._other_params = args[6:]
         print >> sys.stderr, "Other args", args[6:]
 
-    
-
-    def output_success(self):
-        header = "<html><body><h1>Good news!</h1><br />"
-        msg = """
-        <h2>Results of the EuPathDB Export Tool<br />Bigwig Files to EuPathDB</h2>
-        <h3>Your set of bigwig files was exported from Galaxy to your account in EuPathDB.
-            For file access and to view in GBrowse, go to My Data Sets in the appropriate EuPathDB site:
-        </h3><br />
-        Go to the appropriate EuPathDB site (links below) to see it (and all your User Datasets):<br \>
-        <a href='http://amoebadb.org/amoeba/app/workspace/datasets'>AmoebaDB</a><br />
-        <a href='http://cryptodb.org/cryptodb/app/workspace/datasets'>CryptoDB</a><br />
-        <a href='http://fungidb.org/fungidb/app/workspace/datasets'>FungiDB</a><br />
-        <a href='http://giardiadb.org/giardiadb/app/workspace/datasets'>GiardiaDB</a><br />
-        <a href='http://hostdb.org/hostdb/app/workspace/datasets'>HostDB</a><br />
-        <a href='http://microsporidiadb.org/micro/app/workspace/datasets'>MicrosporidiaDB</a><br />
-        <a href='http://piroplasmadb.org/piro/app/workspace/datasets'>PiroplasmaDB</a><br />
-        <a href='http://plasmodb.org/plasmo/app/workspace/datasets'>PlasmoDB</a><br />
-        <a href='http://schistodb.net/schisto/app/workspace/datasets'>SchistoDB</a><br />
-        <a href='http://toxodb.org/toxo/app/workspace/datasets'>ToxoDB</a><br />
-        <a href='http://trichdb.org/trichdb/app/workspace/datasets'>TrichDB</a><br />
-        <a href='http://tritrypdb.org/tritrypdb/app/workspace/datasets'>TriTrypDB</a><br />
-        </body></html>
-        """
-        with open(self._output, 'w') as file:
-            file.write("%s%s" % (header,msg))
 
     def identify_dataset_files(self):
         """
@@ -116,15 +90,16 @@ class FileCollector:
         self.file = name_file_to_export
         self._datasetInfos = []
 
-        # open manifest file
-        manifestPath = "/tmp/manifest." + str(os.getpid()) + ".txt"
-        manifest = open(manifestPath, "w+")
+        # # open manifest file
+        # manifestPath = "/tmp/manifest." + str(os.getpid()) + ".txt"
+        # print >> sys.stderr, 'Manifest:',  manifestPath
+        # manifest = open(manifestPath, "w+")
 
-        ## Note in the xml this will need the right variables passed in - e.g. sample name, file format.
+        # ## Note in the xml this will need the right variables passed in - e.g. sample name, file format.
         self._datasetInfos.append({"name": self.file, "path": self.file_path})
-        #print >> manifest, "SAMPLE NAME", samplename # + "\t" + filename              
-        self._datasetInfos.append({"name": "manifest.txt", "path": manifestPath})
-        print >> sys.stderr, "DATASETINFOS", self._datasetInfos
+        # print >> manifest, "SAMPLE NAME", samplename # + "\t" + filename              
+        # self._datasetInfos.append({"name": "manifest.txt", "path": manifestPath})
+        # # print >> sys.stderr, "DATASETINFOS", self._datasetInfos
     
     def identify_dataset_files(self):
         """
@@ -144,15 +119,18 @@ class Exporter:
     META_JSON = "meta.json"
     DATAFILES = "datafiles"
 
-    def __init__(self, tool_directory, dataset_type, version, user_id, dataset_name, summary, description):
+    def __init__(self, tool_directory, output_file, dataset_type, version, user_id, dataset_name, summary, description, refGenome):
         self._tool_directory = tool_directory
+        self._output = output_file
         self._type = dataset_type
         self._version = version
         self._user_id = user_id
-	self._dataset_name = dataset_name
+        self._dataset_name = dataset_name
         self._dataset_files_for_export = '' # update in methods.
-	self._summary = summary
-	self._description = description
+        self._summary = summary
+        self._description = description
+        #self._refGenome = refGenome
+        self._genome_data = ReferenceGenome.Genome(refGenome)        
         # This msec timestamp is used to denote both the created and modified times.
         self._timestamp = int(time.time() * 1000)
 
@@ -238,7 +216,9 @@ class Exporter:
         dataset filename conferred by Galaxy to a filename expected by EuPathDB
         """
         os.mkdir(temp_path + "/" + self.DATAFILES)
+
         for dataset_file in self._dataset_files_for_export:
+            print >> sys.stderr, "To export:", dataset_file
             shutil.copy(dataset_file['path'], temp_path + "/" + self.DATAFILES + "/" + re.sub(r"\s+", "_", dataset_file['name']))
 
     def create_tarball(self):
@@ -247,6 +227,8 @@ class Exporter:
         user's dataset files
         """
         with tarfile.open(self._export_file_root + ".tgz", "w:gz") as tarball:
+            print >> sys.stderr, "Tarball:", self.META_JSON, self.DATASET_JSON, self.DATAFILES
+
             for item in [self.META_JSON, self.DATASET_JSON, self.DATAFILES]:
                 tarball.add(item)
 
@@ -285,6 +267,29 @@ class Exporter:
                                  " workspace may be unavailable presently. " + str(e)
             sys.exit(2)
         return response
+
+    def output_success(self):
+        header = "<html><body><h1>Good news!</h1><br />"
+        msg = """
+        <h2>Results of the EuPathDB Export Tool<br/>Files to EuPathDB</h2>
+
+        Go to the appropriate EuPathDB site (links below) to see it (and all your User Datasets):<br \>
+        <a href='http://amoebadb.org/amoeba/app/workspace/datasets'>AmoebaDB</a><br />
+        <a href='http://cryptodb.org/cryptodb/app/workspace/datasets'>CryptoDB</a><br />
+        <a href='http://fungidb.org/fungidb/app/workspace/datasets'>FungiDB</a><br />
+        <a href='http://giardiadb.org/giardiadb/app/workspace/datasets'>GiardiaDB</a><br />
+        <a href='http://hostdb.org/hostdb/app/workspace/datasets'>HostDB</a><br />
+        <a href='http://microsporidiadb.org/micro/app/workspace/datasets'>MicrosporidiaDB</a><br />
+        <a href='http://piroplasmadb.org/piro/app/workspace/datasets'>PiroplasmaDB</a><br />
+        <a href='http://plasmodb.org/plasmo/app/workspace/datasets'>PlasmoDB</a><br />
+        <a href='http://schistodb.net/schisto/app/workspace/datasets'>SchistoDB</a><br />
+        <a href='http://toxodb.org/toxo/app/workspace/datasets'>ToxoDB</a><br />
+        <a href='http://trichdb.org/trichdb/app/workspace/datasets'>TrichDB</a><br />
+        <a href='http://tritrypdb.org/tritrypdb/app/workspace/datasets'>TriTrypDB</a><br />
+        </body></html>
+        """
+        with open(self._output, 'w') as file:
+            file.write("%s%s" % (header,msg))
 
     def get_flag(self, collection, source_file):
         """
@@ -332,31 +337,31 @@ class Exporter:
         except Exception as e:
             print >> sys.stderr, "Diagnostic Error: " + str(e)        
    
-    def identify_dependencies(self):
-        """
-        An abstract method to be addressed by a specialized export tool that furnishes a dependency json list.
-        :return: The dependency json list to be returned should look as follows:
-        [dependency1, dependency2, ... ]
-        where each dependency is written as a json object as follows:
-        {
-          "resourceIdentifier": <value>,
-          "resourceVersion": <value>,
-          "resourceDisplayName": <value
-        }
-        Where no dependencies exist, an empty list is returned
-        """
-        raise NotImplementedError(
-            "The method 'identify_dependencies(self)' needs to be implemented in the specialized export module.")
+    # def identify_dependencies(self):
+    #     """
+    #     An abstract method to be addressed by a specialized export tool that furnishes a dependency json list.
+    #     :return: The dependency json list to be returned should look as follows:
+    #     [dependency1, dependency2, ... ]
+    #     where each dependency is written as a json object as follows:
+    #     {
+    #       "resourceIdentifier": <value>,
+    #       "resourceVersion": <value>,
+    #       "resourceDisplayName": <value
+    #     }
+    #     Where no dependencies exist, an empty list is returned
+    #     """
+    #     raise NotImplementedError(
+    #         "The method 'identify_dependencies(self)' needs to be implemented in the specialized export module.")
 
-    def identify_projects(self):
-        """
-        An abstract method to be addressed by a specialized export tool that furnishes a EuPathDB project list.
-        :return: The project list to be returned should look as follows:
-        [project1, project2, ... ]
-        At least one valid EuPathDB project must be listed
-        """
-        raise NotImplementedError(
-            "The method 'identify_project(self)' needs to be implemented in the specialized export module.")
+    # def identify_projects(self):
+    #     """
+    #     An abstract method to be addressed by a specialized export tool that furnishes a EuPathDB project list.
+    #     :return: The project list to be returned should look as follows:
+    #     [project1, project2, ... ]
+    #     At least one valid EuPathDB project must be listed
+    #     """
+    #     raise NotImplementedError(
+    #         "The method 'identify_project(self)' needs to be implemented in the specialized export module.")
 
     def identify_supported_projects(self):
         """
@@ -365,13 +370,26 @@ class Exporter:
         Default is None, interpreted as all projects are ok, ie, no constraints.
         """
         return None;
+    
+    def identify_dependencies(self):
+        """
+            The appropriate dependency(ies) will be determined by the reference genome selected - only one for now. Ross - this could be moved into the parent class if it never changes
+        """
+        return [{
+            "resourceIdentifier": self._genome_data.identifier,
+            "resourceVersion": self._genome_data.version,
+            "resourceDisplayName": self._genome_data.display_name
+        }]
+
+    def identify_projects(self):
+        return [self._genome_data.project]
 
 
     def export(self, file):
         """
         Does the work of exporting to EuPathDB, a tarball consisting of the user's dataset files along
         with dataset and metadata json files.
-        """
+        """        
 
         print >> sys.stdout, "---EXPORTING!!!!---", file
 
@@ -380,35 +398,47 @@ class Exporter:
         orig_path = os.getcwd()
 
         # We need to create a temporary directory in which to assemble the tarball.
+
         with self.temporary_directory(self._export_file_root) as temp_path:
 
             # Need to temporarily work inside the temporary directory to properly construct and
             # send the tarball
             os.chdir(temp_path)
 
+            print >> sys.stdout, "---EXPORTING - 1 ---"
             self.package_data_files(temp_path)
+            print >> sys.stdout, "---EXPORTING - 2 ---"
             self.create_metadata_json_file(temp_path)
+            print >> sys.stdout, "---EXPORTING - 3 ---"
             self.create_dataset_json_file(temp_path)
+            print >> sys.stdout, "---EXPORTING - 4 ---"
             self.create_tarball()
+            print >> sys.stdout, "---EXPORTING - 5 ---"
             
-            # Uncomment to check the calling ip address for this tool.
-            # self.connection_diagnostic()
+            # Uncomment to check the calling ip address for this tool.            
+            #self.connection_diagnostic()
+            print >> sys.stdout, "---EXPORTING - 6 ---"
 
             # Call the iRODS rest service to drop the tarball into the iRODS workspace landing zone
-            # self.process_request(self._lz_coll, self._export_file_root + ".tgz")
+            self.process_request(self._lz_coll, self._export_file_root + ".tgz")
+            print >> sys.stdout, "---EXPORTING - 7 ---"
 
             # Create a empty (flag) file corresponding to the tarball
             open(self._export_file_root + ".txt", "w").close()
+            print >> sys.stdout, "---EXPORTING - 8 ---"
 
             # Call the iRODS rest service to drop a flag into the IRODS workspace flags collection.  This flag
             # triggers the iRODS PEP that unpacks the tarball and posts the event to Jenkins
             self.process_request(self._flag_coll, self._export_file_root + ".txt")
+            print >> sys.stdout, "---EXPORTING - 9 ---"
 
             # Look for a success/fail indication from IRODS.
             self.get_flag(self._flag_coll, self._export_file_root)
+            print >> sys.stdout, "---EXPORTING - 10 ---"
 
             # We exit the temporary directory prior to removing it, back to the original working directory.
             os.chdir(orig_path)
+            print >> sys.stdout, "---EXPORTING - 11 ---"
 
     @contextlib.contextmanager
     def temporary_directory(self, dir_name):

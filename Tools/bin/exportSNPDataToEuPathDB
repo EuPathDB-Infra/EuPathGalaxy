@@ -32,7 +32,7 @@ def main():
     print >> sys.stdout, file_name
     try:
         print >> sys.stdout, "Try export."
-        exporter.validate_datasets() 
+        exporter.validate_datasets() #.export()
 
         # edit the args to export the zipped file....
 
