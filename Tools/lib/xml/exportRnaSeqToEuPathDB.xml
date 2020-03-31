@@ -1,6 +1,6 @@
-<tool id="exportRnaSeqToEuPathDB" name="RNA-Seq to EuPathDB" version="1.0.0">
+<tool id="exportRnaSeqToEuPathDB" name="RNA-Seq to VEuPathDB" version="1.0.0">
   
-<description>Export an RNA-Seq result to EuPathDB</description>
+<description>Export an RNA-Seq result to VEuPathDB</description>
   
   <requirements>
     <requirement type="package">pymodules</requirement>
@@ -56,7 +56,7 @@
     </param>
 
     <param name="bigwig_collection" type="data_collection" multiple="true" label="BigWig collection:" format="bigwig"
-           help="Select the BigWig collection to include in the new EuPathDB My Data Set. The bigwig collection you select here must be mapped to the refreence genome that you select below.">
+           help="Select the BigWig collection to include in the new VEuPathDB My Data Set. The bigwig collection you select here must be mapped to the refreence genome that you select below.">
     </param>
 
     <param name="fpkm_collection" type="data_collection" multiple="true" label="FPKM collection:" format="tabular"
@@ -109,7 +109,7 @@
 
 **What it does**   (check this Tutorial_!)
 
-This tool exports an RNA-Seq result to a EuPathDB site creating a new My Data Set to contain them.
+This tool exports an RNA-Seq result to a VEuPathDB site creating a new My Data Set to contain them.
 
 .. _PlasmoDB.org: http://plasmodb.org
 .. _Tutorial: http://www.youtube.com/watch?v=igQZHjRBqV0
