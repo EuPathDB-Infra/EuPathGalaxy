@@ -1,0 +1,87 @@
+<tool id="exportBiomToEuPathDB" name="BIOM to MicrobiomeDB" version="1.0.0">
+  <description>Export a BIOM 1.0 file to MicrobiomeDB</description>
+  <requirements>
+    <requirement type="package">pymodules</requirement>
+  </requirements>
+  <command interpreter="python" detect_errors="aggressive">
+    ../../bin/exportBiomToEuPathDB "$dataset_name" "$summary" "$description" "$__user_email__" "$__tool_directory__" "$output" "" "$input" 
+  </command>
+  <inputs>
+    <param name="dataset_name" type="text" size="100" value=""
+           label="Dataset name:"
+           help="This name will allow you to readily identify and apply this dataset in MicrobiomeDB">
+      <validator type="empty_field" />
+      <validator type="regex" message="Only letters, numbers, spaces and dashes are allowed in the name.">^[\w\d\s\-]*$</validator>
+      <validator type="length" message="Please restrict the name to 100 characters or less." max="100" />
+    </param>
+    <param name="summary" type="text" value=""
+           label="Dataset summary:"
+           help="This summary will appear in your dataset listing page. Note that any double quotes will be coverted to single quotes">
+      <validator type="empty_field" />
+      <!--
+        The summary may have any printable character with the exception that double quotes must be
+        translated into single quotes since this value will be embedded in a json object
+      -->
+      <sanitizer>
+        <valid initial="string.printable">
+          <remove value="&quot;"/>
+        </valid>
+        <mapping initial="none">
+          <add source="&quot;" target="'"/>
+        </mapping>
+      </sanitizer>
+    </param>
+    <param name="description" type="text" value="" area="True"
+           label="Dataset description:"
+           help="This description is visible on the dataset page reached via the dataset listing page.  Note that any double quotes will be coverted to single quotes" >
+      <validator type="empty_field" />
+      <!--
+        The description may have any printable character with the exception that double quotes must be
+        translated into single quotes since this value will be embedded in a json object
+      -->
+      <sanitizer>
+        <valid initial="string.printable">
+          <remove value="&quot;"/>
+        </valid>
+        <mapping initial="none">
+          <add source="&quot;" target="'"/>
+        </mapping>
+      </sanitizer>
+    </param>
+    <!--
+     multiple = false by default.  If the user select N files, the tool runs N times.  This is
+     a problem since the accompanying information will be the same each time.
+     -->
+    <param name="input" type="data" format="txt" label="BIOM file to export:" >
+      <!--
+      This does not work with the older version of Galaxy that Globus uses.
+      <validator type="empty_dataset" />
+      -->
+    </param>
+
+  </inputs>
+  <outputs>
+      <data format="html" name="output" label="exportToEuPathDBInfo.txt" />
+  </outputs>
+
+  <help>
+
+**What it does**
+
+This tool obtains a file in the BIOM format 1.0 (http://biom-format.org/documentation/format_versions/biom-1.0.html) and from that, creates a valid dataset that can be viewed on our metagenomics portal, MicrobiomeDB.
+
+You need to provide a name for the dataset so that you may easily identify it in EuPathDB websites, along with
+a description and a summary, the project to which the dataset applies and of course, a gene list. All inputs are
+required.
+
+We recommend that the user only supply one dataset file at a time. The tool can run in batch mode,
+but the datasets could be very difficult to distinguish in MicrobiomeDB as all the other parameters above
+will apply to every dataset.
+
+  </help>
+  <citations>
+    <citation type="doi">
+      10.1093/nar/gkw1105
+    </citation>
+  </citations>
+</tool>
