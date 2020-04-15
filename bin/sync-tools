@@ -1,0 +1,19 @@
+#!/bin/bash
+# Syncs tools
+# Doesn't change /opt/galaxy/config/tool_conf.xml
+# Doesn't "sudo supervisorctl restart galaxy:"
+
+host=$1
+pass=$2
+if [ ! "$host" -o ! "$pass" ] ; then
+  echo "Usage: $0 <host eg. eupathdbdev.globusgenomics.org> <sudo pass e.g. hunter2>"
+  exit 1
+fi
+
+ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. >/dev/null 2>&1 && pwd )"
+
+rsync -a $ROOT_DIR/Tools/ $host:/var/tmp/Tools/
+
+echo "$pass" | ssh -tt $host sudo rsync -a /var/tmp/Tools/ /opt/galaxy/tools/eupath/Tools/
+
+ssh $host "cd /opt/galaxy/ && git status "
