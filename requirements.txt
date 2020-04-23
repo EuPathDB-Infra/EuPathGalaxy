@@ -1,0 +1,5 @@
+# Validate BIOM files
+# 2.1.7 is the last version supporting python2
+numpy>=1.12.0
+cython
+biom-format==2.1.7
