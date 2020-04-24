@@ -11,7 +11,7 @@ document.getElementById("eupath-intro").innerHTML = "" +
                 "<ol><li>Start analyzing your data now with pre-configured workflows. All VEuPathDB genomes are pre-loaded.</li>" +
                 "<li>Perform large-scale data analysis with no prior programming or bioinformatics experience.</li>" +
                 "<li>Create custom workflows using an interactive workflow editor. <a target='_blank'  href='https://wiki.galaxyproject.org/Learn/AdvancedWorkflow'>Learn how</a></li> " +
-                "<li>Export your results to VEuPathDB, so that you can explore your data with our tools, such as JBrowse and search strategies. See <a href='https://eupathdb.org/assets/GalaxyRNASeqExportTool.pdf' target='_blank'>this tutorial</a>.</li>" +
+                "<li>Export your results to VEuPathDB, so that you can explore your data with our tools, such as JBrowse and search strategies. See this <a href='https://static-content.veupathdb.org/documents/VEuPathDB_RNAseq_export.pdf' target='_blank'>Export tutorial</a>.</li>" +
                 "<li>View your results on Galaxy or download results to your computer.</li>" +
                 "<li>Keep data private, or share data with colleagues or the community.</li></ol>" +
                 "<i>To learn more about Galaxy, visit the </i><a target='_blank' href='https://wiki.galaxyproject.org/Learn'>public Galaxy resources</a>.";
