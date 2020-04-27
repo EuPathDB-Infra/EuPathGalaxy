@@ -1,5 +1,5 @@
 <tool id="exportBiomToEuPathDB" name="BIOM to MicrobiomeDB" version="1.0.0">
-  <description>Export a BIOM 1.0 file to MicrobiomeDB</description>
+  <description>Export a BIOM file to MicrobiomeDB</description>
   <requirements>
     <requirement type="package">pymodules</requirement>
   </requirements>
@@ -52,7 +52,7 @@
      multiple = false by default.  If the user select N files, the tool runs N times.  This is
      a problem since the accompanying information will be the same each time.
      -->
-    <param name="input" type="data" format="txt" label="BIOM file to export:" >
+    <param name="input" type="data" label="BIOM file to export:" >
       <!--
       This does not work with the older version of Galaxy that Globus uses.
       <validator type="empty_dataset" />
@@ -68,11 +68,10 @@
 
 **What it does**
 
-This tool obtains a file in the BIOM format 1.0 (http://biom-format.org/documentation/format_versions/biom-1.0.html) and from that, creates a valid dataset that can be viewed on our metagenomics portal, MicrobiomeDB.
+This tool obtains a file in the <a href="http://biom-format.org">BIOM format</a>, and lets you be view its contents on our metagenomics portal, MicrobiomeDB.
 
-You need to provide a name for the dataset so that you may easily identify it in EuPathDB websites, along with
-a description and a summary, the project to which the dataset applies and of course, a gene list. All inputs are
-required.
+Please provide a name for the dataset so that you may easily identify it in VEuPathDB websites, along with
+a description and a summary. All inputs are required.
 
 We recommend that the user only supply one dataset file at a time. The tool can run in batch mode,
 but the datasets could be very difficult to distinguish in MicrobiomeDB as all the other parameters above

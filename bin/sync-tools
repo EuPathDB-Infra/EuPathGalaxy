@@ -12,8 +12,11 @@ fi
 
 ROOT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. >/dev/null 2>&1 && pwd )"
 
-rsync -a $ROOT_DIR/Tools/ $host:/var/tmp/Tools/
+rsync -a --delete $ROOT_DIR/Tools/ $host:/var/tmp/Tools/
 
-echo "$pass" | ssh -tt $host sudo rsync -a /var/tmp/Tools/ /opt/galaxy/tools/eupath/Tools/
+# do not delete config.json, kept out of source control, says where irods is
+echo "$pass" | ssh -tt $host sudo rsync -av /var/tmp/Tools/ /opt/galaxy/tools/eupath/Tools/
+ 
 
-ssh $host "cd /opt/galaxy/ && git status "
+echo "$pass" | ssh -tt $host sudo supervisorctl restart galaxy:
+
