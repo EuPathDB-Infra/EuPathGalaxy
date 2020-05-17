@@ -74,6 +74,7 @@ class GffParser(object):
                 if fields[self.featureTypeCol] == 'exon':
                     try:
                         length = int(fields[self.endCol]) - int(fields[self.startCol]) + 1
+                        length = length/1000
                     except ValueError:
                         raise SystemExit('Start value ' + fields[self.startCol] + ' or end value '  + fields[self.endCol] + ' could not be converted to a numeric type.\n')
 
