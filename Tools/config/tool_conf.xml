@@ -10,5 +10,6 @@
     <tool file="eupath/Tools/lib/xml/orthomclMapProteomeToGroups.xml" />
   </section>
   <section name="VEuPathDB RNA-Seq Tools" id="eupath_rnaseq" organization_include="veupathdb,eupathdbdev,eupathdbstaging">
+    <tool file="eupath/Tools/lib/xml/TPMtool.xml" />
     <tool file="eupath/Tools/lib/xml/FPKMtool.xml" />
   </section>
