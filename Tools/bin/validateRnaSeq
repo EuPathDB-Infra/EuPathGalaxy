@@ -30,6 +30,7 @@ def __main__():
       # check header record of FPKM file
       CUFFLINKS_HEADER = "tracking_id\tclass_code\tnearest_ref_id\tgene_id\tgene_short_name\ttss_id\tlocus\tlength\tcoverage\tFPKM\tFPKM_conf_lo\tFPKM_conf_hi\tFPKM_status"
       FPKMTOOL_HEADER = "gene_id\tFPKM"
+      TPMTOOL_HEADER = "gene_id\tTPM"
       fpkm_file = open(dataset_file[i+sample_count]['path'])
       fpkm_header = fpkm_file.readline().strip()
       if fpkm_header == CUFFLINKS_HEADER:
@@ -39,7 +40,7 @@ def __main__():
         if fpkm_data[0] != fpkm_data[3]:
           error = "Bad gene-expression file: tracking ID \"" + fpkm_data[0] + "\" does not match gene ID \"" + fpkm_data[3] + "\" for sample " + sample_name
 
-      elif fpkm_header != FPKMTOOL_HEADER:
+      elif fpkm_header != FPKMTOOL_HEADER and fpkm_header != TPMTOOL_HEADER:
         error = "Unexpected header record in gene-expression file: \"" + fpkm_header + "\""
 
     if error is not None:
