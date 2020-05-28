@@ -229,20 +229,17 @@ class Export:
         orig_path = os.getcwd()
 
         # We need to create a temporary directory in which to assemble the tarball.
-        with os.mkdir("tmp") as temp_path:
-            # Need to temporarily work inside the temporary directory to properly construct and
-            # send the tarball
-            os.chdir(temp_path)
+        temp_path = "tmp"
+        os.mkdir(temp_path)
 
-            self.package_data_files(temp_path)
-            self.create_metadata_json_file(temp_path)
-            self.create_dataset_json_file(temp_path)
-            self.create_tarball()
+        self.package_data_files(temp_path)
+        self.create_metadata_json_file(temp_path)
+        self.create_dataset_json_file(temp_path)
 
-            shutil.move(self._export_file_root + ".tgz", orig_path)
-            
-            # We exit the temporary directory prior to removing it, back to the original working directory.
-            os.chdir(orig_path)
+        os.chdir(temp_path)
+        self.create_tarball()
+        shutil.move(self._export_file_root + ".tgz", orig_path)
+        os.chdir(orig_path)
 
     def output_success(self):
         header = "<html><body><h1>Good news!</h1><br />"
