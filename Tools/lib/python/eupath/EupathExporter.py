@@ -6,11 +6,7 @@ import time
 import os
 import shutil
 import sys
-import requests
-import tempfile
-import contextlib
 import re
-from requests.auth import HTTPBasicAuth
 from subprocess import Popen, PIPE
 
 
