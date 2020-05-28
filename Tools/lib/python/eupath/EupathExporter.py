@@ -268,10 +268,3 @@ class ValidationException(Exception):
     This represents the exception reported when a call to a validation script returns a data error.
     """
     pass
-
-
-class TransferException(Exception):
-    """
-    This represents the exception reported when the export of a dataset to the iRODS system returns a failure.
-    """
-    pass
