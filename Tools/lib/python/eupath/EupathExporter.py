@@ -229,8 +229,7 @@ class Export:
         orig_path = os.getcwd()
 
         # We need to create a temporary directory in which to assemble the tarball.
-        with self.temporary_directory(self._export_file_root) as temp_path:
-
+        with os.mkdir("tmp") as temp_path:
             # Need to temporarily work inside the temporary directory to properly construct and
             # send the tarball
             os.chdir(temp_path)
@@ -244,23 +243,6 @@ class Export:
             
             # We exit the temporary directory prior to removing it, back to the original working directory.
             os.chdir(orig_path)
-            os.rmdir(temp_path)
-
-    @contextlib.contextmanager
-    def temporary_directory(self, dir_name):
-        """
-        This method creates a temporary directory such that removal is assured once the
-        program completes.
-        :param dir_name: The name of the temporary directory
-        :return: The full path to the temporary directory
-        """
-        temp_path = tempfile.mkdtemp(dir_name)
-        try:
-            yield temp_path
-        finally:
-            # Added the boolean arg because cannot remove top level of temp dir structure in
-            # Globus Dev Galaxy instance and it will throw an Exception if the boolean, 'True', is not in place.
-            shutil.rmtree(temp_path, True)
 
     def output_success(self):
         header = "<html><body><h1>Good news!</h1><br />"

@@ -6,7 +6,6 @@ from eupath import BiomFileMicrobiomeDbExporter
 from eupath import EupathExporter
 import optparse
 import sys
-import re
 
 
 def main():
@@ -15,7 +14,8 @@ def main():
 
       Sample for testing outside of Galaxy (assuming the existing file structure):
       python exportGeneListToEuPathDB
-             "a name" "a summary" "a description" "<user.wdk_id@eupath.org eg. crisl.108976930@eupathdb.org>" "<the galaxy tool xml directory e.g. ../lib/xml >" "output" ""
+             "a name" "a summary" "a description" "<user.wdk_id@eupath.org eg. crisl.108976930@eupathdb.org>"
+             "<the galaxy tool xml directory e.g. ../lib/xml >" "output" ""
              "<path to biom file>"
     """
 

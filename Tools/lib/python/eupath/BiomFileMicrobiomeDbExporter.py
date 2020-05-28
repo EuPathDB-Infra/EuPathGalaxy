@@ -99,6 +99,7 @@ def give_table_extra_methods(table):
     #   Here are the globals
     #
     from future.utils import string_types
+
     def get_biom_format_version_string(version=None):
         """Returns the current Biom file format version.
         Parameters
