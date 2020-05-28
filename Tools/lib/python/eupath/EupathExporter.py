@@ -51,9 +51,6 @@ class Export:
         self._export_file_root = 'dataset_u' + str(self._user_id) + '_t' + str(self._timestamp) + '_p' + str(os.getpid())
         print >> sys.stdout, "Export file root is " + self._export_file_root
 
-        # Set up the configuration data
-        (self._url, self._user, self._pwd, self._lz_coll, self._flag_coll) = self.collect_rest_data()
-
     def parse_params(self, args):
         """
         Salts away all generic parameters (i.e., the first 5 params) and do some initial validation.  The subclasses
@@ -80,23 +77,6 @@ class Export:
 
         # Output file
         self._output = args[5]
-
-
-    def collect_rest_data(self):
-        """
-        Obtains the url and credentials and relevant collections needed to run the iRODS rest service.
-        At some point, this information should be fished out of a configuration file.
-        :return:  A tuple containing the url, user, and password, landing zone and flags collection,
-         in that order
-        """
-        config_path = self._tool_directory + "/../../config/config.json"
-        
-        # The tool directory path seems glitchy on Globus Dev Galaxy instance after service restarts.
-        # Uncomment to check.
-        #print >> sys.stdout, "self._tool_directory is " + self._tool_directory
-        with open(config_path, "r") as config_file:
-            config_json = json.load(config_file)
-            return (config_json["url"], config_json["user"], config_json["password"], "lz", "flags")
 
     def validate_datasets(self):
         """
@@ -149,8 +129,7 @@ class Export:
 
         Default is None, interpreted as all projects are ok, ie, no constraints.
         """
-        return None;
-
+        return None
 
     def identify_dataset_files(self):
         """
@@ -173,7 +152,7 @@ class Export:
         # Get the total size of the dataset files (needed for the json file)
         size = sum(os.stat(dataset_file['path']).st_size for dataset_file in self.identify_dataset_files())
 
-        if self.identify_supported_projects() != None:
+        if self.identify_supported_projects() is not None:
             for (project) in self.identify_projects():
                 if project not in self.identify_supported_projects():
                     raise ValidationException("Sorry, you cannot export this kind of data to " + project)
@@ -206,16 +185,15 @@ class Export:
         """
         dataset_files_metadata = []
         for dataset_file in self.identify_dataset_files():
-            dataset_file_metadata = {}
-            dataset_file_metadata["name"] = self.clean_file_name(dataset_file['name'])
-            dataset_file_metadata["file"] = os.path.basename(dataset_file['path'])
-            dataset_file_metadata["size"] = os.stat(dataset_file['path']).st_size
+            dataset_file_metadata = {"name": self.clean_file_name(dataset_file['name']),
+                                     "file": os.path.basename(dataset_file['path']),
+                                     "size": os.stat(dataset_file['path']).st_size}
             dataset_files_metadata.append(dataset_file_metadata)
         return dataset_files_metadata
 
-    
     # replace undesired characters with underscore
-    def clean_file_name(self, file_name):
+    @staticmethod
+    def clean_file_name(file_name):
         s = str(file_name).strip().replace(' ', '_')
         return re.sub(r'(?u)[^-\w.]', '_', s)
         
@@ -236,88 +214,6 @@ class Export:
         with tarfile.open(self._export_file_root + ".tgz", "w:gz") as tarball:
             for item in [self.META_JSON, self.DATASET_JSON, self.DATAFILES]:
                 tarball.add(item)
-
-    def process_request(self, collection, source_file):
-        """
-        This method wraps the iRODS rest request into a try/catch to insure that bad responses are
-        reflected back to the user.
-        :param collection: the name of the workspaces collection to which the file is to be uploaded
-        :param source_file: the name of the file to be uploaded to iRODS
-        """
-        rest_response = self.send_request(collection, source_file)
-        try:
-            rest_response.raise_for_status()
-        except requests.exceptions.HTTPError as e:
-            print >> sys.stderr, "Error: " + str(e)
-            sys.exit(1)
-
-    def send_request(self, collection, source_file):
-        """
-        This request is intended as a multi-part form post containing one file to be uploaded.  iRODS Rest
-        does an iput followed by an iget, apparently.  So the response can be used to insure proper
-        delivery.
-        :param collection: the name of the workspaces collection to which the file is to be uploaded
-        :param source_file: the name of the file to be uploaded to iRODS
-        :return: the http response from an iget of the uploaded file
-        """
-        request = self._url + collection + "/" + source_file
-        headers = {"Accept": "application/json"}
-        upload_file = {"uploadFile": open(source_file, "rb")}
-        auth = HTTPBasicAuth(self._user, self._pwd)
-        try:
-            response = requests.post(request, auth=auth, headers=headers, files=upload_file)
-            response.raise_for_status()
-        except Exception as e:
-            print >> sys.stderr, "Error: The dataset export could not be completed at this time.  The VEuPathDB" \
-                                 " workspace may be unavailable presently. " + str(e)
-            sys.exit(2)
-        return response
-
-    def get_flag(self, collection, source_file):
-        """
-        This method picks up any flag (success or failure) from the flags collection in iRODs related to the dataset
-        exported to determine whether the export was successful.  If not, the nature of the failure is reported to the
-        user.  The failure report will normally be very general unless the problem is one that can possibly be remedied
-        by the user (e.g., going over quota).
-        :param collection: The iRODS collection holding the status flags
-        :param source_file: The dataset tarball name sans extension
-        """
-        time.sleep(5)  # arbitrary wait period before one time check for a flag.
-        auth = HTTPBasicAuth(self._user, self._pwd)
-        # Look for the presence of a success flag first and if none found, check for a failure flag.  If neither
-        # found, assume that to be a failure also.
-        try:
-            request = self._url + collection + "/" + "success_" + source_file
-            success = requests.get(request, auth=auth, timeout=5)
-            if success.status_code == 404:
-                request = self._url + collection + "/" + "failure_" + source_file
-                failure = requests.get(request, auth=auth, timeout=5)
-                if failure.status_code != 404:
-                    raise TransferException(failure.content)
-                else:
-                    failure.raise_for_status()
-            else:
-                self.output_success()
-                print >> sys.stdout, "Your dataset has been successfully exported to VEuPathDB."
-                print >> sys.stdout, "Please visit an appropriate VEuPathDB site to view your dataset."
-        except (requests.exceptions.ConnectionError, TransferException) as e:
-            print >> sys.stderr, "Error: " + str(e)
-            sys.exit(1)
-        
-    def connection_diagnostic(self):
-        """
-        Used to insure that the calling ip is the one expected (i.e., the one for which the
-        firewall is opened).  In Globus Dev Galaxy instance calling the tool outside of Galaxy
-        versus inside Galaxy resulted in different calling ip addresses.
-        """
-        request = "http://ifconfig.co"
-        headers = {"Accept": "application/json"}
-        try:
-            response = requests.get(request, headers=headers)
-            response.raise_for_status()
-            print >> sys.stdout, "Diagnostic Result: " + response.content
-        except Exception as e:
-            print >> sys.stderr, "Diagnostic Error: " + str(e)        
 
     def export(self):
         """
@@ -343,25 +239,12 @@ class Export:
             self.create_metadata_json_file(temp_path)
             self.create_dataset_json_file(temp_path)
             self.create_tarball()
+
+            shutil.move(self._export_file_root + ".tgz", orig_path)
             
-            # Uncomment to check the calling ip address for this tool.
-            # self.connection_diagnostic()
-
-            # Call the iRODS rest service to drop the tarball into the iRODS workspace landing zone
-            self.process_request(self._lz_coll, self._export_file_root + ".tgz")
-
-            # Create a empty (flag) file corresponding to the tarball
-            open(self._export_file_root + ".txt", "w").close()
-
-            # Call the iRODS rest service to drop a flag into the IRODS workspace flags collection.  This flag
-            # triggers the iRODS PEP that unpacks the tarball and posts the event to Jenkins
-            self.process_request(self._flag_coll, self._export_file_root + ".txt")
-
-            # Look for a success/fail indication from IRODS.
-            self.get_flag(self._flag_coll, self._export_file_root)
-
             # We exit the temporary directory prior to removing it, back to the original working directory.
             os.chdir(orig_path)
+            os.rmdir(temp_path)
 
     @contextlib.contextmanager
     def temporary_directory(self, dir_name):
@@ -402,8 +285,7 @@ class Export:
         </body></html>
         """
         with open(self._output, 'w') as file:
-            file.write("%s%s" % (header,msg))
-
+            file.write("%s%s" % (header, msg))
 
 
 class ValidationException(Exception):

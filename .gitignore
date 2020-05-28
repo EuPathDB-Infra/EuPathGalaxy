@@ -1,6 +1,7 @@
 # IntelijIdea Project Junk
 .idea/
 *.iml
+/venv/
 
 
 # Eclipse Project Junk

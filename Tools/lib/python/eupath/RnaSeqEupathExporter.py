@@ -1,7 +1,5 @@
 import EupathExporter
 import ReferenceGenome
-import sys
-import json
 import os
 import re
 
@@ -12,11 +10,6 @@ class RnaSeqExport(EupathExporter.Export):
     VERSION = "1.0"
 
     def __init__(self, args):
-
-        # print >> sys.stderr, "arguments:"
-        # for i in range(0, len(args)):
-        #   print >> sys.stderr, "args[" + str(i) + "] = " + args[i]
-        # print >> sys.stderr, "end of arguments"
 
         EupathExporter.Export.__init__(self,
                                        RnaSeqExport.TYPE,
@@ -42,7 +35,6 @@ class RnaSeqExport(EupathExporter.Export):
         # process variable number of [dataset refgenome] pairs.
         fileNumber = 0
         for i in range(8, len(args), 4):   # start on args[8], increment by 4
-            # print >> sys.stderr, "args[" + str(i) + "] = " + args[i]
             samplename = args[i+1]
             suffix = args[i+3]
             filename = self.clean_file_name(re.sub(r"\s+", "_", samplename) + "." + suffix)
@@ -64,7 +56,6 @@ class RnaSeqExport(EupathExporter.Export):
 
         self._refGenome = ReferenceGenome.Genome(args[10])
 
-        # print >> sys.stderr, "datasetInfos: " + json.dumps(self._datasetInfos) + "<<- END OF datasetInfos"
 
     def identify_dependencies(self):
         """

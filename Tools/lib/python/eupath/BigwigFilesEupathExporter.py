@@ -1,6 +1,5 @@
 import EupathExporter
 import ReferenceGenome
-import sys
 
 
 class BigwigFilesExport(EupathExporter.Export):
@@ -29,10 +28,10 @@ class BigwigFilesExport(EupathExporter.Export):
         # process variable number of [dataset refgenome] pairs.
         # confirm that all dataset provided ref genomes are identical.
         for i in range(7, len(args), 3):   # start on 8th arg, increment by 3
-            #if not args[i+1].endswith(".bigwig") and not args[i+1].endswith(".bw"):
-            #    raise EupathExporter.ValidationException("All datafiles must have either the .bigwig or .bw extension.")
             if args[i+2] != self._initial_refGenome:
-                raise EupathExporter.ValidationException("All provided bigwig datasets must have the same reference genome.  Found " + self._initial_refGenome + " and " + args[i+2])
+                raise EupathExporter.ValidationException("All provided bigwig datasets must have the same reference "
+                                                         "genome.  Found " + self._initial_refGenome + " and "
+                                                         + args[i+2])
             self._datasetInfos.append({"name": args[i+1], "path": args[i]})
 
         # now override the dataset provided ref genome with the one obtained from the form assuming it is correctly
@@ -40,7 +39,6 @@ class BigwigFilesExport(EupathExporter.Export):
         if len(args[6].strip()) == 0:
             raise EupathExporter.ValidationException("A reference genome must be selected.")
         self._refGenome = ReferenceGenome.Genome(args[6])
-
 
     def identify_dependencies(self):
         """
