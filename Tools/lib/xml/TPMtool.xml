@@ -13,9 +13,7 @@
             #end if
 
             #if $stranded.double == "Yes":
-                --double_stranded y --antisense_input  ${stranded.antisense_input}
-            #else:
-                --double_stranded n
+	        --stranded --antisense_input  ${stranded.antisense_input}
             #end if
 
 	    --output $gene_expression
