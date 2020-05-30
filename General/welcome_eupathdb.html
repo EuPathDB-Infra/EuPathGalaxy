@@ -112,29 +112,29 @@
 	Use the following workflows to analyze your FASTQ files. The workflows use FASTQ groomer and Trimmomatic for preparation of reads, FASTQC for sequencing statistics, and HISAT2 for mapping reads to a VEuPathDB reference genome. Choose the appropriate workflow based on your input data and your desired analysis. Explore this <a href='https://static-content.veupathdb.org/documents/VEuPathDB_RNAseq_export.pdf' target='_blank'>RNA-Seq export tutorial</a> to learn about exporting your workflow results to VEuPathDB.
 	<br><br>
 
-	<b>Examine coverage across the genome and calculate RPKM for each gene</b>
+	<b>Examine genome coverage and calculate TPM for each gene</b>
 	<br>
-	In addition to the tools described above, these workflows use three tools (bamCoverage, htseq-count, HTSeqCountToFPKM) to generate BigWig and FPKM files that can be analyzed on VEuPathDB, in Galaxy, or on your computer. The workflows take any number of samples and process the samples in parallel.
+	In addition to the tools described above, these workflows use three tools (bamCoverage, htseq-count, HTSeqCountToTPM) to generate BigWig and TPM files that can be analyzed on VEuPathDB, in Galaxy, or on your computer. The workflows take any number of samples and processes them in parallel. <u>To export to VEuPathDB</u>, use the 'RNA-Seq to VEuPathDB' tool after the workflow completes.
 	</p>
 	<ul><ul>
 	  <li>
-	    <a id='workflow9' href='javascript:void(0)' onClick="import_and_run_workflow('daec8ac497ab13b8')">Workflow for paired-end stranded reads</a>
+	    <a id='workflow9' href='javascript:void(0)' onClick="import_and_run_workflow('e906b7badb87bf85')">Workflow for paired-end stranded reads</a>
 	  </li>
 	  <li>
-	    <a id='workflow9' href='javascript:void(0)' onClick="import_and_run_workflow('de4c607f485f4cc6')">Workflow for paired-end unstranded reads</a>
+	    <a id='workflow9' href='javascript:void(0)' onClick="import_and_run_workflow('e45cada3714cdf50')">Workflow for paired-end unstranded reads</a>
 	  </li>
 	  <li>
-	    <a id='workflow9' href='javascript:void(0)' onClick="import_and_run_workflow('6cc718c9b289ea85')">Workflow for single-end stranded reads</a>
+	    <a id='workflow9' href='javascript:void(0)' onClick="import_and_run_workflow('0c1df1c0f262d97b')">Workflow for single-end stranded reads</a>
 	  </li>
 	  <li>
-	    <a id='workflow9' href='javascript:void(0)' onClick="import_and_run_workflow('ccd44928f98bb984')">Workflow for single-end unstranded reads</a>
+	    <a id='workflow9' href='javascript:void(0)' onClick="import_and_run_workflow('c818c508a87f4aaf')">Workflow for single-end unstranded reads</a>
 	  </li>
 	</ul></ul>
 
 	<p style="margin-left: 40px">
 	<b>Identify genes with statistically significant expression differences between two samples</b>
 	<br>
-	In addition to the tools described above, these workflows use three tools (htseq-count, DESeq2, Bam to BigWig) to determine whether each gene exhibits differential expression and to generate BigWig coverage files. The output files can be analyzed in Galaxy or on your computer. The workflows compare two samples with any number of replicates. NOTE: Export of DESeq2 results to VEuPathDB will be available soon.
+	In addition to the tools described above, these workflows use three tools (htseq-count, DESeq2, Bam to BigWig) to determine whether each gene exhibits differential expression and to generate BigWig coverage files. The output files can be analyzed in Galaxy or on your computer. The workflows compare two samples with any number of replicates. <u>To export BigWig files to VeuPathDB</u>, use the 'Bigwig Files to VEuPathDB' tool after the workflow completes. Note, export of DESeq2 results to VEuPathDB will be available soon.
 	</p>
 	<ul><ul>
 	  <li>
