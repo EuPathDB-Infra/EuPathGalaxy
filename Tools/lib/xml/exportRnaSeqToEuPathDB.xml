@@ -59,8 +59,8 @@
            help="Select the BigWig collection to include in the new VEuPathDB My Data Set. The bigwig collection you select here must be mapped to the refreence genome that you select below.">
     </param>
 
-    <param name="fpkm_collection" type="data_collection" multiple="true" label="FPKM collection:" format="tabular"
-           help="Select the FPKM collection. For an unstranded dataset, its name should include the phrase 'gene expression'.">
+    <param name="fpkm_collection" type="data_collection" multiple="true" label="TPM or FPKM collection:" format="tabular"
+           help="Select the TPM or FPKM collection. For an unstranded dataset, its name should include the phrase 'gene expression'.">
     </param>
 
     <param name="summary" type="text" value=""
