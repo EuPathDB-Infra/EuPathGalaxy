@@ -114,7 +114,7 @@
 
 	<b>Examine genome coverage and calculate TPM for each gene</b>
 	<br>
-	In addition to the tools described above, these workflows use three tools (bamCoverage, htseq-count, HTSeqCountToTPM) to generate BigWig and TPM files that can be analyzed on VEuPathDB, in Galaxy, or on your computer. The workflows take any number of samples and processes them in parallel. <u>To export to VEuPathDB</u>, use the 'RNA-Seq to VEuPathDB' tool after the workflow completes.
+	In addition to the tools described above, these workflows use three tools (bamCoverage, htseq-count, HTSeqCountToTPM) to generate BigWig and TPM files that can be analyzed on VEuPathDB, in Galaxy, or on your computer. The workflows take any number of samples and processes them in parallel. To export the results to VEuPathDB, use the 'RNA-Seq to VEuPathDB' tool.
 	</p>
 	<ul><ul>
 	  <li>
@@ -134,20 +134,20 @@
 	<p style="margin-left: 40px">
 	<b>Identify genes with statistically significant expression differences between two samples</b>
 	<br>
-	In addition to the tools described above, these workflows use three tools (htseq-count, DESeq2, Bam to BigWig) to determine whether each gene exhibits differential expression and to generate BigWig coverage files. The output files can be analyzed in Galaxy or on your computer. The workflows compare two samples with any number of replicates. <u>To export BigWig files to VeuPathDB</u>, use the 'Bigwig Files to VEuPathDB' tool after the workflow completes. Note, export of DESeq2 results to VEuPathDB will be available soon.
+	In addition to the tools described above, these workflows use three tools (htseq-count, DESeq2, Bam to BigWig) to determine whether each gene exhibits differential expression and to generate BigWig coverage files. The output files can be analyzed in Galaxy or on your computer. The workflows compare two samples with any number of replicates. To export your BigWig files to VEuPathDB, use the 'Bigwig Files to VEuPathDB' tool. To filter your DESeq2 result file and obtain a set of Gene IDs that change significantly (defaults: fold-change>=2 and adj-p<=0.05; these can be changed), use <a id='workflow9' href='javascript:void(0)' onClick="import_and_run_workflow('70e1b95dd76461ea')">this workflow</a>. Copy and paste the Gene IDs into the 'Identify Genes based on Gene ID(s)' question on a VEuPathDB website, <a href="https://beta.plasmodb.org/plasmo.beta/app/search/transcript/GeneByLocusTag" target="_blank">as seen here for the PlasmoDB site</a>.
 	</p>
 	<ul><ul>
 	  <li>
-            <a id='workflow9' href='javascript:void(0)' onClick="import_and_run_workflow('e8dc30e4494f212f')">Workflow for paired-end stranded reads</a>
+            <a id='workflow9' href='javascript:void(0)' onClick="import_and_run_workflow('45253d09053ce39f')">Workflow for paired-end stranded reads</a>
           </li>
           <li>
-            <a id='workflow9' href='javascript:void(0)' onClick="import_and_run_workflow('b76cdaaa4db75ab1')">Workflow for paired-end unstranded reads</a>
+            <a id='workflow9' href='javascript:void(0)' onClick="import_and_run_workflow('2c199f1c9e5ca326')">Workflow for paired-end unstranded reads</a>
           </li>
           <li>
-            <a id='workflow9' href='javascript:void(0)' onClick="import_and_run_workflow('edc9a8362208f60d')">Workflow for single-end stranded reads</a>
+            <a id='workflow9' href='javascript:void(0)' onClick="import_and_run_workflow('ad34b5ecde6e2788')">Workflow for single-end stranded reads</a>
           </li>
           <li>
-            <a id='workflow9' href='javascript:void(0)' onClick="import_and_run_workflow('88448f4041633510')">Workflow for single-end unstranded reads</a>
+            <a id='workflow9' href='javascript:void(0)' onClick="import_and_run_workflow('6afb2b526a059966')">Workflow for single-end unstranded reads</a>
 	  </li>
 	</ul></ul>
 

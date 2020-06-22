@@ -31,7 +31,7 @@ class GffParser(object):
 
                 fields = line.split('\t')
 
-                if fields[self.featureTypeCol] == 'transcript' or fields[self.featureTypeCol].endswith('RNA'):
+                if fields[self.featureTypeCol] == 'transcript' or fields[self.featureTypeCol] == 'protein_coding_gene' or fields[self.featureTypeCol] == 'pseudogene' or fields[self.featureTypeCol] == 'ncRNA_gene' or fields[self.featureTypeCol].endswith('RNA'):
                     id = None;
                     parent = None;
                     attributeString = fields[self.attributeCol]
