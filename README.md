@@ -7,7 +7,7 @@ It provides our own home page, and includes the VEuPathDB written (1) tools for 
 
 This site is maintained by [Globus Genomics](https://globusgenomics.org/).
 
-== Description
+## Description
 
 With VEuPathDB Galaxy you can:
 1. Start analyzing your data now with pre-configured workflows. All VEuPathDB genomes are pre-loaded.
