@@ -1,5 +1,5 @@
 # EuPathGalaxy
-Code running in the [VEuPathDB Galaxy](https://veupathdb.globusgenomics.org/) website, a free, interactive, web-based platform for large-scale data analysis.
+VEuPathDB features offered in the [VEuPathDB Galaxy](https://veupathdb.globusgenomics.org/) website, a free, interactive, web-based platform for large-scale data analysis.
 
 Instructions to access this website from our VEuPathDB sites, at [VEuPathDB Galaxy orientation](https://veupathdb.org/veupathdb/app/galaxy-orientation).
 
