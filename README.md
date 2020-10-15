@@ -5,7 +5,7 @@ Instructions to access this website from our VEuPathDB sites, at [VEuPathDB Gala
 
 It provides our own home page, and includes the VEuPathDB written (1) tools for exporting data to our VEuPathDB sites, and (2) workflows to generate data that can be exported to our VEuPathDB sites.
 
-This site is maintained by [Globus Genomics](https://globusgenomics.org/).
+[VEuPathDB Galaxy](https://veupathdb.globusgenomics.org/) website is built on the software developed by the [Galaxy Project](https://github.com/galaxyproject/galaxy) (there is  [Galaxy public website](https://usegalaxy.org/)). Our galaxy site is maintained by [Globus Genomics](https://globusgenomics.org/).
 
 ## Description
 
