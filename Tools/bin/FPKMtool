@@ -68,7 +68,7 @@ def __main__():
         # if fields[gffFeatureTypeCol] == 'gene':
             # txParent = {}
 
-        if fields[gffFeatureTypeCol] == 'transcript' or fields[gffFeatureTypeCol] == 'protein_coding_gene' or fields[gffFeatureTypeCol] == 'pseudogene' or fields[gffFeatureTypeCol] == 'ncRNA_gene' or fields[gffFeatureTypeCol].endswith('RNA'):
+        if fields[gffFeatureTypeCol].endswith('transcript') or fields[gffFeatureTypeCol].endswith('RNA'):
             id = None
             parent = None
             attributeString = fields[gffAttributeCol]
