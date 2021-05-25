@@ -36,10 +36,10 @@ class BigwigFilesExport(EupathExporter.Export):
         # confirm that all dataset provided ref genomes are identical.
         for i in range(7, len(args), 3):   # start on 8th arg, increment by 3
 
-            if args[i+1].endswith(".bw"):
-                args[i+1] = args[i+1][0:-2] + "bigwig"
-            elif not args[i+1].endswith(".bigwig"):
-                args[i+1] = args[i+1] + ".bigwig"
+            if args[i+1].endswith(".bigwig"):
+                args[i+1] = args[i+1][0:-6] + "bw"
+            elif not args[i+1].endswith(".bw"):
+                args[i+1] = args[i+1] + ".bw"
 
             print >> sys.stderr, "after munging, filename is " + args[i+1]
 
