@@ -1,7 +1,7 @@
 import EupathExporter
 import ReferenceGenome
 import sys
-
+import os
 
 class BigwigFilesExport(EupathExporter.Export):
 
@@ -21,7 +21,7 @@ class BigwigFilesExport(EupathExporter.Export):
         if len(args) < 10:
             raise EupathExporter.ValidationException("The tool was passed an insufficient numbers of arguments.")
 
-        # list arguments then die
+        # list arguments (for debuging)
         # print >> sys.stderr, "args to BigwigFilesEupathExporter.py"
         # for i in range(0, len(args)):
         #     print >> sys.stderr, str(args[i])
@@ -36,15 +36,19 @@ class BigwigFilesExport(EupathExporter.Export):
         # confirm that all dataset provided ref genomes are identical.
         for i in range(7, len(args), 3):   # start on 8th arg, increment by 3
 
+            # check file suffix (and set if needed)
             if args[i+1].endswith(".bigwig"):
                 args[i+1] = args[i+1][0:-6] + "bw"
             elif not args[i+1].endswith(".bw"):
                 args[i+1] = args[i+1] + ".bw"
 
-            print >> sys.stderr, "after munging, filename is " + args[i+1]
+            # check file size
+            size = os.stat(args[i]).st_size
+            sizeLimit = 500 * 1024 * 1024 # 500MB
+            # print >> sys.stderr, "file size is " + str(size)
+            if size > sizeLimit:
+                raise EupathExporter.ValidationException("File exceeds 500MB size limit")
 
-            #if not args[i+1].endswith(".bigwig") and not args[i+1].endswith(".bw"):
-            #    raise EupathExporter.ValidationException("All datafiles must have either the .bigwig or .bw extension.")
             if args[i+2] != self._initial_refGenome:
                 raise EupathExporter.ValidationException("All provided bigwig datasets must have the same reference genome.  Found " + self._initial_refGenome + " and " + args[i+2])
             self._datasetInfos.append({"name": args[i+1], "path": args[i]})
