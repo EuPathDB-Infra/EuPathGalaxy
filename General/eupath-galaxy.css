@@ -1,3 +1,20 @@
+div.document {
+  text-align: left;
+  min-height: calc(100vh - 16em);
+}
+
+a:link {
+  color: #0066cc;
+}
+a:hover {
+  color: #003399;
+  text-decoration:underline;
+}
+
+body {
+  overflow-x: hidden; /* Hide horizontal scrollbar */
+}
+
 .eupath-header {
   background-color:#eee;
   margin-bottom: 1em;
@@ -8,29 +25,60 @@
 .eupath-header .status-image {
   text-align:right;
 }
+
+      <!-- in class eupath-header   -->
+
+      img.topLogo {
+         display: block;
+         margin-left: auto;
+         margin-right: auto;
+         float: left;
+         width: 180px;
+      }
+      td.logo_table_row {
+         text-decoration:none;
+         color:#666666;
+         font-size:13px;
+         vertical-align: bottom;
+         padding-bottom: 24px;
+         width:90px;
+      }
+      td.status {
+         vertical-align: bottom;
+         padding-bottom: 20px;
+         width:45px;
+      }
+
+
+
 #eupath-title {
   text-align:center;
+  margin-top: 1.5em;
+  margin-bottom: 0;
 }
+
 #eupath-subtitle {
   text-align:center;
   font-size: 135%;
   margin-bottom: 2em;
 }
+
+
 .eupath-section {
-  margin-left: 4em;
+  margin-left: 2em;
+  margin-right: 2em;
+  margin-top: 2em;
 }
-#eupath-intro {
-  font-size: 120%;
+.eupath-section h2 {
+  margin-bottom: 1em;
 }
-#eupath-intro i {
-  margin-left: 23px; 
-}
+
+
 #eupath-workflows {
   margin-left: 29px;
 }
-#eupath-workflows {
-/*  font-size: 120%; */
-}
+
+
 .eupath-footer {
   background-color:#eee;
   padding-top: 1em;
@@ -38,4 +86,22 @@
   position: relative;
   height: 9em;
 }
+
+      <!-- in footer element (class eupath-footer)   -->
+
+      .container {
+        max-width: 93%;
+        position: relative;
+      }
+      .eupath-footer li {
+        display: inline;
+	padding: 0 2px;
+      }
+      .row {
+        margin-left:0;
+      }
+      span.globus-icon img {
+          width: 30px;
+      }
+
 

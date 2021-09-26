@@ -2,62 +2,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
   <head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
-  <link rel="stylesheet" href="style/base.css" type="text/css">
-<!--  <link rel="stylesheet" type="text/css" href="https://cbilsvn.pmacs.upenn.edu/svn/apidb/EuPathGalaxy/branches/build29/eupath-galaxy.css" />
--->
-  <link rel="stylesheet" href="./eupath-galaxy.css" type="text/css">
-  <style type="text/css">
-
-      div.document {
-         /* padding: 0 10px 0 10px; */
-         text-align: left;
-         min-height: calc(100vh - 16em);
-      }
-      img.topLogo {
-         display: block; 
-         margin-left: auto; 
-         margin-right: auto; 
-         float: left;
-         width: 180px;
-      }
-      td.logo_table_row {
-         text-decoration:none;
-         color:#666666;
-         font-size:13px;
-         vertical-align: bottom;
-         padding-bottom: 35px; 
-         width:90px;
-      } 
-      td.status {
-         vertical-align: bottom;
-         padding-bottom: 20px;
-         width:45px;
-      }
-
-      a:link {
-         color: #0066cc;
-      }
-      a:hover {
-         color: #003399;
-         text-decoration:underline;
-      }
-
-      .container {
-        max-width: 93%;
-        position: relative;
-      }
-      .row { 
-        margin-left:0;
-      }
-      span.globus-icon img {
-          width: 30px;
-      }
-
-  </style>
- 
+    <link rel="stylesheet" href="style/base.css" type="text/css">
+    <link rel="stylesheet" href="./eupath-galaxy.css" type="text/css">
   </head>
-  <body style="margin: 0; padding: 0;">
+
+  <body style="margin: 0!important; padding: 0;">
     <div class="document">
 
       <!-- HEADER -->
@@ -84,7 +33,7 @@
 
       <!-- INTRO (help section)  -->
       <div class="eupath-section">
-        <h2>With VEuPathDB Galaxy you can:</h2>
+        <h4>With VEuPathDB Galaxy you can:</h4>
         <div id="eupath-intro">
           (Do nothing currently)
         </div>
@@ -93,7 +42,7 @@
 
       <!-- WORKFOW LIST -->
       <div class="eupath-section">
-        <h2 style="margin-bottom:0">Get started with VEuPathDB pre-configured workflows:</h2>
+        <h2>Get started with VEuPathDB pre-configured workflows:</h2>
         <div>
         <h3>OrthoMCL</h3>
 	<p style="margin-left: 40px">
@@ -101,7 +50,7 @@
 	<br> </p>
 	<ul><ul>
 	  <li>
-	    <a id='workflow8' href='javascript:void(0)' onClick="import_and_run_workflow('33e64f72c9df1b41')">Workflow to map your proteins to OrthoMCL groups</a>
+	    <a id='workflow8' href='javascript:void(0)' onClick="import_and_run_workflow('f5de04b427fd6768')">Workflow to map your proteins to OrthoMCL groups</a>
 	  </li>
 	</ul></ul>
 
@@ -169,7 +118,7 @@
             <h3>Additional VEuPathDB workflows</h3>
 
 <p style="margin-left: 40px">
-<a href="https://veupathdb.globusgenomics.org/workflow/list_published" target="_blank">Click here</a> for additional shared workflows. This page can also be accessed within the 'Shared Data' menu above by selecting 'Workflows'.
+  See <a href="https://veupathdb.globusgenomics.org/workflow/list_published" target="_blank">all shared workflows</a>. This page that can also be accessed in the menu above: 'Shared Data' >> 'Workflows'.
             <br>
 </p>
 
@@ -178,16 +127,18 @@
     </div>  <!-- end document -->
 
     <!-- FOOTER -->
-    <hr style="margin-bottom:0"><p style="font-size:70%;background-color:white;padding:5px 5px 0;text-align:left">
+    <hr style="margin-bottom:0">
+
+    <p style="font-size:70%;background-color:white;padding:5px 5px 0;text-align:left">
 VEuPathDB Galaxy workspaces are provided free of charge. <b>Note that data will be purged after 60 days of inactivity.</b> We encrypt data transfers and storage but ultimately, we cannot guarantee the security of data transmissions between VEuPathDB, Globus and affiliates, Amazon Cloud Services, and the user. It is your responsibility to back up your data and obtain any required permissions from your study and/or institution prior to uploading data for analyses on the VEuPathDB Galaxy platform. Do not use, transmit, upload or share any human identifiable information in the files you analyze. VEuPathDB, the multiple universities responsible for providing this resource, Globus and affiliates, and Amazon Cloud Services are not responsible or liable for the loss and/or release of any data you analyze via the VEuPathDB Galaxy platform.
 <a href="https://veupathdb.org/veupathdb/app/static-content/privacyPolicy.html" target="_blank">See the VEuPathDB privacy policy.</a></p>
    
     <footer class="eupath-footer">
-      <div class="container">
+      <div>
 
       <div class="row">
         <div class="col-md-12">
-          <ul class="list-inline eupath-sites">
+          <ul class="list-inline">
             <li title="VEuPathDB.org">
               <a href="http://veupathdb.org" target="_top">
                 <img width="25" src="http://eupathdb.org/oauth/assets/images/veupath-icon.png"/></a></li>
@@ -270,5 +221,5 @@ VEuPathDB Galaxy workspaces are provided free of charge. <b>Note that data will 
 
    <script type="text/javascript" src="./eupath-galaxy.js"></script>
 
-</body>
+  </body>
 </html>

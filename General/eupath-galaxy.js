@@ -61,14 +61,14 @@ import_and_run_workflow = function(id) {
             // If the id of the imported workflow is (hopefully always) found, redirect to the
             // url that runs that workflow.
             if(import_id.length > 0) {
-              location.href = "/workflow/run?id=" + import_id;
+              window.parent.location.href = "/workflows/run?id=" + import_id;
             }
           });
         });
       }
       // Import already exists.  Just run it.
       else {
-        location.href = "/workflow/run?id=" + import_id;
+        window.parent.location.href = "/workflows/run?id=" + import_id;
       }    
     });
   });  
