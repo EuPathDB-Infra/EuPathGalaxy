@@ -8,14 +8,14 @@ document.getElementById("eupath-subtitle").innerHTML = "" +
 
 // Introductory paragraph content
 document.getElementById("eupath-intro").innerHTML = "" +
-                "<ol><li>Start analyzing your data now with pre-configured workflows. All VEuPathDB genomes are pre-loaded.</li>" +
-                "<li>Perform large-scale data analysis with no prior programming or bioinformatics experience.</li>" +
-                "<li>Use dataset Collections, to process multiple samples in parallel and/or to group paired-end files. <a target='_blank'  href='https://galaxyproject.org/tutorials/collections/'>Learn about Galaxy Collections.</a></li>" +
-                "<li>Create custom workflows using an interactive workflow editor. <a target='_blank'  href='https://wiki.galaxyproject.org/Learn/AdvancedWorkflow'>Learn how.</a></li> " +
-                "<li>Export your results to VEuPathDB, so that you can explore your data with our tools, such as JBrowse and search strategies. See this <a href='https://static-content.veupathdb.org/documents/VEuPathDB_RNAseq_export.pdf' target='_blank'>Export tutorial</a>.</li>" +
-                "<li>View your results on Galaxy or download results to your computer.</li>" +
-                "<li>Keep data private, or share data with colleagues or the community.</li></ol>" +
-                "<i>To learn more about Galaxy, visit the </i><a target='_blank' href='https://wiki.galaxyproject.org/Learn'>public Galaxy resources</a>.";
+       "<ol><li>Start analyzing your data now with <b>our pre-configured workflows</b> linked below. All VEuPathDB genomes are pre-loaded.</li>" +
+           "<li><b>Export your results to VEuPathDB</b>, so that you can explore your data with our tools, such as JBrowse and search strategies. See this <a href='https://static-content.veupathdb.org/documents/VEuPathDB_RNAseq_export.pdf' target='_blank'>Export tutorial</a>.</li>" +
+	   "<li>Perform large-scale data analysis with no prior programming or bioinformatics experience.</li>" +
+           "<li>Use dataset Collections, to process multiple samples in parallel and/or to group paired-end files. <a target='_blank'  href='https://galaxyproject.org/tutorials/collections/'>Learn about Galaxy Collections.</a></li>" +
+           "<li>Create custom workflows using an interactive workflow editor. <a target='_blank'  href='https://wiki.galaxyproject.org/Learn/AdvancedWorkflow'>Learn how.</a></li> " +
+           "<li>View your results on Galaxy or download results to your computer.</li>" +
+           "<li>Keep data private, or share data with colleagues or the community.</li></ol>" +
+       "<i>To learn more about Galaxy, visit the </i><a target='_blank' href='https://wiki.galaxyproject.org/Learn'>public Galaxy resources</a>.";
 
 
 // Links content
