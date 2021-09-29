@@ -72,7 +72,7 @@
   </inputs>
   
   <outputs>
-      <data format="html" name="output" label="exportToEuPathDBInfo.html" />
+      <data format="html" name="output" label="exportToVEuPathDBInfo.html" />
   </outputs>
 
   <help>
