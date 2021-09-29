@@ -1,5 +1,5 @@
-<tool id="exportGeneListToEuPathDB" name="Gene List to EuPathDB" version="1.0.0">
-  <description>Export a gene list to EuPathDB</description>
+<tool id="exportGeneListToEuPathDB" name="Gene List to VEuPathDB" version="1.0.0">
+  <description>Export a gene list to VEuPathDB</description>
   <requirements>
     <requirement type="package">pymodules</requirement>
   </requirements>
@@ -8,15 +8,15 @@
   </command>
   <inputs>
     <param name="dataset_name" type="text" size="100" value=""
-           label="EuPathDB dataset name:"
-           help="This name will allow you to readily identify and apply this dataset in EuPathDB">
+           label="VEuPathDB dataset name:"
+           help="This name will allow you to readily identify and apply this dataset in VEuPathDB">
       <validator type="empty_field" />
       <validator type="regex" message="Only letters, numbers, spaces and dashes are allowed in the name.">^[\w\d\s\-]*$</validator>
       <validator type="length" message="Please restrict the name to 100 characters or less." max="100" />
     </param>
     <param name="summary" type="text" value=""
-           label="EuPathDB dataset summary:"
-           help="This summary will appear in your EuPathDB dataset listing page. Note that any double quotes will be coverted to single quotes">
+           label="VEuPathDB dataset summary:"
+           help="This summary will appear in your VEuPathDB dataset listing page. Note that any double quotes will be coverted to single quotes">
       <validator type="empty_field" />
       <!--
         The summary may have any printable character with the exception that double quotes must be
@@ -32,8 +32,8 @@
       </sanitizer>
     </param>
     <param name="description" type="text" value="" area="True"
-           label="EuPathDB dataset description:"
-           help="This description is visible on the EuPathDB dataset page reached via the dataset listing page.  Note that any double quotes will be coverted to single quotes" >
+           label="VEuPathDB dataset description:"
+           help="This description is visible on the VEuPathDB dataset page reached via the dataset listing page.  Note that any double quotes will be coverted to single quotes" >
       <validator type="empty_field" />
       <!--
         The description may have any printable character with the exception that double quotes must be
@@ -62,7 +62,7 @@
     <param name="overrideDbkey" type="genomebuild" label="Genome" />
   </inputs>
   <outputs>
-      <data format="html" name="output" label="exportToEuPathDBInfo.txt" />
+      <data format="html" name="output" label="exportToVEuPathDBInfo.txt" />
   </outputs>
 
   <help>
