@@ -56,7 +56,7 @@
     </param>
 
     <param name="bigwig_collection" type="data_collection" multiple="true" label="BigWig collection:" format="bigwig"
-           help="Select the BigWig collection to include in the new VEuPathDB My Data Set. The bigwig collection you select here must be mapped to the refreence genome that you select below.">
+           help="Select the BigWig collection to include in the new VEuPathDB My Data Set. The BigWig collection you select here must be mapped to the reference genome that you select below.">
     </param>
 
     <param name="fpkm_collection" type="data_collection" multiple="true" label="TPM or FPKM collection:" format="tabular"
@@ -100,7 +100,7 @@
   </inputs>
   
   <outputs>
-      <data format="html" name="output" label="exportToEuPathDBInfo.html" />
+      <data format="html" name="output" label="exportToVEuPathDBInfo.html" />
   </outputs>
 
   <help>
