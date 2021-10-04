@@ -23,15 +23,15 @@
     </command>
 
     <inputs>
-        <param format="tabular" help="sense counts file" label="gene counts of (sense) aligned RNA-Seq reads" name="input" type="data"/>
+        <param format="tabular" help="sense counts file, like that output by htseq-count" label="gene counts of sense-strand aligned RNA-Seq reads" name="input" type="data"/>
 
         <conditional name="stranded">
-	  <param label="Double-stranded dataset?" help="Is the dataset double-stranded?" name="double" type="select">
+	  <param label="Do you also have antisense reads?" help="Answer yes if you would like to submit sense and antisense counts to this tool" name="double" type="select">
             <option selected="true" value="No">No</option>
 	    <option value="Yes">Yes</option>
 	  </param>
 	  <when value="Yes">
-            <param format="tabular" help="antisense reads file" label="gene counts of antisense aligned RNA-Seq reads" name="antisense_input" type="data"/>
+            <param format="tabular" help="antisense reads file, like that output by htseq-count" label="gene counts of antisense-strand aligned RNA-Seq reads" name="antisense_input" type="data"/>
 	  </when>
           <when value="No"/>
         </conditional>
