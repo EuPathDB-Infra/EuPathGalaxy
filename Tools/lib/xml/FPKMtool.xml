@@ -31,7 +31,7 @@
 	    <option value="Yes">Yes</option>
 	  </param>
 	  <when value="Yes">
-            <param format="tabular" help="antisense reads file, like that output by htseq-count" label="gene counts of antisense-strand aligned RNA-Seq reads" name="antisense_input" type="data"/>
+            <param format="tabular" help="antisense reads file, like that output by htseq-count" label="gene counts of RNA-Seq reads aligned to the antisense strand" name="antisense_input" type="data"/>
 	  </when>
           <when value="No"/>
         </conditional>
