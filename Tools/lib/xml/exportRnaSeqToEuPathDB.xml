@@ -50,7 +50,7 @@
       <validator type="length" message="Please restrict the name to 100 characters or less." max="100" />
     </param>
 
-    <param label="Is your dataset strand-specific?" help="Is this a strand-specific dataset?" name="double" type="select">
+    <param label="Are you exporting sense and antisense TPM/FPKM datasets?" help="Select yes if your experiment is strand-specific and you are including sense and antisense datasets in this export." name="double" type="select">
       <option selected="true" value="unstranded">No</option>
       <option value="stranded">Yes</option>
     </param>
