@@ -68,7 +68,7 @@
 
 	<b>Examine genome coverage and calculate TPM for each gene</b>
 	<br>
-	In addition to the tools described above, these workflows use three tools (bamCoverage, htseq-count, HTSeqCountToTPM) to generate BigWig and TPM files that can be analyzed on VEuPathDB, in Galaxy, or on your computer. Each workflow can process one or more samples that have been combined into one Collection. To export the results to VEuPathDB, use the 'RNA-Seq to VEuPathDB' tool.
+	In addition to the tools described above, these workflows use three tools (bamCoverage, htseq-count, HTSeqCountToTPM) to generate BigWig and TPM files that can be analyzed on VEuPathDB, in Galaxy, or on your computer. Each workflow can simultaneously process one or more samples that have been combined into one Collection. To export the results to VEuPathDB, use the 'RNA-Seq to VEuPathDB' tool.
 	</p>
 	<ul><ul>
 	  <li>
@@ -88,7 +88,7 @@
 	<p style="margin-left: 40px">
 	<b>Identify genes with statistically significant expression differences between two samples</b>
 	<br>
-	In addition to the tools described above, these workflows use three tools (htseq-count, DESeq2, Bam to BigWig) to determine whether each gene exhibits differential expression and to generate BigWig coverage files. The output files can be analyzed in Galaxy or on your computer. The workflows compare two samples with any number of replicates. To export your BigWig files to VEuPathDB, use the 'Bigwig Files to VEuPathDB' tool. To filter your DESeq2 result file and obtain a set of Gene IDs that change significantly (defaults: fold-change>=2 and adj-p<=0.05; these can be changed), use <a id='workflow9' href='javascript:void(0)' onClick="import_and_run_workflow('fa015f4a720f3a0d')">this workflow</a>. Copy and paste the Gene IDs into the 'Identify Genes based on Gene ID(s)' question on a VEuPathDB website, <a href="https://beta.plasmodb.org/plasmo.beta/app/search/transcript/GeneByLocusTag" target="_blank">as seen here for the PlasmoDB site</a>.
+	In addition to the tools described above, these workflows use three tools (htseq-count, DESeq2, Bam to BigWig) to determine whether each gene exhibits differential expression and to generate BigWig coverage files. The output files can be analyzed in Galaxy or on your computer. The workflows compare two samples each with one or more replicates. The stranded workflows only detect and test sense-strand transcripts. To export your BigWig files to VEuPathDB, use the 'Bigwig Files to VEuPathDB' tool. To filter your DESeq2 result file and obtain a set of Gene IDs that change significantly (defaults: fold-change>=2 and adj-p<=0.05; these can be changed), use <a id='workflow9' href='javascript:void(0)' onClick="import_and_run_workflow('fa015f4a720f3a0d')">this workflow</a>. Copy and paste the Gene IDs into the 'Identify Genes based on Gene ID(s)' question on a VEuPathDB website, <a href="https://beta.plasmodb.org/plasmo.beta/app/search/transcript/GeneByLocusTag" target="_blank">as seen here for the PlasmoDB site</a>.
 	</p>
 	<ul><ul>
 	  <li>
