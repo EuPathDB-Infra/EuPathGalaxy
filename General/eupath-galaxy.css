@@ -50,6 +50,16 @@ body {
       }
 
 
+div.eupath-banner {
+  background-color:lightblue;
+  margin: 0 1em;
+  border-radius: 0.5em;
+  padding: 0.5em 1em;
+}
+div.eupath-banner span {
+  font-weight:bold;
+  font-size: 120%;
+}
 
 #eupath-title {
   text-align:center;
