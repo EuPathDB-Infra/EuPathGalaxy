@@ -1,10 +1,6 @@
 <tool id="exportVCFFileToEuPathDB" name="VCF File to EuPathDB" version="1.0.0">
   
-<description>Export a VCF file to EuPathDB</description>
-  
-  <requirements>
-    <requirement type="package">pymodules</requirement>
-  </requirements>
+<description>Export a VCF file to VEuPathDB</description>
   
   <command interpreter="python" detect_errors="aggressive">
     <![CDATA[
@@ -68,7 +64,7 @@
   </inputs>
   
   <outputs>
-      <data format="html" name="output" label="exportToEuPathDBInfo.html" />
+      <data format="html" name="output" label="exportToVEuPathDBInfo.html" />
   </outputs>
 
   <help>
