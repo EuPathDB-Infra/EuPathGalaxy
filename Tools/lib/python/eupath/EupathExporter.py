@@ -49,7 +49,7 @@ class Export:
         # convention, the dataset tarball is of the form dataset_uNNNNNN_tNNNNNNN.tgz where the NNNNNN following the _u
         # is the WDK user id and _t is the msec timestamp
         self._export_file_root = 'dataset_u' + str(self._user_id) + '_t' + str(self._timestamp) + '_p' + str(os.getpid())
-        print >> sys.stdout, "Export file root is " + self._export_file_root
+        print("Export file root is " + self._export_file_root, file=sys.stdout)
 
         # Set up the configuration data
         (self._url, self._user, self._pwd, self._lz_coll, self._flag_coll) = self.collect_rest_data()
@@ -248,7 +248,7 @@ class Export:
         try:
             rest_response.raise_for_status()
         except requests.exceptions.HTTPError as e:
-            print >> sys.stderr, "Error: " + str(e)
+            print("Error: " + str(e), file=sys.stderr)
             sys.exit(1)
 
     def send_request(self, collection, source_file):
@@ -268,8 +268,8 @@ class Export:
             response = requests.post(request, auth=auth, headers=headers, files=upload_file)
             response.raise_for_status()
         except Exception as e:
-            print >> sys.stderr, "Error: The dataset export could not be completed at this time.  The VEuPathDB" \
-                                 " workspace may be unavailable presently. " + str(e)
+            print("Error: The dataset export could not be completed at this time.  The VEuPathDB" \
+                                 " workspace may be unavailable presently. " + str(e), file=sys.stderr)
             sys.exit(2)
         return response
 
@@ -298,10 +298,10 @@ class Export:
                     failure.raise_for_status()
             else:
                 self.output_success()
-                print >> sys.stdout, "Your dataset has been successfully exported to VEuPathDB."
-                print >> sys.stdout, "Please visit an appropriate VEuPathDB site to view your dataset."
+                print("Your dataset has been successfully exported to VEuPathDB.", file=sys.stdout)
+                print("Please visit an appropriate VEuPathDB site to view your dataset.", file=sys.stdout)
         except (requests.exceptions.ConnectionError, TransferException) as e:
-            print >> sys.stderr, "Error: " + str(e)
+            print("Error: " + str(e), file=sys.stderr)
             sys.exit(1)
         
     def connection_diagnostic(self):
@@ -315,9 +315,9 @@ class Export:
         try:
             response = requests.get(request, headers=headers)
             response.raise_for_status()
-            print >> sys.stdout, "Diagnostic Result: " + response.content
+            print("Diagnostic Result: " + response.content, file=sys.stdout)
         except Exception as e:
-            print >> sys.stderr, "Diagnostic Error: " + str(e)        
+            print("Diagnostic Error: " + str(e), file=sys.stderr)        
 
     def export(self):
         """
