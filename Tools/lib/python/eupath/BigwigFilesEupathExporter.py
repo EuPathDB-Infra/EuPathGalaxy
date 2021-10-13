@@ -1,5 +1,5 @@
-import EupathExporter
-import ReferenceGenome
+from . import EupathExporter
+from . import ReferenceGenome
 import sys
 import os
 
