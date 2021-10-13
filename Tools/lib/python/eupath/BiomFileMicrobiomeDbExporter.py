@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import EupathExporter
+from . import EupathExporter
 import biom
 from biom.cli.table_validator import _validate_table
 from biom.parse import load_table
