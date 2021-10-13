@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import EupathExporter
+from . import EupathExporter
 import re
 
 
