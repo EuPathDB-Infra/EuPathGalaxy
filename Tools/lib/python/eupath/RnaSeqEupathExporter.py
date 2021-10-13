@@ -1,5 +1,5 @@
-import EupathExporter
-import ReferenceGenome
+from . import EupathExporter
+from . import ReferenceGenome
 import sys
 import json
 import os
@@ -57,7 +57,7 @@ class RnaSeqExport(EupathExporter.Export):
                     strandedness =  "firststrand" if (fileNumber % 2) == 1 else "secondstrand"
 
             self._datasetInfos.append({"name": filename, "path": args[i]})
-            print >> manifest, samplename + "\t" + filename + "\t" + strandedness
+            print(samplename + "\t" + filename + "\t" + strandedness, file=manifest)
 
         manifest.close()
         self._datasetInfos.append({"name": "manifest.txt", "path": manifestPath})
