@@ -1,5 +1,5 @@
-import EupathExporter
-import ReferenceGenome
+from . import EupathExporter
+from . import ReferenceGenome
 import sys
 import os
 import subprocess
@@ -25,14 +25,14 @@ class VCFFileExport(EupathExporter.Export):
         manifest = open(manifestPath, "w+")
 
         for i in range(6, len(args), 2):
-            print >> sys.stdout, i, args[i]
+            print(i, args[i], file=sys.stdout)
             samplename = args[i+1]
             #filename = samplename + "." + args[i+2]
         ## Note in the xml this will need the right variables passed in - e.g. sample name, file format.
         
 
             self._datasetInfos.append({"name": samplename, "path": args[i]})
-            print >> manifest, samplename # + "\t" + filename 
+            print(samplename, file=manifest)
                 
 
         self._datasetInfos.append({"name": "manifest.txt", "path": manifestPath})
