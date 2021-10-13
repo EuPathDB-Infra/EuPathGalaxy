@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
-import EupathExporter
-import ReferenceGenome
+from . import EupathExporter
+from . import ReferenceGenome
 
 
 class GeneListExport(EupathExporter.Export):
