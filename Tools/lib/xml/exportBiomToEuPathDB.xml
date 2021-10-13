@@ -1,8 +1,5 @@
 <tool id="exportBiomToEuPathDB" name="BIOM to MicrobiomeDB" version="1.0.0">
   <description>Export a BIOM file to MicrobiomeDB</description>
-  <requirements>
-    <requirement type="package">pymodules</requirement>
-  </requirements>
   <command interpreter="python" detect_errors="aggressive">
     ../../bin/exportBiomToEuPathDB "$dataset_name" "$summary" "$description" "$__user_email__" "$__tool_directory__" "$output" "" "$input" 
   </command>
@@ -61,7 +58,7 @@
 
   </inputs>
   <outputs>
-      <data format="html" name="output" label="exportToEuPathDBInfo.txt" />
+      <data format="html" name="output" label="exportToVEuPathDBInfo.txt" />
   </outputs>
 
   <help>
