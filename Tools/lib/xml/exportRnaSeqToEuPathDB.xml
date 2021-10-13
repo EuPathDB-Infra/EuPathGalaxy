@@ -2,10 +2,6 @@
   
 <description>Export an RNA-Seq result to VEuPathDB</description>
   
-  <requirements>
-    <requirement type="package">pymodules</requirement>
-  </requirements>
-  
   <command interpreter="python" detect_errors="aggressive">
     <![CDATA[
     ../../bin/exportRnaSeqToEuPathDB "$dataset_name" "$summary" "$description" "$__user_email__" "$__tool_directory__" "$output" "$summary" "$double"
