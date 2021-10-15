@@ -27,7 +27,7 @@ def main():
     try:
         exporter.export()
     except EupathExporter.ValidationException as ve:
-        print >> sys.stderr, str(ve)
+        print(str(ve), file=sys.stderr)
         sys.exit(1)
 
 
