@@ -16,11 +16,11 @@ def __main__():
     dataset_file = json.loads(dataset_file_json)
 
     file_count = len(dataset_file)
-    sample_count = (file_count - 1) / 2
+    sample_count = int((file_count - 1) / 2)
 
-    print >> sys.stderr, "exporting " + str(sample_count) + " samples using " + str(file_count) + " files"
+    print("exporting " + str(sample_count) + " samples using " + str(file_count) + " files", file=sys.stderr)
     for i in range(0, file_count):
-     print >> sys.stderr, dataset_file[i]['name'] + "\t" + dataset_file[i]['path']
+     print(dataset_file[i]['name'] + "\t" + dataset_file[i]['path'], file=sys.stderr)
 
     for i in range(0, sample_count):
       bigwig_name = dataset_file[i]['name']
@@ -44,7 +44,7 @@ def __main__():
         error = "Unexpected header record in gene-expression file: \"" + fpkm_header + "\""
 
     if error is not None:
-        print >> sys.stderr, "Error: " + error
+        print("Error: " + error, file=sys.stderr)
         sys.exit(1)
 
 if __name__ == "__main__": __main__()
