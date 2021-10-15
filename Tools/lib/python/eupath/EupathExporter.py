@@ -113,7 +113,7 @@ class Export:
         validation_process = Popen(['python', self._tool_directory + "/../../bin/" + self._validation_script],
                                    stdin=PIPE, stdout=PIPE, stderr=PIPE)
         # output is a tuple containing (stdout, stderr)
-        output = validation_process.communicate(json.dumps(dataset_files))
+        output = validation_process.communicate(json.dumps(dataset_files).encode("utf-8"))
         if validation_process.returncode == 1:
             raise ValidationException(output[1])
 
