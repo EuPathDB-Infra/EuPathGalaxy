@@ -29,7 +29,7 @@ def __main__():
             if count > len(my_set):
                 error = "Found duplicated lines in your file:" + str(count-len(my_set)) + " line(s)"
     if error is not None:
-        print >> sys.stderr, "Error: " + error
+        print("Error: " + error, file=sys.stderr) 
         sys.exit(1)
 
 if __name__ == "__main__": __main__()
