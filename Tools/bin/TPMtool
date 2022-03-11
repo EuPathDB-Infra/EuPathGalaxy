@@ -219,8 +219,11 @@ class TPM(object):
     def  _calcTPM(self, rpkHash):
         tpmHash = {}
         for gene, rpk in rpkHash.items():
-            tpm = rpk/(self.rpkSum/1000000)
-            tpmHash[gene] = tpm
+            try:
+                tpm = rpk/(self.rpkSum/1000000)
+                tpmHash[gene] = tpm
+            except ZeroDivisionError as e:
+                raise SystemExit(e + '\nSum of Reads Per Kilobase values for all genes is 0. This usually indicates a problem with the count data. Please check your input and try again\n')
 
         return tpmHash
 
