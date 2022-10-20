@@ -1,7 +1,12 @@
 #!/bin/bash
-# Syncs tools
+
+# A helper script for developers that syncs a local Tools/ directory to a galaxy server.
+# - finds Tools/ relative to the running location of this script:  pwd/../Tools
+# - rysnc's that to /var/tmp/Tools on the remote (galaxy) host
+# - uses sudo on the galaxy host to rsync the tmp dir to /opt/galaxy/tools/eupath/Tools/
+# - uses sudo on the galaxy host to restart galaxy on that host
+
 # Doesn't change /opt/galaxy/config/tool_conf.xml
-# Doesn't "sudo supervisorctl restart galaxy:"
 
 host=$1
 pass=$2
