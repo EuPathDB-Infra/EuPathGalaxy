@@ -13,76 +13,61 @@ import re
 from requests.auth import HTTPBasicAuth
 from subprocess import Popen, PIPE
 
-
 class Export:
     """
     This is a generic VEuPathDB export tool for Galaxy.  It is abstract and so must be subclassed by more
     specialized export tools that implement those abstract classes.
     """
 
-    # Names for the 2 json files and the folder containing the dataset to be included in the tarball
-    DATASET_JSON = "dataset.json"
-    META_JSON = "meta.json"
-    DATAFILES = "datafiles"
-
-    def __init__(self, dataset_type, version, validation_script, args):
+    def __init__(self, dataset_type, version, args):
         """
         Initializes the export class with the parameters needed to accomplish the export of user
         datasets on Galaxy to VEuPathDB projects.
         :param dataset_type: The VEuPathDB type of this dataset
         :param version: The version of the VEuPathDB type of this dataset
-        :param validation_script: A script that handles the validation of this dataset
         :param args: An array of the input parameters
         """
         self._type = dataset_type
         self._version = version
-        self._validation_script = validation_script
 
         # Extract and transform the parameters as needed into member variables
         self.parse_params(args)
-
-        # This msec timestamp is used to denote both the created and modified times.
-        self._timestamp = int(time.time() * 1000)
 
         # This is the name of the file to be exported sans extension.  It will be used to designate a unique temporary
         # directory and to export both the tarball and the flag that triggers IRODS to process the tarball. By
         # convention, the dataset tarball is of the form dataset_uNNNNNN_tNNNNNNN.tgz where the NNNNNN following the _u
         # is the WDK user id and _t is the msec timestamp
-        self._export_file_root = 'dataset_u' + str(self._user_id) + '_t' + str(self._timestamp) + '_p' + str(os.getpid())
+        timestamp = int(time.time() * 1000)
+        self._export_file_root = 'dataset_u' + str(self._user_id) + '_t' + str(timestamp) + '_p' + str(os.getpid())
         print("Export file root is " + self._export_file_root, file=sys.stdout)
 
-        # Set up the configuration data
-        (self._url, self._user, self._pwd, self._lz_coll, self._flag_coll) = self.collect_rest_data()
+        (self._url, self._user, self._pwd) = self.read_config()
 
     def parse_params(self, args):
         """
-        Salts away all generic parameters (i.e., the first 5 params) and do some initial validation.  The subclasses
-        will handle the other parameters.
-        :param args:
-        :return:
+        Unpack generic parameters (the first 6).  The subclasses will handle the other parameters.
         """
         if len(args) < 6:
             raise ValidationException("The tool was passed an insufficient numbers of arguments.")
         self._dataset_name = args[0]
         self._summary = args[1]
         self._description = args[2]
+        self._user_id = getWdkUserId(args[3])
+        self._tool_directory = args[4] # Used to find the configuration file containing IRODS url and credentials
+        self._output = args[5] # output file
 
-        # WDK user id is derived from the user email
-        user_email = args[3].strip()
+
+    def getWdkUserId(rawUserEmail):
+        user_email = rawUserEmail.strip()
+         # WDK user id is derived from the user email
         if not re.match(r'.+\.\d+@veupathdb.org$', user_email, flags=0):
             raise ValidationException(
                 "The user email " + str(user_email) + " is not valid for the use of this tool.")
         galaxy_user = user_email.split("@")[0]
-        self._user_id = galaxy_user[galaxy_user.rfind(".") + 1:]
+        return galaxy_user[galaxy_user.rfind(".") + 1:]
+       
 
-        # Used to find the configuration file containing IRODS url and credentials
-        self._tool_directory = args[4]
-
-        # Output file
-        self._output = args[5]
-
-
-    def collect_rest_data(self):
+    def read_config(self):
         """
         Obtains the url and credentials and relevant collections needed to run the iRODS rest service.
         At some point, this information should be fished out of a configuration file.
@@ -96,42 +81,7 @@ class Export:
         #print >> sys.stdout, "self._tool_directory is " + self._tool_directory
         with open(config_path, "r") as config_file:
             config_json = json.load(config_file)
-            return (config_json["url"], config_json["user"], config_json["password"], "lz", "flags")
-
-    def validate_datasets(self):
-        """
-        Runs the validation script provided to the class upon initialization using the user's
-        dataset files as standard input.
-        :return:
-        """
-
-        if self._validation_script == None:
-            return
-        
-        dataset_files = self.identify_dataset_files()
-
-        validation_process = Popen(['python', self._tool_directory + "/../../bin/" + self._validation_script],
-                                   stdin=PIPE, stdout=PIPE, stderr=PIPE)
-        # output is a tuple containing (stdout, stderr)
-        output = validation_process.communicate(json.dumps(dataset_files).encode("utf-8"))
-        if validation_process.returncode == 1:
-            raise ValidationException(output[1])
-
-    def identify_dependencies(self):
-        """
-        An abstract method to be addressed by a specialized export tool that furnishes a dependency json list.
-        :return: The dependency json list to be returned should look as follows:
-        [dependency1, dependency2, ... ]
-        where each dependency is written as a json object as follows:
-        {
-          "resourceIdentifier": <value>,
-          "resourceVersion": <value>,
-          "resourceDisplayName": <value
-        }
-        Where no dependencies exist, an empty list is returned
-        """
-        raise NotImplementedError(
-            "The method 'identify_dependencies(self)' needs to be implemented in the specialized export module.")
+            return (config_json["url"], config_json["user"], config_json["password")
 
     def identify_projects(self):
         """
@@ -187,7 +137,6 @@ class Export:
               "dataFiles": self.create_data_file_metadata(),
               "owner": self._user_id,
               "size": size,
-              "created": self._timestamp
             }, json_file, indent=4)
 
     def create_metadata_json_file(self, temp_path):
