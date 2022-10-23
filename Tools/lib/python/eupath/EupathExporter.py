@@ -13,13 +13,11 @@ import re
 from requests.auth import HTTPBasicAuth
 from subprocess import Popen, PIPE
 
-class Export:
-    """
-    This is a generic VEuPathDB export tool for Galaxy.  It is abstract and so must be subclassed by more
-    specialized export tools that implement those abstract classes.
-    """
+# An abstract class to export to VEuPathDB.  Subclasses implement details for a given dataet type
+class Exporter:
+    SOURCE_GALAXY = "galaxy" # indicate to the service that Galaxy is the point of origin for this user dataset.
 
-    def __init__(self, dataset_type, version, args):
+    def initialize(self, dataset_type, version, args):
         """
         Initializes the export class with the parameters needed to accomplish the export of user
         datasets on Galaxy to VEuPathDB projects.
@@ -34,8 +32,8 @@ class Export:
         self.parse_params(args)
 
         # This is the name of the file to be exported sans extension.  It will be used to designate a unique temporary
-        # directory and to export both the tarball and the flag that triggers IRODS to process the tarball. By
-        # convention, the dataset tarball is of the form dataset_uNNNNNN_tNNNNNNN.tgz where the NNNNNN following the _u
+        # directory and to export the tarball.
+        # By convention, the dataset tarball is of the form dataset_uNNNNNN_tNNNNNNN.tgz where the NNNNNN following the _u
         # is the WDK user id and _t is the msec timestamp
         timestamp = int(time.time() * 1000)
         self._export_file_root = 'dataset_u' + str(self._user_id) + '_t' + str(timestamp) + '_p' + str(os.getpid())
@@ -54,18 +52,7 @@ class Export:
         self._description = args[2]
         self._user_id = getWdkUserId(args[3])
         self._tool_directory = args[4] # Used to find the configuration file containing IRODS url and credentials
-        self._output = args[5] # output file
-
-
-    def getWdkUserId(rawUserEmail):
-        user_email = rawUserEmail.strip()
-         # WDK user id is derived from the user email
-        if not re.match(r'.+\.\d+@veupathdb.org$', user_email, flags=0):
-            raise ValidationException(
-                "The user email " + str(user_email) + " is not valid for the use of this tool.")
-        galaxy_user = user_email.split("@")[0]
-        return galaxy_user[galaxy_user.rfind(".") + 1:]
-       
+        self._output = args[5] # output file       
 
     def read_config(self):
         """
@@ -81,7 +68,35 @@ class Export:
         #print >> sys.stdout, "self._tool_directory is " + self._tool_directory
         with open(config_path, "r") as config_file:
             config_json = json.load(config_file)
-            return (config_json["url"], config_json["user"], config_json["password")
+            return (config_json["url"], config_json["user"], config_json["password"])
+                    
+
+    def export(self):
+
+        # Save the current working directory so we can get back to it
+        orig_path = os.getcwd()
+
+        # Create a temporary directory in which to assemble the tarball.
+        with self.temporary_directory(self._export_file_root) as temp_path:
+
+            os.chdir(temp_path)
+            self.package_data_files(temp_path)
+            self.create_tarball()
+            json_blob = self.create_json_for_post()
+            dataset_id = self.post_json(json_blob)
+            post_data(dataset_id, json_blob)
+            os.chdir(orig_path) # exit temp dir, prior to removing it
+
+    def create_body_for_post(self):
+        return {
+            "name": self._dataset_name,
+            "summary": self._summary,
+            "description": self._description
+            "type": self._type,
+            "projects": self.identify_projects(),
+            "origin": SOURCE_GALAXY
+        }
+
 
     def identify_projects(self):
         """
@@ -132,7 +147,6 @@ class Export:
         with open(dataset_path, "w+") as json_file:
             json.dump({
               "type": {"name": self._type, "version": self._version},
-              "dependencies": self.identify_dependencies(),
               "projects": self.identify_projects(),
               "dataFiles": self.create_data_file_metadata(),
               "owner": self._user_id,
@@ -183,7 +197,7 @@ class Export:
         user's dataset files
         """
         with tarfile.open(self._export_file_root + ".tgz", "w:gz") as tarball:
-            for item in [self.META_JSON, self.DATASET_JSON, self.DATAFILES]:
+            for item in [self.DATAFILES]:
                 tarball.add(item)
 
     def process_request(self, collection, source_file):
@@ -268,50 +282,6 @@ class Export:
         except Exception as e:
             print("Diagnostic Error: " + str(e), file=sys.stderr)        
 
-    def export(self):
-        """
-        Does the work of exporting to VEuPathDB, a tarball consisting of the user's dataset files along
-        with dataset and metadata json files.
-        """
-
-        # Apply the validation first.  If it fails, exit with a data error.
-        self.validate_datasets()
-
-        # We need to save the current working directory so we can get back to it when we are
-        # finished working in our temporary directory.
-        orig_path = os.getcwd()
-
-        # We need to create a temporary directory in which to assemble the tarball.
-        with self.temporary_directory(self._export_file_root) as temp_path:
-
-            # Need to temporarily work inside the temporary directory to properly construct and
-            # send the tarball
-            os.chdir(temp_path)
-
-            self.package_data_files(temp_path)
-            self.create_metadata_json_file(temp_path)
-            self.create_dataset_json_file(temp_path)
-            self.create_tarball()
-            
-            # Uncomment to check the calling ip address for this tool.
-            # self.connection_diagnostic()
-
-            # Call the iRODS rest service to drop the tarball into the iRODS workspace landing zone
-            self.process_request(self._lz_coll, self._export_file_root + ".tgz")
-
-            # Create a empty (flag) file corresponding to the tarball
-            open(self._export_file_root + ".txt", "w").close()
-
-            # Call the iRODS rest service to drop a flag into the IRODS workspace flags collection.  This flag
-            # triggers the iRODS PEP that unpacks the tarball and posts the event to Jenkins
-            self.process_request(self._flag_coll, self._export_file_root + ".txt")
-
-            # Look for a success/fail indication from IRODS.
-            self.get_flag(self._flag_coll, self._export_file_root)
-
-            # We exit the temporary directory prior to removing it, back to the original working directory.
-            os.chdir(orig_path)
-
     @contextlib.contextmanager
     def temporary_directory(self, dir_name):
         """
@@ -367,3 +337,27 @@ class TransferException(Exception):
     This represents the exception reported when the export of a dataset to the iRODS system returns a failure.
     """
     pass
+
+def getWdkUserId(rawUserEmail):
+    user_email = rawUserEmail.strip()
+    # WDK user id is derived from the user email
+    if not re.match(r'.+\.\d+@veupathdb.org$', user_email, flags=0):
+        raise ValidationException(
+            "The user email " + str(user_email) + " is not valid for the use of this tool.")
+    galaxy_user = user_email.split("@")[0]
+    return galaxy_user[galaxy_user.rfind(".") + 1:]
+
+import optparse
+def execute(exporter):
+    parser = optparse.OptionParser()
+    (options, args) = parser.parse_args()
+    exporter.initialize(args);
+
+    #sys.tracebacklimit = 0
+
+    try:
+        print >> sys.stdout, "Try export."
+        exporter.export()
+    except EupathExporter.ValidationException as ve:
+        print >> sys.stderr, str(ve)
+        sys.exit(1)
