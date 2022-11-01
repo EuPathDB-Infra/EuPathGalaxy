@@ -1,7 +1,7 @@
 <tool id="exportGeneListToEuPathDB" name="Gene List to VEuPathDB" version="1.0.0">
   <description>Export a gene list to VEuPathDB</description>
   <command interpreter="python" detect_errors="aggressive">
-    ../../bin/exportGeneListToEuPathDB "$dataset_name" "$summary" "$description" "$__user_email__" "$__tool_directory__" "$output" "$overrideDbkey" "$input" "$input.metadata.dbkey" "$input.datatype"
+    ../../bin/exportGeneListToEuPathDB "$dataset_name" "$summary" "$description" "$__user_email__" "$__tool_directory__" "$output" "$overrideDbkey" "$input" "$input.datatype"
   </command>
   <inputs>
     <param name="dataset_name" type="text" size="100" value=""

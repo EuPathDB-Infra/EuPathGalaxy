@@ -3,10 +3,11 @@
 import sys
 #sys.path.insert(1, "/home/ross/EuPathGalaxy/Tools/lib/python/")
 sys.path.insert(0, "/opt/galaxy/tools/eupath/Tools/lib/python")
-from eupath import VCFFileEuPathExporter
+from eupath import GeneListEupathExporter
+from eupath import EupathExporterNew
 
 def main():
-    EuPathExporter.execute(VCFFileEuPathExporter.VCFFileExport())
+    EupathExporterNew.execute(GeneListEupathExporter.GeneListExporter())
 
 if __name__ == "__main__":
     sys.exit(main())
