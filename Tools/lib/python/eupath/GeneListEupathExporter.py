@@ -12,7 +12,7 @@ class GeneListExporter(EupathExporterNew.Exporter):
 
     def initialize(self, stdArgsBundle, typeSpecificArgsList):
 
-        super.initialize(self, stdArgsBundle, GeneListExport.GENE_LIST_TYPE, GeneListExport.GENE_LIST_VERSION)
+        super().initialize(stdArgsBundle, GeneListExporter.GENE_LIST_TYPE, GeneListExporter.GENE_LIST_VERSION)
 
         if len(typeSpecificArgsList) != 3:
             raise EupathExporterNew.ValidationException("The tool was passed an insufficient numbers of arguments.")

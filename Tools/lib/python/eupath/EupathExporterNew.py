@@ -18,33 +18,35 @@ def execute(exporter):
     
     (options, args) = optparse.OptionParser().parse_args()
     stdArgsBundle = StandardArgsBundle(args)
-    typeSpecificArgsList = stdArgsBundle.getTypeSpecificArgs(args)
+    typeSpecificArgsList = stdArgsBundle.getTypeSpecificArgsList(args)
     exporter.initialize(stdArgsBundle, typeSpecificArgsList);
 
     try:
-        print >> sys.stdout, "Try export."
+        print("Attempting export.",  file=sys.stderr)
         exporter.export()
     except ValidationException as ve:
-        print >> sys.stderr, str(ve)
+        print(str(ve),  file=sys.stderr)
         sys.exit(1)
 
 class StandardArgsBundle:
+    ARGS_LEN = 6
+
     def __init__(self, args):
-        ARGS_LEN = 6
-        if len(args) < ARGS_LEN:
+        if len(args) < StandardArgsBundle.ARGS_LEN:
             raise ValidationException("The tool was passed an insufficient numbers of arguments.")
-        self._dataset_name = args[0]
-        self._summary = args[1]
-        self._description = args[2]
-        self._user_id = getWdkUserId(args[3])
-        self._tool_directory = args[4] # Used to find the configuration file containing IRODS url and credentials
-        self._output = args[5] # output file
+        self.dataset_name = args[0]
+        self.summary = args[1]
+        self.description = args[2]
+        self.user_id = getWdkUserId(args[3])
+        self.tool_directory = args[4] # Used to find the configuration file containing IRODS url and credentials
+        self.output = args[5] # output file
 
     def getTypeSpecificArgsList(self, args):
-        return array[ARGS_LEN : ]
+        return args[StandardArgsBundle.ARGS_LEN : ]
 
 # An abstract class to export to VEuPathDB.  Subclasses implement details for a given dataet type
 class Exporter:
+    DATAFILES = "datafiles"
     SOURCE_GALAXY = "galaxy" # indicate to the service that Galaxy is the point of origin for this user dataset.
 
     def initialize(self, stdArgsBundle, dataset_type, dataset_version):
@@ -57,7 +59,7 @@ class Exporter:
         # By convention, the dataset tarball is of the form dataset_uNNNNNN_tNNNNNNN.tgz where the NNNNNN following the _u
         # is the WDK user id and _t is the msec timestamp
         timestamp = int(time.time() * 1000)
-        self._export_file_root = 'dataset_u' + str(self.stdArgsBundle._user_id) + '_t' + str(timestamp) + '_p' + str(os.getpid())
+        self._export_file_root = 'dataset_u' + str(self._stdArgsBundle.user_id) + '_t' + str(timestamp) + '_p' + str(os.getpid())
         print("Export file root is " + self._export_file_root, file=sys.stdout)
 
         (self._url, self._user, self._pwd) = self.read_config()
@@ -87,7 +89,8 @@ class Exporter:
             os.chdir(temp_path)
             self.package_data_files(temp_path)
             self.create_tarball()
-            json_blob = self.create_json_for_post()
+            json_blob = self.create_body_for_post()
+            print(json_blob, file=sys.stderr)
             user_dataset_id = self.post_metadata_json(json_blob)
             self.post_datafile(user_dataset_id)
             os.chdir(orig_path) # exit temp dir, prior to removing it
@@ -97,9 +100,9 @@ class Exporter:
             "name": self._stdArgsBundle.dataset_name,
             "summary": self._stdArgsBundle.summary,
             "description": self._stdArgsBundle.description,
-            "type": self.dataset_type,
+            "type": self._datatype,
             "projects": self.identify_projects(),
-            "origin": SOURCE_GALAXY
+            "origin": self.SOURCE_GALAXY
         }
 
     def post_metadata_json(json_blob):
@@ -249,6 +252,7 @@ class TransferException(Exception):
     """
     pass
 
+# expect email of the form: sfischer.67546@veupathdb.org (where the number is the user ID)
 def getWdkUserId(rawUserEmail):
     user_email = rawUserEmail.strip()
     # WDK user id is derived from the user email

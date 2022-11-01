@@ -9,7 +9,7 @@ class Genome:
     def __init__(self, reference_genome):
         """
         Teases out from the user's parameter, the reference genome information used in the construction of dependency
-        data.  The reference genome parameter should be of the form: ProjectId-EupathBuildNumber_Strain_Genome
+        data.  The reference genome parameter should be of the form: PROJECTID-BUILDNUM_STRAINNAME_Genome
         :param reference_genome: the reference genome parameter provided by the user
         """
 
