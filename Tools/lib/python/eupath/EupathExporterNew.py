@@ -88,6 +88,7 @@ class Exporter:
         with self.temporary_directory(self._export_file_root) as temp_path:
             os.chdir(temp_path)
             self.package_data_files(temp_path)
+            print("temp path: " + temp_path, file=sys.stderr)
             self.create_tarball()
             json_blob = self.create_body_for_post()
             print(json_blob, file=sys.stderr)
@@ -106,7 +107,13 @@ class Exporter:
         }
 
     def post_metadata_json(self, json_blob):
-        x = requests.post(url, json = json_blob)
+        headers = {"Accept": "application/json", "Auth-Key": self._pwd}
+        try:
+            response = requests.post(url, json = json_blob, headers=headers)
+            response.raise_for_status()
+        except Exception as e:
+            print("Error: The dataset export failed. " + str(e), file=sys.stderr)
+            sys.exit(2)
 
     def post_datafile():
         x=3
