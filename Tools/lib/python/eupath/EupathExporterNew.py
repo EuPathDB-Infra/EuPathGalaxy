@@ -92,7 +92,7 @@ class Exporter:
             self.create_tarball()
             json_blob = self.create_body_for_post()
             print(json_blob, file=sys.stderr)
-            user_dataset_id = self.post_metadata_json(json_blob)
+            user_dataset_id = self.post_metadata_json(self._url, json_blob)
             self.post_datafile(user_dataset_id)
             os.chdir(orig_path) # exit temp dir, prior to removing it
 
@@ -106,7 +106,7 @@ class Exporter:
             "origin": self.SOURCE_GALAXY
         }
 
-    def post_metadata_json(self, json_blob):
+    def post_metadata_json(self, url, json_blob):
         headers = {"Accept": "application/json", "Auth-Key": self._pwd}
         try:
             response = requests.post(url, json = json_blob, headers=headers)
