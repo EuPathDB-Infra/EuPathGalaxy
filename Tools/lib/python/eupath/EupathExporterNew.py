@@ -105,7 +105,7 @@ class Exporter:
             "origin": self.SOURCE_GALAXY
         }
 
-    def post_metadata_json(json_blob):
+    def post_metadata_json(self, json_blob):
         x = requests.post(url, json = json_blob)
 
     def post_datafile():
