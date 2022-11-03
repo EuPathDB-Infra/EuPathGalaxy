@@ -93,6 +93,7 @@ class Exporter:
             json_blob = self.create_body_for_post()
             print(json_blob, file=sys.stderr)
             user_dataset_id = self.post_metadata_json(self._url, json_blob)
+            print("UD ID: " + user_dataset_id)
             self.post_datafile(user_dataset_id)
             os.chdir(orig_path) # exit temp dir, prior to removing it
 
@@ -110,8 +111,9 @@ class Exporter:
         headers = {"Accept": "application/json", "Auth-Key": self._pwd}
         try:
             response = requests.post(url, json = json_blob, headers=headers)
-            #print("Response text: " + response.text, file=sys.stderr)
             response.raise_for_status()
+            print(response.json())
+            return response.json()['jobId']
         except Exception as e:
             print("Error: The dataset export failed. " + str(e), file=sys.stderr)            
             print("Response text: " + response.text, file=sys.stderr)
