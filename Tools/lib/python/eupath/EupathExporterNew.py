@@ -62,7 +62,7 @@ class Exporter:
         self._export_file_root = 'dataset_u' + str(self._stdArgsBundle.user_id) + '_t' + str(timestamp) + '_p' + str(os.getpid())
         print("Export file root is " + self._export_file_root, file=sys.stdout)
 
-        (self._url, self._user, self._pwd) = self.read_config()
+        (self._url, self._user, self._pwd, self._service_url, self._super_user_token) = self.read_config()
 
     def read_config(self):
         """
@@ -76,7 +76,7 @@ class Exporter:
         #print >> sys.stdout, "self._tool_directory is " + self._tool_directory
         with open(config_path, "r") as config_file:
             config_json = json.load(config_file)
-            return (config_json["url"], config_json["user"], config_json["password"])
+            return (config_json["url"], config_json["user"], config_json["password"], config_json["service-url"], config_json["super-user-token"])
                     
 
     def export(self):
@@ -92,7 +92,7 @@ class Exporter:
             self.create_tarball()
             json_blob = self.create_body_for_post()
             print(json_blob, file=sys.stderr)
-            user_dataset_id = self.post_metadata_json(self._url, json_blob)
+            user_dataset_id = self.post_metadata_json(json_blob)
             print("UD ID: " + user_dataset_id)
             self.post_datafile(user_dataset_id)
             os.chdir(orig_path) # exit temp dir, prior to removing it
@@ -107,10 +107,10 @@ class Exporter:
             "origin": self.SOURCE_GALAXY
         }
 
-    def post_metadata_json(self, url, json_blob):
-        headers = {"Accept": "application/json", "Auth-Key": self._pwd}
+    def post_metadata_json(self, json_blob):
+        headers = {"Accept": "application/json", "Auth-Key": self._super_user_token}
         try:
-            response = requests.post(url, json = json_blob, headers=headers)
+            response = requests.post(self._service_url, json = json_blob, headers=headers)
             response.raise_for_status()
             print(response.json())
             return response.json()['jobId']
