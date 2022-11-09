@@ -212,7 +212,7 @@ class Exporter:
         sys.exit(1)
 
     def handle_job_rejected_status(self, response_json):
-        msgLines = ["Upload rejected.  Validation problems:"]
+        msgLines = ["Export failed.  Dataset had validation problems:"]
         for general in response_json["statusDetails"]["general"]:
             msgLines.append(general)
         for key in response_json["statusDetails"]["byKey"]:
