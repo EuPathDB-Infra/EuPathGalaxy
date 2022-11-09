@@ -1,9 +1,9 @@
 #!/usr/bin/python
 
-from . import EupathExporterNew
+from . import EupathExporter
 from . import ReferenceGenome
 
-class GeneListExporter(EupathExporterNew.Exporter):
+class GeneListExporter(EupathExporter.Exporter):
 
     # Name given to this type of dataset and to the expected file
     GENE_LIST_TYPE = "GeneList"
