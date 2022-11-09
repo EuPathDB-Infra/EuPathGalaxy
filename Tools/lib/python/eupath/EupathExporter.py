@@ -130,8 +130,7 @@ class Exporter:
         
     def create_tarball(self, temp_path):
         """
-        Package the tarball - contains meta.json, dataset.json and a datafiles folder containing the
-        user's dataset files
+        Package the tarball - contains the user's dataset files
         """
         tarball_name = self._export_file_root + ".tgz"
         with tarfile.open(tarball_name, "w:gz") as tarball:
@@ -178,11 +177,11 @@ class Exporter:
 
     def poll_for_upload_complete(self, user_dataset_id):
         start_time = time.time()
-        poll_interval = 1
+        poll_interval_seconds = 1
         while (self.check_upload_in_progress(user_dataset_id)):
-            time.sleep(poll_interval)  # sleep for specified seconds
-            if poll_interval < self.POLLING_INTERVAL_MAX:
-                poll_interval *= self.POLLING_FACTOR
+            time.sleep(poll_interval_seconds)  # sleep for specified seconds
+            if poll_interval_seconds < self.POLLING_INTERVAL_MAX:
+                poll_interval_seconds *= self.POLLING_FACTOR
             if (time.time() - start_time > self.POLLING_TIMEOUT):
                 raise SystemException("Timed out polling for upload completion status")
 
