@@ -4,10 +4,10 @@ import sys
 #sys.path.insert(1, "/home/ross/EuPathGalaxy/Tools/lib/python/")
 sys.path.insert(0, "/opt/galaxy/tools/eupath/Tools/lib/python")
 from eupath import GeneListEupathExporter
-from eupath import EupathExporterNew
+from eupath import EupathExporter
 
 def main():
-    EupathExporterNew.execute(GeneListEupathExporter.GeneListExporter())
+    EupathExporter.execute(GeneListEupathExporter.GeneListExporter())
 
 if __name__ == "__main__":
     sys.exit(main())

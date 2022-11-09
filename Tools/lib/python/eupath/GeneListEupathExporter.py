@@ -15,11 +15,11 @@ class GeneListExporter(EupathExporter.Exporter):
         super().initialize(stdArgsBundle, GeneListExporter.GENE_LIST_TYPE, GeneListExporter.GENE_LIST_VERSION)
 
         if len(typeSpecificArgsList) != 3:
-            raise EupathExporterNew.ValidationException("The tool was passed an insufficient numbers of arguments.")
+            raise EupathExporter.ValidationException("The tool was passed an insufficient numbers of arguments.")
 
         # Override the dataset genome reference with that provided via the form.
         if len(typeSpecificArgsList[0].strip()) == 0:
-            raise EupathExporterNew.ValidationException("A reference genome must be selected.")
+            raise EupathExporter.ValidationException("A reference genome must be selected.")
         self._genome = ReferenceGenome.Genome(typeSpecificArgsList[0])
         self._dataset_file_path = typeSpecificArgsList[1]
         self._datatype = typeSpecificArgsList[2]
