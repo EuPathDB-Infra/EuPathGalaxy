@@ -211,9 +211,17 @@ class Exporter:
         self.printHttpErr("GET upload status failed. " + response_json["statusDetails"]["message"], "200")
         sys.exit(1)
 
+    def handle_job_rejected_status(self, response_json):
+        msgLines = ["Upload rejected.  Validation problems:"]
+        for general in response_json["statusDetails"]["general"]:
+            msgLines.append(general)
+        for key in response_json["statusDetails"]["byKey"]:
+            msgLines.append(key + ": " + response_json["statusDetails"]["byKey"][key])
+        print('\n'.join(msgLines), file=sys.stderr)
+        sys.exit(1)
+
     def printHttpErr(self, msg, status_code):
         print("Http Error (" + status_code + "): " + msg, file=sys.stderr)            
-
 
     def output_success(self):
         header = "<html><body><h1>Good news!</h1><br />"
