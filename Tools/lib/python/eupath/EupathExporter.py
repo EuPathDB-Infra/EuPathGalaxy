@@ -221,7 +221,7 @@ class Exporter:
         sys.exit(1)
 
     def printHttpErr(self, msg, status_code):
-        print("Http Error (" + status_code + "): " + msg, file=sys.stderr)            
+        print("Http Error (" + str(status_code) + "): " + msg, file=sys.stderr)            
 
     def output_success(self):
         header = "<html><body><h1>Good news!</h1><br />"
