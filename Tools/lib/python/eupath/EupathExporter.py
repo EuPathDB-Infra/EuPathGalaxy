@@ -16,6 +16,12 @@ import optparse
 def print_debug(msg):
     if os.getenv('DEBUG'):
         print(msg,  file=sys.stderr)
+
+def get_ssl_verify():
+    if os.getenv('NO_SSL_VER'):
+        return False
+    else:
+        return True    
     
 def execute(exporter):
     (options, args) = optparse.OptionParser().parse_args()
@@ -52,6 +58,7 @@ class Exporter:
     POLLING_INTERVAL_MAX = 60
     POLLING_TIMEOUT = 10 * POLLING_INTERVAL_MAX 
     SOURCE_GALAXY = "galaxy" # indicate to the service that Galaxy is the point of origin for this user dataset.
+    ORIGINATING_USER_HEADER_KEY = "originating-user-id" 
 
     def initialize(self, stdArgsBundle, dataset_type, dataset_version):
         self._stdArgsBundle = stdArgsBundle
@@ -66,7 +73,7 @@ class Exporter:
         print_debug("Export file root is " + self._export_file_root)
 
         # read in config info
-        (self._url, self._user_id, self._pwd, self._service_url, self._super_user_token) = self.read_config()
+        (self._service_url, self._super_user_token) = self.read_config()
 
     def read_config(self):
         """
@@ -77,7 +84,7 @@ class Exporter:
         
         with open(config_path, "r") as config_file:
             config_json = json.load(config_file)
-            return (config_json["url"], config_json["user"], config_json["password"], config_json["service-url"], config_json["super-user-token"])
+            return (config_json["service-url"], config_json["super-user-token"])
                     
     def export(self):
 
@@ -150,9 +157,10 @@ class Exporter:
         }
 
     def post_metadata_json(self, json_blob):
-        headers = {"Accept": "application/json", "Auth-Key": self._super_user_token}
+        headers = {"Accept": "application/json", "Auth-Key": self._super_user_token, self.ORIGINATING_USER_HEADER_KEY: self._stdArgsBundle.user_id}
+        print_debug("Super usre token: |" + self._super_user_token + "|")
         try:
-            response = requests.post(self._service_url, json = json_blob, headers=headers)
+            response = requests.post(self._service_url, json = json_blob, headers=headers, verify=get_ssl_verify())
             response.raise_for_status()
             print_debug(response.json())
             return response.json()['jobId']
@@ -163,11 +171,11 @@ class Exporter:
 
     def post_datafile(self, user_dataset_id, tarball_name):
         print_debug("POSTING data.  Tarball name: " + tarball_name)
-        headers = {"Accept": "application/json", "Auth-Key": self._super_user_token, "Originating-User_Id": self._user_id}
+        headers = {"Accept": "application/json", "Auth-Key": self._super_user_token, self.ORIGINATING_USER_HEADER_KEY: self._stdArgsBundle.user_id}
         response = None
         try:
             form_fields = {"file": open(tarball_name, "rb"), "uploadMethod":"file"}
-            response = requests.post(self._service_url + "/" + user_dataset_id, headers=headers, files=form_fields)
+            response = requests.post(self._service_url + "/" + user_dataset_id, headers=headers, files=form_fields, verify=get_ssl_verify())
             response.raise_for_status()
         except Exception as e:
             self.printHttpErr("POST of metadata failed. " + str(e), response.status_code)            
@@ -187,10 +195,10 @@ class Exporter:
 
     # return True if still in progress; False if success.  Fail and terminate if system or validation error
     def check_upload_in_progress(self, user_dataset_id):
-        headers = {"Accept": "application/json", "Auth-Key": self._super_user_token, "Originating-User_Id": self._user_id}
+        headers = {"Accept": "application/json", "Auth-Key": self._super_user_token, self.ORIGINATING_USER_HEADER_KEY: self._stdArgsBundle.user_id}
         print_debug("Polling for status")
         try:
-            response = requests.get(self._service_url + "/" + user_dataset_id, headers=headers)
+            response = requests.get(self._service_url + "/" + user_dataset_id, headers=headers, verify=get_ssl_verify())
             response.raise_for_status()
             json_blob = response.json()
             if json_blob["status"] == "success":
