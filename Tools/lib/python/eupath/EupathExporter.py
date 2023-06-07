@@ -13,6 +13,10 @@ import contextlib
 import re
 import optparse
 
+# Superclass for all exporters
+# POSTS data+metadata to the VDI service, and polls for response while status is till awaiting or in progress
+# if dataset is invalid, fails, returning messages to user
+
 def print_debug(msg):
     if os.getenv('DEBUG'):
         print(msg,  file=sys.stderr)
@@ -36,6 +40,7 @@ def execute(exporter):
         print(str(ve), file=sys.stderr)
         sys.exit(1)
 
+# A small class capturing the standard args provided by galaxy        
 class StandardArgsBundle:
     ARGS_LEN = 6
 
@@ -47,12 +52,12 @@ class StandardArgsBundle:
         self.description = args[2]
         self.user_id = getWdkUserId(args[3])
         self.tool_directory = args[4] # Used to find the configuration file containing IRODS url and credentials
-        self.output = args[5] # output file
+        self.output = args[5] # output file where we write a success message for the Galaxy user
 
     def getTypeSpecificArgsList(self, args):
         return args[StandardArgsBundle.ARGS_LEN : ]
 
-# An abstract class to export to VEuPathDB.  Subclasses implement details for a given dataet type
+# Abstract class to export to VEuPathDB.  Subclasses implement details for a given dataset type
 class Exporter:
     POLLING_FACTOR = 1.5  # multiplier for progressive polling of status endpoint
     POLLING_INTERVAL_MAX = 60
@@ -77,8 +82,7 @@ class Exporter:
 
     def read_config(self):
         """
-        Obtains the url and credentials and relevant collections needed to run the iRODS rest service.
-        At some point, this information should be fished out of a configuration file.
+        Obtain the url and credentials to talk the the VDI service
         """
         config_path = self._stdArgsBundle.tool_directory + "/../../config/config.json"
         
@@ -98,9 +102,8 @@ class Exporter:
             tarball_name = self.create_tarball(temp_path)
             json_body = self.create_body_for_post()
             print_debug(json_body)
-            user_dataset_id = self.post_metadata_json(json_body)
+            user_dataset_id = self.post_metadata_and_data(json_body, tarball_name)
             print_debug("UD ID: " + user_dataset_id)
-            self.post_datafile(user_dataset_id, tarball_name)
             self.poll_for_upload_complete(user_dataset_id)   # teriminates if system or validation error
             os.chdir(orig_path) # exit temp dir, prior to removing it
 
@@ -156,31 +159,19 @@ class Exporter:
             "origin": self.SOURCE_GALAXY
         }
 
-    def post_metadata_json(self, json_blob):
+    def post_metadata_and_data(self, json_blob, tarball_name):
         headers = {"Accept": "application/json", "Auth-Key": self._super_user_token, self.ORIGINATING_USER_HEADER_KEY: self._stdArgsBundle.user_id}
-        print_debug("Super usre token: |" + self._super_user_token + "|")
+        print_debug("Super user token: |" + self._super_user_token + "|")
+        print_debug("POSTING data.  Tarball name: " + tarball_name)
         try:
-            response = requests.post(self._service_url, json = json_blob, headers=headers, verify=get_ssl_verify())
+            form_fields = {"file": open(tarball_name, "rb"), "uploadMethod":"file"}
+            response = requests.post(self._service_url, json = json_blob, files=form_fields, headers=headers, verify=get_ssl_verify())
             response.raise_for_status()
             print_debug(response.json())
             return response.json()['jobId']
         except Exception as e:
-            self.printHttpErr("POST of metadata failed. " + str(e), response.status_code)            
+            self.printHttpErr("POST failed. " + str(e), response.status_code)            
             print("Reason: " + response.text, file=sys.stderr)
-            sys.exit(1)
-
-    def post_datafile(self, user_dataset_id, tarball_name):
-        print_debug("POSTING data.  Tarball name: " + tarball_name)
-        headers = {"Accept": "application/json", "Auth-Key": self._super_user_token, self.ORIGINATING_USER_HEADER_KEY: self._stdArgsBundle.user_id}
-        response = None
-        try:
-            form_fields = {"file": open(tarball_name, "rb"), "uploadMethod":"file"}
-            response = requests.post(self._service_url + "/" + user_dataset_id, headers=headers, files=form_fields, verify=get_ssl_verify())
-            response.raise_for_status()
-        except Exception as e:
-            self.printHttpErr("POST of metadata failed. " + str(e), response.status_code)            
-            if response != None:
-                print("Reason: " + response.text, file=sys.stderr)
             sys.exit(1)
 
     def poll_for_upload_complete(self, user_dataset_id):
@@ -201,29 +192,22 @@ class Exporter:
             response = requests.get(self._service_url + "/" + user_dataset_id, headers=headers, verify=get_ssl_verify())
             response.raise_for_status()
             json_blob = response.json()
-            if json_blob["status"] == "success":
+            if json_blob["status"]["import"] == "complete":
                 return False
-            if json_blob["status"] == "errored":
-                self.handle_job_error_status(json_blob)
-            if json_blob["status"] == "rejected":
-                self.handle_job_rejected_status(json_blob)
-            return True
+            if json_blob["status"]["import"] == "invalid":
+                self.handle_job_invalid_status(json_blob)
+                return False
+            return True  # status is awaiting or in progress
         except Exception as e:
             self.printHttpErr("GET of upload status failed. " + str(e), response.status_code)            
             if response != None:
                 print("Reason: " + response.text, file=sys.stderr)
             sys.exit(1)
 
-    def handle_job_error_status(self, response_json):
-        self.printHttpErr("GET upload status failed. " + response_json["statusDetails"]["message"], "200")
-        sys.exit(1)
-
-    def handle_job_rejected_status(self, response_json):
+    def handle_job_invalid_status(self, response_json):
         msgLines = ["Export failed.  Dataset had validation problems:"]
-        for general in response_json["statusDetails"]["general"]:
-            msgLines.append(general)
-        for key in response_json["statusDetails"]["byKey"]:
-            msgLines.append(key + ": " + response_json["statusDetails"]["byKey"][key])
+        for msg in response_json["importMessages"]:
+            msgLines.append(msg)
         print('\n'.join(msgLines), file=sys.stderr)
         sys.exit(1)
 
