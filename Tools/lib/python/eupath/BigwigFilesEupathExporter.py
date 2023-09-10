@@ -6,9 +6,9 @@ class BigwigFilesExporter(EupathExporter.Export):
     """
 INPUT
     type specific args:  
-      - user's explicit choice of ref genome
-      - one of more tuples of: [filepath, filename, refgenome_key]
-        - error unless tuples agree on ref genome
+      - user's explicit choice of a ref genome key (a string encoding project, buildnum, genome)
+      - one or more tuples of: [filepath, filename, ref_genome_key]
+        - ref_genome_key must be "Unspecified(?)" or agree with explicit ref genome key. else error. 
         - all files must have .bw type
 
 OUTPUT
@@ -24,7 +24,7 @@ OUTPUT
     # Constants
     TYPE = "BigwigFiles"
     VERSION = "1.0"
-
+    UNSPECIFIED_REF_GENOME_KEY = "Unspecified(?)"
 
     def initialize(self, stdArgsBundle, typeSpecificArgsList):
 
@@ -36,10 +36,10 @@ OUTPUT
         if (len(typeSpecificArgsList) - 1) % 3 != 0:
             raise EupathExporter.ValidationException("Invalid number of arguments.  Must be a reference genome followed by one or more 3-tuples.")
 
-        # Override the dataset genome reference with that provided via the form.
-        if len(typeSpecificArgsList[0].strip()) == 0:
+        self._refGenomeKey = typeSpecificArgsList[0]
+        if self._refGenomeKey == UNSPECIFIED_REF_GENOME_KEY or len(self._refGenomeKey.strip()) == 0:
             raise EupathExporter.ValidationException("A reference genome must be selected.")
-        self._refGenome = ReferenceGenome.Genome(typeSpecificArgsList[0])
+        self._refGenome = ReferenceGenome.Genome(self._refGenomeKey)
 
         # list arguments (for debuging)
         # print >> sys.stderr, "args to BigwigFilesEupathExporter.py"
@@ -55,7 +55,7 @@ OUTPUT
 
             path = typeSpecificArgsList[i+0]
             filename = typeSpecificArgsList[i+1]  # user's original file name
-            rg = typeSpecificArgsList[i+2]
+            refGenomeKey = typeSpecificArgsList[i+2]
 
             # check file suffix (and set if needed)
             if filename.endswith(".bigwig"):
@@ -70,8 +70,8 @@ OUTPUT
             if size > sizeLimit:
                 raise EupathExporter.ValidationException("File exceeds 500MB size limit: " + filename)
 
-            if rg.identifier != self._refGenome.identifier or rg.version != self._refGenome.version:
-                raise EupathExporter.ValidationException("File " + filename + " is annotated with ref genome " + rg.identifier + " version " + rg.version " which conflicts with " + self._refGenome.identifier + " " + self._refGenome.version)
+            if refGenomeKey != UNSPECIFIED_REF_GENOME_KEY and refGenomeKey != self._refGenomeKey:
+                raise EupathExporter.ValidationException("File " + filename + " is annotated with ref genome " + refGenomeKey + " which conflicts with what you specified for the export: " + self._refGenomeKey)
 
             self._datasetInfos.append({"name": filename, "path": path})
 

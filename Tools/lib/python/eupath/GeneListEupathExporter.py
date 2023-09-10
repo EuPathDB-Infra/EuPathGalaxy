@@ -18,6 +18,8 @@ class GeneListExporter(EupathExporter.Exporter):
             raise EupathExporter.ValidationException("The tool was passed an insufficient numbers of arguments.")
 
         # Override the dataset genome reference with that provided via the form.
+        # (We need a ref genome in order to decide which project the gene list is for.  BUT... a gene list might
+        # contain genes from mulitple genomes)
         if len(typeSpecificArgsList[0].strip()) == 0:
             raise EupathExporter.ValidationException("A reference genome must be selected.")
         self._genome = ReferenceGenome.Genome(typeSpecificArgsList[0])

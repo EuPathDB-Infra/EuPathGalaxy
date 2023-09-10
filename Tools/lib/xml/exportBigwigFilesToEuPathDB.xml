@@ -28,7 +28,6 @@
            help="Select the files to include in the new VEuPathDB My Data Set. The bigwig files you select here must be mapped to the reference genome that you select below.">
     </param>
 
-    <!-- I consider this a very bad idea -->
     <param name="overrideDbkey" type="genomebuild" label="Reference genome:" 
            help="The bigwig files you selected above must be mapped to the reference genome that you select here." />
     

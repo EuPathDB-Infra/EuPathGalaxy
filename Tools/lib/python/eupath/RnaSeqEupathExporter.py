@@ -45,14 +45,9 @@ OUTPUT
    - reference genome and version (unanimous consensus of the samples provided)
     """
     
-    # Constants
-    TYPE = "RnaSeq"
+    # Name given to this type of dataset and to the expected file
+    TYPE = "RNASeq"
     VERSION = "1.0"
-
-        # Name given to this type of dataset and to the expected file
-    GENE_LIST_TYPE = "GeneList"
-    GENE_LIST_VERSION = "1.0"
-    GENE_LIST_FILE = "genelist.txt"
 
     def initialize(self, stdArgsBundle, typeSpecificArgsList):
 

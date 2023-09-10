@@ -8,8 +8,9 @@ class Genome:
 
     def __init__(self, reference_genome):
         """
-        Teases out from the user's parameter, the reference genome information used in the construction of dependency
-        data.  The reference genome parameter should be of the form: PROJECTID-BUILDNUM_STRAINNAME_Genome
+        reference_genome is a string parameter, from a pulldown list provided by VEuPathDB.  
+        It should be of the form: PROJECTID-BUILDNUM_STRAINNAME_Genome
+        This method parses the string, to provide the info in a structured object.
         :param reference_genome: the reference genome parameter provided by the user
         """
 
