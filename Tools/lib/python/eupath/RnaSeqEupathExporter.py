@@ -57,13 +57,15 @@ OUTPUT
             raise EupathExporter.ValidationException("The tool was passed an insufficient numbers of arguments.")
 
         if (len(typeSpecificArgsList) - 1) % 4 != 0:
-            raise EupathExporter.ValidationException("Invalid number of arguments.  Must be a strand followed by one or more 4-tuples.")
+            raise EupathExporter.ValidationException("Invalid number of arguments.  Must be stranded/unstranded followed by one or more 4-tuples.")
 
         strandednessParam = typeSpecificArgsList[0]
         if strandnessParam != "stranded" and strandnessParam != "unstranded":
             raise EupathExporter.ValidationException("Invalid strand param: " + strandednessParam)
 
-        self._refGenome = ReferenceGenome.Genome(typeSpecificArgsList[3]) # grab ref genome from first tuple.  all others must agree
+        # grab ref genome from first tuple.  all others must agree
+        self._refGenomeKey = typeSpecificArgsList[3]
+        self._refGenome = ReferenceGenome.Genome( self._refGenomeKey)
 
         self._datasetInfos = []
 
@@ -78,11 +80,11 @@ OUTPUT
             # print >> sys.stderr, "args[" + str(i) + "] = " + args[i]
             path = typeSpecificArgsList[i+0]
             samplename = typeSpecificArgsList[i+1]
-            rg = typeSpecificArgsList[i+2]
+            refGenomeKey = typeSpecificArgsList[i+2]
             suffix = typeSpecificArgsList[i+3]
 
-            if rg.identifier != self._refGenome.identifier or rg.version != self._refGenome.version:
-                raise EupathExporter.ValidationException("All datasets must have the same reference genome identifier and version")
+            if refGenomeKey != self._refGenomeKey
+                raise EupathExporter.ValidationException("All datasets must have the same reference genome identifier and version. Sample " + sampleName + " does not agree with others: " + refGenomeKey)
             
             filename = self.clean_file_name(re.sub(r"\s+", "_", samplename) + "." + suffix)
 
