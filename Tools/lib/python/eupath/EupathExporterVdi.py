@@ -170,11 +170,11 @@ class Exporter:
             response = requests.post(self._service_url, json = json_blob, files=form_fields, headers=headers, verify=get_ssl_verify())
             response.raise_for_status()
             print_debug(response.json())
-            return response.json()['jobId']
-        except Exception as e:
-            self.printHttpErr("POST failed. " + str(e), response.status_code)            
-            print("Reason: " + response.text, file=sys.stderr)
-            sys.exit(1)
+            jobId = response.json()['jobId']
+            response.close()
+            return jobId
+        except requests.exceptions.RequestException as e:
+            handleRequestException(e, url, "Posting metadata and data to VDI")    
 
     def poll_for_upload_complete(self, user_dataset_id):
         start_time = time.time()
@@ -287,5 +287,9 @@ def getWdkUserId(rawUserEmail):
     galaxy_user = user_email.split("@")[0]
     return galaxy_user[galaxy_user.rfind(".") + 1:]
 
+def handleRequestException(e, url, msg):
+    print("Error " + msg + ". Exception type: " + str(type(e)) + " Code: " + str(e.response.status_code) + " " + e.response.text, file=sys.stderr)
+    print("Error URL: " + url, file=sys.stderr)            
+    exit(1)
         
     
