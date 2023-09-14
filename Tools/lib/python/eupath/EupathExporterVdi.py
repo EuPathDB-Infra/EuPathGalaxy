@@ -162,7 +162,7 @@ class Exporter:
         }
 
     def post_metadata_and_data(self, json_blob, tarball_name):
-        headers = {"Accept": "application/json", "Auth-Key": self._super_user_token, "User-ID": self._stdArgsBundle.user_id}
+        headers = {"Accept": "application/json", "Admin-Token": self._super_user_token, "User-ID": self._stdArgsBundle.user_id}
         print_debug("Super user token: |" + self._super_user_token + "|")
         print_debug("POSTING data.  Tarball name: " + tarball_name)
         try:
@@ -188,7 +188,7 @@ class Exporter:
 
     # return True if still in progress; False if success.  Fail and terminate if system or validation error
     def check_upload_in_progress(self, user_dataset_id):
-        headers = {"Accept": "application/json", "Auth-Key": self._super_user_token, "User-ID": self._stdArgsBundle.user_id}
+        headers = {"Accept": "application/json", "Admin-Token": self._super_user_token, "User-ID": self._stdArgsBundle.user_id}
         print_debug("Polling for status")
         try:
             response = requests.get(self._service_url + "/" + user_dataset_id, headers=headers, verify=get_ssl_verify())
