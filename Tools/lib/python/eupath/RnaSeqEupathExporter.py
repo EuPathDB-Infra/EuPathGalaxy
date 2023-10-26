@@ -9,40 +9,30 @@ class RnaSeqExporter(EupathExporter.Exporter):
 
     """
 INPUT
-    tuple format is: [filepath, samplename, refgenome_key, suffix]
-
-    suffixes are:  bw or txt (for fpkm files)
-    
     type specific args:  
       strand param: 'stranded' or 'unstranded'
-      for each sample, a list of tuple pairs, one txt tuple and one bw tuple: 
-        - hopefully all tuples agree on ref genome
-        - hopefully matching bw and txt files
-        - if stranded, then sample has two pairs of tuples, one per strand
-          - txt:
-            - first tuple file name and sample name contain 'forward' in the name (sense)
-            - second tuple file name and sample name contain 'reverse' in the name (antisense)
-          - bw:
-            - first tuple is strand one
-            - second tuple is strand two
+      a list of tuples. 
 
+    tuple format is: [filepath, samplename, refgenome_key, suffix]
+
+    suffixes provided by the galaxy UI are either 'bw' or 'txt' (for fpkm or tpm files)
+    
 OUTPUT
-  files given cannonical names:
-     unstranded: sample.suffix (with sample name cleaned of icky characters)
-     stranded:  
-       -SAMPLE_NAME.forward.bw
-       -SAMPLE_NAME.reverse.bw
-       -SAMPLE_NAME.one.txt
-       -SAMPLE_NAME.two.txt
+  files are given cannonical names:
+     sample.suffix (with sample name cleaned of icky characters)
+     for stranded, if txt file name contains forward or reverse, change to one or two
 
-  manifest.txt file with one line per file:
+  manifest.txt file with one line per tuple:
     for txt file:
       samplename filename strandinfo ('unstranded', 'sense' or 'antisense')
     for bw file:
-      samplename filename strandinfo ('unstranded', 'strandone' or 'strandtwo')
+      samplename filename strandinfo ('unstranded', 'firststrand' or 'secondstrand')
 
   dependency info:
    - reference genome and version (unanimous consensus of the samples provided)
+
+SEE VDI IMPORTER FOR VALIDATION RULES
+
     """
     
     # Name given to this type of dataset and to the expected file
@@ -90,7 +80,7 @@ OUTPUT
 
             fileNumber += 1
             if strandednessParam == "stranded":
-                if filename[-4:] == ".txt":
+                if suffix == "txt":
                     filename = re.sub("forward", "one", re.sub("reverse", "two", filename))
                     samplename = re.sub("forward", "one", re.sub("reverse", "two", samplename))
                     strandedness = "sense" if (fileNumber % 2) == 1 else "antisense"

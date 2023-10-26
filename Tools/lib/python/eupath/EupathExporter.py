@@ -63,12 +63,12 @@ class Exporter:
     POLLING_INTERVAL_MAX = 60
     POLLING_TIMEOUT = 10 * POLLING_INTERVAL_MAX 
     SOURCE_GALAXY = "galaxy" # indicate to the service that Galaxy is the point of origin for this user dataset.
-    ORIGINATING_USER_HEADER_KEY = "originating-user-id" 
 
     def initialize(self, stdArgsBundle, dataset_type, dataset_version):
         self._stdArgsBundle = stdArgsBundle
         self._dataset_type = dataset_type
         self._dataset_version = dataset_version
+        self._headers = {"Accept": "application/json", "Admin-Token": self._super_user_token, "User-ID": self._stdArgsBundle.user_id}
 
         # create a unique name for our tmp working dir and the tarball, of the form: 
         #   dataset_uNNNNNN_tTTTTTTT 
@@ -88,7 +88,7 @@ class Exporter:
         
         with open(config_path, "r") as config_file:
             config_json = json.load(config_file)
-            return (config_json["service-url"], config_json["super-user-token"])
+            return (config_json["vdi-service-url"], config_json["vdi-auth-token"])
                     
     def export(self):
 
@@ -151,28 +151,28 @@ class Exporter:
 
     def create_body_for_post(self):
         return {
-            "datasetName": self._stdArgsBundle.dataset_name,
+            "name": self._stdArgsBundle.dataset_name,
             "summary": self._stdArgsBundle.summary,
+            "dependencies": self.identify_dependencies(),
             "description": self._stdArgsBundle.description,
+            "datasetType": {"name": self._dataset_type, "version": self._dataset_version},
             "datasetType": self._datatype,
             "projects": self.identify_projects(),
+            "visibility": "private",
             "origin": self.SOURCE_GALAXY
         }
 
     def post_metadata_and_data(self, json_blob, tarball_name):
-        headers = {"Accept": "application/json", "Auth-Key": self._super_user_token, self.ORIGINATING_USER_HEADER_KEY: self._stdArgsBundle.user_id}
         print_debug("Super user token: |" + self._super_user_token + "|")
         print_debug("POSTING data.  Tarball name: " + tarball_name)
         try:
-            form_fields = {"file": open(tarball_name, "rb"), "uploadMethod":"file"}
-            response = requests.post(self._service_url, json = json_blob, files=form_fields, headers=headers, verify=get_ssl_verify())
+            form_fields = {"file": open(tarball_name, "rb"),  "meta":json.dumps(json_blob)}
+            response = requests.post(self._service_url, files=form_fields, headers=self._headers, verify=get_ssl_verify())
             response.raise_for_status()
             print_debug(response.json())
-            return response.json()['jobId']
-        except Exception as e:
-            self.printHttpErr("POST failed. " + str(e), response.status_code)            
-            print("Reason: " + response.text, file=sys.stderr)
-            sys.exit(1)
+            return response.json()['datasetId']
+        except requests.exceptions.RequestException as e:
+            handleRequestException(e, url, "Posting metadata and data to VDI")    
 
     def poll_for_upload_complete(self, user_dataset_id):
         start_time = time.time()
@@ -186,23 +186,19 @@ class Exporter:
 
     # return True if still in progress; False if success.  Fail and terminate if system or validation error
     def check_upload_in_progress(self, user_dataset_id):
-        headers = {"Accept": "application/json", "Auth-Key": self._super_user_token, self.ORIGINATING_USER_HEADER_KEY: self._stdArgsBundle.user_id}
         print_debug("Polling for status")
         try:
-            response = requests.get(self._service_url + "/" + user_dataset_id, headers=headers, verify=get_ssl_verify())
+            response = requests.get(self._service_url + "/" + user_dataset_id, headers=self._headers, verify=get_ssl_verify())
             response.raise_for_status()
             json_blob = response.json()
             if json_blob["status"]["import"] == "complete":
                 return False
             if json_blob["status"]["import"] == "invalid":
                 self.handle_job_invalid_status(json_blob)
-                return False
             return True  # status is awaiting or in progress
-        except Exception as e:
-            self.printHttpErr("GET of upload status failed. " + str(e), response.status_code)            
-            if response != None:
-                print("Reason: " + response.text, file=sys.stderr)
-            sys.exit(1)
+        except requests.exceptions.RequestException as e:
+            handleRequestException(e, url, "Polling VDI for upload status")    
+
 
     def handle_job_invalid_status(self, response_json):
         msgLines = ["Export failed.  Dataset had validation problems:"]
