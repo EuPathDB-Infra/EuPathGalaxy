@@ -37,9 +37,9 @@ OUTPUT
             raise EupathExporter.ValidationException("Invalid number of arguments.  Must be a reference genome followed by one or more 3-tuples.")
 
         # list arguments (for debuging)
-        print >> sys.stderr, "args to BigwigFilesEupathExporter.py"
+        print("args to BigwigFilesEupathExporter.py", file=sys.stderr)
         for i in range(0, len(args)):
-            print >> sys.stderr, str(args[i])
+            print(str[argsi], file=sys.stderr)
 
         self._refGenomeKey = typeSpecificArgsList[0]
         if self._refGenomeKey == BigwigFilesExporter.UNSPECIFIED_REF_GENOME_KEY or len(self._refGenomeKey.strip()) == 0:
