@@ -2,7 +2,7 @@ from . import EupathExporter
 from . import ReferenceGenome
 import os
 
-class BigwigFilesExporter(EupathExporter.Export):
+class BigwigFilesExporter(EupathExporter.Exporter):
     """
 INPUT
     type specific args:  
