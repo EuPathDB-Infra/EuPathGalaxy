@@ -64,7 +64,7 @@ OUTPUT
                 filename = filename + ".bw"
 
             # check file size
-            size = os.stat(filename).st_size
+            size = os.stat(path).st_size
             sizeLimit = 500 * 1024 * 1024 # 500MB
             # print >> sys.stderr, "file size is " + str(size)
             if size > sizeLimit:
