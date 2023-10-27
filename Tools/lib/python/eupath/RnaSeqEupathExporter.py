@@ -44,14 +44,17 @@ SEE VDI IMPORTER FOR VALIDATION RULES
         super().initialize(stdArgsBundle, RnaSeqExporter.TYPE, RnaSeqExporter.VERSION)
 
         if len(typeSpecificArgsList) < 5:
-            raise EupathExporter.ValidationException("The tool was passed an insufficient numbers of arguments.")
+            print("The tool was passed an insufficient numbers of arguments.", file=sys.stderr)
+            exit(1)
 
         if (len(typeSpecificArgsList) - 1) % 4 != 0:
-            raise EupathExporter.ValidationException("Invalid number of arguments.  Must be stranded/unstranded followed by one or more 4-tuples.")
+            print("Invalid number of arguments.  Must be stranded/unstranded followed by one or more 4-tuples.", file=sys.stderr)
+            exit(1)
 
         strandednessParam = typeSpecificArgsList[0]
         if strandnessParam != "stranded" and strandnessParam != "unstranded":
-            raise EupathExporter.ValidationException("Invalid strand param: " + strandednessParam)
+            print("Invalid strand param: " + strandednessParam, file=sys.stderr)
+            exit(1)
 
         # grab ref genome from first tuple.  all others must agree
         self._refGenomeKey = typeSpecificArgsList[3]
@@ -74,7 +77,8 @@ SEE VDI IMPORTER FOR VALIDATION RULES
             suffix = typeSpecificArgsList[i+3]
 
             if refGenomeKey != self._refGenomeKey
-                raise EupathExporter.ValidationException("All datasets must have the same reference genome identifier and version. Sample " + sampleName + " does not agree with others: " + refGenomeKey)
+                print("All datasets must have the same reference genome identifier and version. Sample " + sampleName + " does not agree with the others: " + refGenomeKey, file=sys.stderr)
+                exit(1)
             
             filename = self.clean_file_name(re.sub(r"\s+", "_", samplename) + "." + suffix)
 

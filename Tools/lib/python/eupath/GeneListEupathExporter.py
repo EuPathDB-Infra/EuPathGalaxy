@@ -1,7 +1,6 @@
-#!/usr/bin/python
-
 from . import EupathExporter
 from . import ReferenceGenome
+import sys
 
 class GeneListExporter(EupathExporter.Exporter):
 
@@ -15,13 +14,15 @@ class GeneListExporter(EupathExporter.Exporter):
         super().initialize(stdArgsBundle, GeneListExporter.GENE_LIST_TYPE, GeneListExporter.GENE_LIST_VERSION)
 
         if len(typeSpecificArgsList) != 3:
-            raise EupathExporter.ValidationException("The tool was passed an insufficient numbers of arguments.")
+            print("The tool was passed an insufficient numbers of arguments.", file=sys.stderr)
+            exit(1)
 
         # Override the dataset genome reference with that provided via the form.
         # (We need a ref genome in order to decide which project the gene list is for.  BUT... a gene list might
         # contain genes from mulitple genomes)
         if len(typeSpecificArgsList[0].strip()) == 0:
-            raise EupathExporter.ValidationException("A reference genome must be selected.")
+            print("A reference genome must be selected.", file=sys.stderr)
+            exit(1)
         self._genome = ReferenceGenome.Genome(typeSpecificArgsList[0])
         self._dataset_file_path = typeSpecificArgsList[1]
         self._datatype = typeSpecificArgsList[2]

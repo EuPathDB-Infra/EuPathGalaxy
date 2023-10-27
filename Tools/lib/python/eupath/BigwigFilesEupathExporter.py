@@ -25,26 +25,29 @@ OUTPUT
     # Constants
     TYPE = "BigwigFiles"
     VERSION = "1.0"
-    UNSPECIFIED_REF_GENOME_KEY = "Unspecified(?)"
+    UNSPECIFIED_REF_GENOME_KEY = "?"
 
     def initialize(self, stdArgsBundle, typeSpecificArgsList):
 
         super().initialize(stdArgsBundle, BigwigFilesExporter.TYPE, BigwigFilesExporter.VERSION)
 
         if len(typeSpecificArgsList) < 4:
-            raise EupathExporter.ValidationException("The tool was passed an insufficient numbers of arguments.")
+            print("The tool was passed an insufficient numbers of arguments.", file=sys.stderr)
+            exit(1)
 
         if (len(typeSpecificArgsList) - 1) % 3 != 0:
-            raise EupathExporter.ValidationException("Invalid number of arguments.  Must be a reference genome followed by one or more 3-tuples.")
+            print("Invalid number of arguments.  Must be a reference genome followed by one or more 3-tuples.", file=sys.stderr)
+            exit(1)
 
-        # list arguments (for debuging)
-        print("args to BigwigFilesEupathExporter.py", file=sys.stderr)
-        for i in range(0, len(args)):
-            print(str[argsi], file=sys.stderr)
+        ## list arguments (for debuging)  (these can easily be seen in the galaxy UI)
+        # print("args to BigwigFilesEupathExporter.py", file=sys.stderr)
+        # for i in range(0, len(typeSpecificArgsList)):
+        #     print(str(typeSpecificArgsList[i]), file=sys.stderr)
 
         self._refGenomeKey = typeSpecificArgsList[0]
         if self._refGenomeKey == BigwigFilesExporter.UNSPECIFIED_REF_GENOME_KEY or len(self._refGenomeKey.strip()) == 0:
-            raise EupathExporter.ValidationException("A reference genome must be selected.")
+            print("Please select a reference genome from the provided list.", file=sys.stderr)
+            exit(1);
         self._refGenome = ReferenceGenome.Genome(self._refGenomeKey)
 
         self._datasetInfos = []
@@ -68,10 +71,12 @@ OUTPUT
             sizeLimit = 500 * 1024 * 1024 # 500MB
             # print >> sys.stderr, "file size is " + str(size)
             if size > sizeLimit:
-                raise EupathExporter.ValidationException("File exceeds 500MB size limit: " + filename)
+                print("File exceeds 500MB size limit: " + filename, file=sys.stderr)
+                exit(1)
 
             if refGenomeKey != BigwigFilesExporter.UNSPECIFIED_REF_GENOME_KEY and refGenomeKey != self._refGenomeKey:
-                raise EupathExporter.ValidationException("File " + filename + " is annotated with ref genome " + refGenomeKey + " which conflicts with what you specified for the export: " + self._refGenomeKey)
+                print("File " + filename + " is annotated with ref genome " + refGenomeKey + " which conflicts with what you specified for the export: " + self._refGenomeKey, file=sys.stderr)
+                exit(1)
 
             self._datasetInfos.append({"name": filename, "path": path})
 
