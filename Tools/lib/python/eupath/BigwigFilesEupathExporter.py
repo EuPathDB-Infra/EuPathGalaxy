@@ -36,16 +36,15 @@ OUTPUT
         if (len(typeSpecificArgsList) - 1) % 3 != 0:
             raise EupathExporter.ValidationException("Invalid number of arguments.  Must be a reference genome followed by one or more 3-tuples.")
 
+        list arguments (for debuging)
+        print >> sys.stderr, "args to BigwigFilesEupathExporter.py"
+        for i in range(0, len(args)):
+            print >> sys.stderr, str(args[i])
+
         self._refGenomeKey = typeSpecificArgsList[0]
         if self._refGenomeKey == BigwigFilesExporter.UNSPECIFIED_REF_GENOME_KEY or len(self._refGenomeKey.strip()) == 0:
             raise EupathExporter.ValidationException("A reference genome must be selected.")
         self._refGenome = ReferenceGenome.Genome(self._refGenomeKey)
-
-        # list arguments (for debuging)
-        # print >> sys.stderr, "args to BigwigFilesEupathExporter.py"
-        # for i in range(0, len(args)):
-        #     print >> sys.stderr, str(args[i])
-
 
         self._datasetInfos = []
         
