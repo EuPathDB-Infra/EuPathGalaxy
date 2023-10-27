@@ -1,5 +1,6 @@
 from . import EupathExporter
 from . import ReferenceGenome
+import sys
 import os
 
 class BigwigFilesExporter(EupathExporter.Exporter):
