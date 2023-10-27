@@ -36,7 +36,7 @@ OUTPUT
         if (len(typeSpecificArgsList) - 1) % 3 != 0:
             raise EupathExporter.ValidationException("Invalid number of arguments.  Must be a reference genome followed by one or more 3-tuples.")
 
-        list arguments (for debuging)
+        # list arguments (for debuging)
         print >> sys.stderr, "args to BigwigFilesEupathExporter.py"
         for i in range(0, len(args)):
             print >> sys.stderr, str(args[i])
