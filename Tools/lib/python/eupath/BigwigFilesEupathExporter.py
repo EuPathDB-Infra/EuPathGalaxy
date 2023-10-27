@@ -28,7 +28,7 @@ OUTPUT
 
     def initialize(self, stdArgsBundle, typeSpecificArgsList):
 
-        super().initialize(stdArgsBundle, TYPE, VERSION)
+        super().initialize(stdArgsBundle, BigwigFilesExporter.TYPE, BigwigFilesExporter.VERSION)
 
         if len(typeSpecificArgsList) < 4:
             raise EupathExporter.ValidationException("The tool was passed an insufficient numbers of arguments.")
@@ -37,7 +37,7 @@ OUTPUT
             raise EupathExporter.ValidationException("Invalid number of arguments.  Must be a reference genome followed by one or more 3-tuples.")
 
         self._refGenomeKey = typeSpecificArgsList[0]
-        if self._refGenomeKey == UNSPECIFIED_REF_GENOME_KEY or len(self._refGenomeKey.strip()) == 0:
+        if self._refGenomeKey == BigwigFilesExporter.UNSPECIFIED_REF_GENOME_KEY or len(self._refGenomeKey.strip()) == 0:
             raise EupathExporter.ValidationException("A reference genome must be selected.")
         self._refGenome = ReferenceGenome.Genome(self._refGenomeKey)
 
@@ -70,7 +70,7 @@ OUTPUT
             if size > sizeLimit:
                 raise EupathExporter.ValidationException("File exceeds 500MB size limit: " + filename)
 
-            if refGenomeKey != UNSPECIFIED_REF_GENOME_KEY and refGenomeKey != self._refGenomeKey:
+            if refGenomeKey != BigwigFilesExporter.UNSPECIFIED_REF_GENOME_KEY and refGenomeKey != self._refGenomeKey:
                 raise EupathExporter.ValidationException("File " + filename + " is annotated with ref genome " + refGenomeKey + " which conflicts with what you specified for the export: " + self._refGenomeKey)
 
             self._datasetInfos.append({"name": filename, "path": path})
