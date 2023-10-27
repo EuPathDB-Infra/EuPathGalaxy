@@ -68,7 +68,11 @@ class Exporter:
         self._stdArgsBundle = stdArgsBundle
         self._dataset_type = dataset_type
         self._dataset_version = dataset_version
-        self._headers = {"Accept": "application/json", "Admin-Token": self._super_user_token, "User-ID": self._stdArgsBundle.user_id}
+
+        # read in config info
+        (self._vdi_service_url, self._vdi_auth_token) = self.read_config()
+
+        self._headers = {"Accept": "application/json", "Admin-Token": self._vdi_auth_token, "User-ID": self._stdArgsBundle.user_id}
 
         # create a unique name for our tmp working dir and the tarball, of the form: 
         #   dataset_uNNNNNN_tTTTTTTT 
@@ -77,8 +81,6 @@ class Exporter:
         self._export_file_root = 'dataset_u' + str(self._stdArgsBundle.user_id) + '_t' + str(timestamp) + '_p' + str(os.getpid())
         print_debug("Export file root is " + self._export_file_root)
 
-        # read in config info
-        (self._service_url, self._super_user_token) = self.read_config()
 
     def read_config(self):
         """
@@ -163,7 +165,6 @@ class Exporter:
         }
 
     def post_metadata_and_data(self, json_blob, tarball_name):
-        print_debug("Super user token: |" + self._super_user_token + "|")
         print_debug("POSTING data.  Tarball name: " + tarball_name)
         try:
             form_fields = {"file": open(tarball_name, "rb"),  "meta":json.dumps(json_blob)}
@@ -188,7 +189,7 @@ class Exporter:
     def check_upload_in_progress(self, user_dataset_id):
         print_debug("Polling for status")
         try:
-            response = requests.get(self._service_url + "/" + user_dataset_id, headers=self._headers, verify=get_ssl_verify())
+            response = requests.get(self._vdi_service_url + "/" + user_dataset_id, headers=self._headers, verify=get_ssl_verify())
             response.raise_for_status()
             json_blob = response.json()
             if json_blob["status"]["import"] == "complete":
