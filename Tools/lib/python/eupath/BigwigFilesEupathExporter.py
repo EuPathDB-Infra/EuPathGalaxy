@@ -45,7 +45,7 @@ OUTPUT
         #     print(str(typeSpecificArgsList[i]), file=sys.stderr)
 
         self._refGenomeKey = typeSpecificArgsList[0]
-        if self._refGenomeKey == BigwigFilesExporter.UNSPECIFIED_REF_GENOME_KEY or len(self._refGenomeKey.strip()) == 0:
+        if len(self._refGenomeKey.strip()) == 0 or self._refGenomeKey == BigwigFilesExporter.UNSPECIFIED_REF_GENOME_KEY:
             print("Please select a reference genome from the provided list.", file=sys.stderr)
             exit(1);
         self._refGenome = ReferenceGenome.Genome(self._refGenomeKey)

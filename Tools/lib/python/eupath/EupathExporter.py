@@ -70,7 +70,9 @@ class Exporter:
         self._dataset_version = dataset_version
 
         # read in config info
-        (self._vdi_service_url, self._vdi_auth_token) = self.read_config()
+        (vdi_service_url, self._vdi_auth_token) = self.read_config()
+
+        self._vdi_datasets_url = vdi_service_url + "/vdi-datasets"
 
         self._headers = {"Accept": "application/json", "Admin-Token": self._vdi_auth_token, "User-ID": self._stdArgsBundle.user_id}
 
@@ -158,7 +160,6 @@ class Exporter:
             "dependencies": self.identify_dependencies(),
             "description": self._stdArgsBundle.description,
             "datasetType": {"name": self._dataset_type, "version": self._dataset_version},
-            "datasetType": self._datatype,
             "projects": self.identify_projects(),
             "visibility": "private",
             "origin": self.SOURCE_GALAXY
@@ -167,13 +168,14 @@ class Exporter:
     def post_metadata_and_data(self, json_blob, tarball_name):
         print_debug("POSTING data.  Tarball name: " + tarball_name)
         try:
+            url = self._vdi_datasets_url
             form_fields = {"file": open(tarball_name, "rb"),  "meta":json.dumps(json_blob)}
-            response = requests.post(self._service_url, files=form_fields, headers=self._headers, verify=get_ssl_verify())
+            response = requests.post(url, files=form_fields, headers=self._headers, verify=get_ssl_verify())
             response.raise_for_status()
             print_debug(response.json())
             return response.json()['datasetId']
         except requests.exceptions.RequestException as e:
-            handleRequestException(e, url, "Posting metadata and data to VDI")    
+            self.handleRequestException(e, url, "Posting metadata and data to VDI")    
 
     def poll_for_upload_complete(self, user_dataset_id):
         start_time = time.time()
@@ -189,7 +191,8 @@ class Exporter:
     def check_upload_in_progress(self, user_dataset_id):
         print_debug("Polling for status")
         try:
-            response = requests.get(self._vdi_service_url + "/" + user_dataset_id, headers=self._headers, verify=get_ssl_verify())
+            url = self._vdi_datasets_url + "/" + user_dataset_id
+            response = requests.get(url, headers=self._headers, verify=get_ssl_verify())
             response.raise_for_status()
             json_blob = response.json()
             if json_blob["status"]["import"] == "complete":
@@ -198,9 +201,15 @@ class Exporter:
                 self.handle_job_invalid_status(json_blob)
             return True  # status is awaiting or in progress
         except requests.exceptions.RequestException as e:
-            handleRequestException(e, url, "Polling VDI for upload status")    
+            self.handleRequestException(e, url, "Polling VDI for upload status")    
 
 
+    def handleRequestException(self, e, url, msg):
+        print("Error " + msg + ". Exception type: " + str(type(e)), file=sys.stderr)
+        print("HTTP Code: " + str(e.response.status_code) + " " + e.response.text, file=sys.stderr)
+        print("URL: " + url, file=sys.stderr)            
+        exit(1)
+        
     def handle_job_invalid_status(self, response_json):
         msgLines = ["Export failed.  Dataset had validation problems:"]
         for msg in response_json["importMessages"]:

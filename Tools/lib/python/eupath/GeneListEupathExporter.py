@@ -4,28 +4,29 @@ import sys
 
 class GeneListExporter(EupathExporter.Exporter):
 
-    # Name given to this type of dataset and to the expected file
     GENE_LIST_TYPE = "GeneList"
     GENE_LIST_VERSION = "1.0"
     GENE_LIST_FILE = "genelist.txt"
+    UNSPECIFIED_REF_GENOME_KEY = "?"
 
     def initialize(self, stdArgsBundle, typeSpecificArgsList):
 
         super().initialize(stdArgsBundle, GeneListExporter.GENE_LIST_TYPE, GeneListExporter.GENE_LIST_VERSION)
 
-        if len(typeSpecificArgsList) != 3:
+        ##  TODO:  make this 2
+        if len(typeSpecificArgsList) != 4: 
             print("The tool was passed an insufficient numbers of arguments.", file=sys.stderr)
             exit(1)
 
         # Override the dataset genome reference with that provided via the form.
         # (We need a ref genome in order to decide which project the gene list is for.  BUT... a gene list might
         # contain genes from mulitple genomes)
-        if len(typeSpecificArgsList[0].strip()) == 0:
-            print("A reference genome must be selected.", file=sys.stderr)
-            exit(1)
-        self._genome = ReferenceGenome.Genome(typeSpecificArgsList[0])
+        refGenomeKey = typeSpecificArgsList[0]
+        if len(refGenomeKey.strip()) == 0 or refGenomeKey == GeneListExporter.UNSPECIFIED_REF_GENOME_KEY:
+            print("Please select a reference genome from the provided list.", file=sys.stderr)
+            exit(1);
+        self._genome = ReferenceGenome.Genome(refGenomeKey)
         self._dataset_file_path = typeSpecificArgsList[1]
-        self._datatype = typeSpecificArgsList[2]
 
     def identify_dependencies(self):
         """

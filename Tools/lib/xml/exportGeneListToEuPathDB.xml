@@ -55,7 +55,7 @@
       <validator type="empty_dataset" />
       -->
     </param>
-    <!-- I consider this a very bad idea -->
+
     <param name="overrideDbkey" type="genomebuild" label="Representative Genome"
            help="Choose a genome that represents your gene list.  It will be used to determine which VEuPathDB website to export to (eg PlasmoDB).  Your genes do not need to exclusively belong to that genome." />
   </inputs>
