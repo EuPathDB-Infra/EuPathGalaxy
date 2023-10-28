@@ -110,7 +110,8 @@ class Exporter:
             print_debug("UD ID: " + user_dataset_id)
             self.poll_for_upload_complete(user_dataset_id)   # teriminates if system or validation error
             os.chdir(orig_path) # exit temp dir, prior to removing it
-
+            print("Export complete. VEuPathDB User Dataset ID: " + user_dataset_id, file=sys.stdout)
+            
     @contextlib.contextmanager
     def temporary_directory(self, dir_name):
         """
@@ -151,6 +152,7 @@ class Exporter:
             for filename in os.listdir(temp_path):
                 print_debug("Adding file to tarball: " + filename)
                 tarball.add(filename)
+        #shutil.copy(tarball_name, "/home/galaxy/steve.tgz")
         return tarball_name       
 
     def create_body_for_post(self):
@@ -168,12 +170,12 @@ class Exporter:
     def post_metadata_and_data(self, json_blob, tarball_name):
         print_debug("POSTING data.  Tarball name: " + tarball_name)
         try:
-            url = self._vdi_datasets_url
+            url = self._vdi_datasets_url + "/admin/proxy-upload"
             form_fields = {"file": open(tarball_name, "rb"),  "meta":json.dumps(json_blob)}
             response = requests.post(url, files=form_fields, headers=self._headers, verify=get_ssl_verify())
             response.raise_for_status()
             print_debug(response.json())
-            return response.json()['datasetId']
+            return response.json()['datasetID']
         except requests.exceptions.RequestException as e:
             self.handleRequestException(e, url, "Posting metadata and data to VDI")    
 
