@@ -48,7 +48,12 @@ OUTPUT
         if len(self._refGenomeKey.strip()) == 0 or self._refGenomeKey == BigwigFilesExporter.UNSPECIFIED_REF_GENOME_KEY:
             print("Please select a reference genome from the provided list.", file=sys.stderr)
             exit(1);
-        self._refGenome = ReferenceGenome.Genome(self._refGenomeKey)
+
+        try:    
+            self._refGenome = ReferenceGenome.Genome(self._refGenomeKey)
+        except:
+            print("Please provide a valid reference genome", file=sys.stderr)
+            exit(1)
 
         self._datasetInfos = []
         

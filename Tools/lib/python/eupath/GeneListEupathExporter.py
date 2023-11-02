@@ -6,7 +6,6 @@ class GeneListExporter(EupathExporter.Exporter):
 
     GENE_LIST_TYPE = "GeneList"
     GENE_LIST_VERSION = "1.0"
-    GENE_LIST_FILE = "genelist.txt"
     UNSPECIFIED_REF_GENOME_KEY = "?"
 
     def initialize(self, stdArgsBundle, typeSpecificArgsList):
@@ -14,7 +13,7 @@ class GeneListExporter(EupathExporter.Exporter):
         super().initialize(stdArgsBundle, GeneListExporter.GENE_LIST_TYPE, GeneListExporter.GENE_LIST_VERSION)
 
         ##  TODO:  make this 2
-        if len(typeSpecificArgsList) != 4: 
+        if len(typeSpecificArgsList) != 3: 
             print("The tool was passed an insufficient numbers of arguments.", file=sys.stderr)
             exit(1)
 
@@ -27,6 +26,7 @@ class GeneListExporter(EupathExporter.Exporter):
             exit(1);
         self._genome = ReferenceGenome.Genome(refGenomeKey)
         self._dataset_file_path = typeSpecificArgsList[1]
+        self._dataset_file_name = typeSpecificArgsList[2]
 
     def identify_dependencies(self):
         """
@@ -56,4 +56,4 @@ class GeneListExporter(EupathExporter.Exporter):
         for such a file
         :return: A list containing the single dataset file accompanied by its EuPathDB designation.
         """
-        return [{"name": self.GENE_LIST_FILE, "path": self._dataset_file_path}]
+        return [{"name": self._dataset_file_name, "path": self._dataset_file_path}]

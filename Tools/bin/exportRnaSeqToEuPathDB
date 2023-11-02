@@ -7,7 +7,7 @@ from eupath import RnaSeqEupathExporter
 from eupath import EupathExporter
 
 def main():
-    EupathExporter.execute(BigwigFilesEupathExporter.RnaSeqEupathExporter())
+    EupathExporter.execute(RnaSeqEupathExporter.RnaSeqExporter())
 
 if __name__ == "__main__":
     sys.exit(main())

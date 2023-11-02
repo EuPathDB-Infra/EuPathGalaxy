@@ -4,33 +4,15 @@
   
   <command interpreter="python" detect_errors="aggressive">
     <![CDATA[
-    ../../bin/exportRnaSeqToEuPathDB "$dataset_name" "$summary" "$description" "$__user_email__" "$__tool_directory__" "$output" "$summary" "$double"
+    ../../bin/exportRnaSeqToEuPathDB "$dataset_name" "$summary" "$description" "$__user_email__" "$__tool_directory__" "$output"
 
-    #if $double == "unstranded":
+    #for $key in $bigwig_collection.keys()
+      "$bigwig_collection[$key]" "$key" "$bigwig_collection[$key].metadata.dbkey" bw
+    #end for
 
-      #for $key in $bigwig_collection.keys()
-        "$bigwig_collection[$key]" "$key" "$bigwig_collection[$key].metadata.dbkey" bw
-      #end for
-
-      #for $key in $fpkm_collection.keys()
-        "$fpkm_collection[$key]" "$key" "$fpkm_collection[$key].metadata.dbkey" txt
-      #end for
-
-    #else:
-
-      #for $key in $bigwig_collection.keys()
-        #for $subkey in $bigwig_collection[$key].keys()
-          "$bigwig_collection[$key][$subkey]" "$key-$subkey" "$bigwig_collection[$key][$subkey].metadata.dbkey" bw
-        #end for
-      #end for
-
-      #for $key in $fpkm_collection.keys()
-        #for $subkey in $fpkm_collection[$key].keys()
-          "$fpkm_collection[$key][$subkey]" "$key-$subkey" "$fpkm_collection[$key][$subkey].metadata.dbkey" txt
-        #end for
-      #end for
-
-    #end if
+    #for $key in $fpkm_collection.keys()
+      "$fpkm_collection[$key]" "$key" "$fpkm_collection[$key].metadata.dbkey" txt
+    #end for
 
     ]]>
     
@@ -46,16 +28,11 @@
       <validator type="length" message="Please restrict the name to 100 characters or less." max="100" />
     </param>
 
-    <param label="Are you exporting sense and antisense TPM/FPKM datasets?" help="Select yes if your experiment is strand-specific and you are including sense and antisense datasets in this export." name="double" type="select">
-      <option selected="true" value="unstranded">No</option>
-      <option value="stranded">Yes</option>
-    </param>
-
-    <param name="bigwig_collection" type="data_collection" multiple="true" label="BigWig collection:" format="bigwig"
+    <param name="bigwig_collection" type="data_collection" collection_type="list" multiple="true" label="BigWig collection:" format="bigwig"
            help="Select the BigWig collection to include in the new VEuPathDB My Data Set. The BigWig collection you select here must be mapped to the reference genome that you select below.">
     </param>
 
-    <param name="fpkm_collection" type="data_collection" multiple="true" label="TPM or FPKM collection:" format="tabular"
+    <param name="fpkm_collection" type="data_collection" collection_type="list" multiple="true" label="TPM or FPKM collection:" format="tabular"
            help="Select the TPM or FPKM collection. For an unstranded dataset, its name should include the phrase 'gene expression'.">
     </param>
 
