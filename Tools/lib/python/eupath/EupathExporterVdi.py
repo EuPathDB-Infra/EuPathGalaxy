@@ -12,6 +12,8 @@ import tempfile
 import contextlib
 import re
 import optparse
+from urllib import request, parse
+from urllib.error import HTTPError
 
 # Superclass for all exporters
 # POSTS data+metadata to the VDI service, and polls for response while status is till awaiting or in progress
@@ -78,18 +80,22 @@ class Exporter:
         print_debug("Export file root is " + self._export_file_root)
 
         # read in config info
-        (self._service_url, self._super_user_token) = self.read_config()
+        (self._service_url, self._super_user_token, self._login_server_url, self._gateway_username, self._gateway_password) = self.read_config()
 
     def read_config(self):
         """
         Obtain the url and credentials to talk the the VDI service
         """
         config_path = self._stdArgsBundle.tool_directory + "/../../config/config.json"
-        
+
+        required_config = ["service-url", "super-user-token", "login-server-url", "gateway-username", "gateway-password"]
         with open(config_path, "r") as config_file:
             config_json = json.load(config_file)
-            return (config_json["service-url"], config_json["super-user-token"])
-                    
+            missing_elements = set(required_config) - set(config_json.keys())
+            if missing_elements:
+                raise SystemException(f"The config file is missing: {missing_elements}")
+            return config_json
+        
     def export(self):
 
         # Save the current working directory so we can get back to it
@@ -102,9 +108,10 @@ class Exporter:
             tarball_name = self.create_tarball(temp_path)
             json_body = self.create_body_for_post()
             print_debug(json_body)
-            user_dataset_id = self.post_metadata_and_data(json_body, tarball_name)
+            auth_tkt = self.get_eupath_gateway_auth_tkt()
+            user_dataset_id = self.post_metadata_and_data(json_body, tarball_name, auth_tkt)
             print_debug("UD ID: " + user_dataset_id)
-            self.poll_for_upload_complete(user_dataset_id)   # teriminates if system or validation error
+            self.poll_for_upload_complete(user_dataset_id, auth_tkt)   # teriminates if system or validation error
             os.chdir(orig_path) # exit temp dir, prior to removing it
 
     @contextlib.contextmanager
@@ -161,8 +168,31 @@ class Exporter:
             "origin": self.SOURCE_GALAXY
         }
 
+    def get_eupath_gateway_auth_tkt(
+        params = {    
+            "username": self._gateway_username,    
+            "password": self._gateway_password,    
+        }    
+        query_string = parse.urlencode(params)    
+        data = query_string.encode("utf-8")    
+
+        req =  request.Request(self._login_server_url, data=data) # this will make the method "POST"
+        req.add_header("Content-Type", "application/x-www-form-urlencoded")
+        req.add_header("Content-Length", len(data))
+        req.add_header("Cookie", "auth_probe=1")
+        try:
+            response = request.urlopen(req)
+            cookie = response.info().get_all('Set-Cookie')
+            # ['auth_tkt=Y2M2YzU1OTE5MTAzNGFjZDk0MjU5YjExMTBjZmFjOTM2NTk3MjhmZmFwaWRiIWFwaWRiITE3MDQ0MDUyNDc6; domain=veupathdb.org; path=/']
+            auth_tkt = cookie[0].split("; ")[0].split("=")[1] 
+            return auth_tkt
+        except HTTPError as e:
+            print("Exception authenticating through gateway. Code: " + str(e.code) + " " + e.reason, file=sys.stderr)
+            print("Error URL: " + url, file=sys.stderr)            
+            exit(1)
+
     def post_metadata_and_data(self, json_blob, tarball_name):
-        headers = {"Accept": "application/json", "Admin-Token": self._super_user_token, "User-ID": self._stdArgsBundle.user_id}
+        headers = {"Accept": "application/json", "Admin-Token": self._super_user_token, "User-ID": self._stdArgsBundle.user_id, "Cookie": auth_tkt}
         print_debug("Super user token: |" + self._super_user_token + "|")
         print_debug("POSTING data.  Tarball name: " + tarball_name)
         try:
@@ -188,7 +218,7 @@ class Exporter:
 
     # return True if still in progress; False if success.  Fail and terminate if system or validation error
     def check_upload_in_progress(self, user_dataset_id):
-        headers = {"Accept": "application/json", "Admin-Token": self._super_user_token, "User-ID": self._stdArgsBundle.user_id}
+        headers = {"Accept": "application/json", "Admin-Token": self._super_user_token, "User-ID": self._stdArgsBundle.user_id, "Cookie": auth_tkt}
         print_debug("Polling for status")
         try:
             response = requests.get(self._service_url + "/" + user_dataset_id, headers=headers, verify=get_ssl_verify())
