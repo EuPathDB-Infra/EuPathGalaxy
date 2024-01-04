@@ -12,10 +12,15 @@ import tempfile
 import contextlib
 import re
 import optparse
+from urllib import request, parse
+from urllib.error import HTTPError
+
 
 # Superclass for all exporters
 # POSTS data+metadata to the VDI service, and polls for response while status is till awaiting or in progress
 # if dataset is invalid, fails, returning messages to user
+
+# we always authenticate through the eupath dev gateway, even for prod, because it is needed for dev and ok for prod
 
 def print_debug(msg):
     if os.getenv('DEBUG'):
@@ -71,10 +76,13 @@ class Exporter:
 
         # read in config info
         (vdi_service_url, self._vdi_auth_token) = self.read_config()
+        (vdi_service_url, self._vdi_auth_token, self._gateway_url, self._gateway_username, self._gateway_password) = self.read_config()
 
         self._vdi_datasets_url = vdi_service_url + "/vdi-datasets"
 
-        self._headers = {"Accept": "application/json", "Admin-Token": self._vdi_auth_token, "User-ID": self._stdArgsBundle.user_id}
+        gateway_cookie = self.get_eupath_gateway_cookie()
+
+        self._headers = {"Accept": "application/json", "Admin-Token": self._vdi_auth_token, "User-ID": self._stdArgsBundle.user_id, "Cookie": gateway_cookie}
 
         # create a unique name for our tmp working dir and the tarball, of the form: 
         #   dataset_uNNNNNN_tTTTTTTT 
@@ -89,10 +97,14 @@ class Exporter:
         Obtain the url and credentials to talk the the VDI service
         """
         config_path = self._stdArgsBundle.tool_directory + "/../../config/config.json"
-        
+
+        required_config = ["vdi-service-url", "vdi-auth-token", "gateway-url", "gateway-username", "gateway-password"]
         with open(config_path, "r") as config_file:
             config_json = json.load(config_file)
-            return (config_json["vdi-service-url"], config_json["vdi-auth-token"])
+            missing_elements = set(required_config) - set(config_json.keys())
+            if missing_elements:
+                raise SystemException(f"The config file is missing: {missing_elements}")
+            return (config_json["vdi-service-url"], config_json["vdi-auth-token"], config_json["gateway-url"], config_json["gateway-username"], config_json["gateway-password"])
                     
     def export(self):
 
@@ -154,6 +166,29 @@ class Exporter:
                 tarball.add(filename)
         #shutil.copy(tarball_name, "/home/galaxy/steve.tgz")
         return tarball_name       
+
+    def get_eupath_gateway_cookie(
+        params = {    
+            "username": self._gateway_username,    
+            "password": self._gateway_password,    
+        }    
+        query_string = parse.urlencode(params)    
+        data = query_string.encode("utf-8")    
+
+        req =  request.Request(self._login_server_url, data=data) # this will make the method "POST"
+        req.add_header("Content-Type", "application/x-www-form-urlencoded")
+        req.add_header("Content-Length", len(data))
+        req.add_header("Cookie", "auth_probe=1")
+        try:
+            response = request.urlopen(req)
+            cookie = response.info().get_all('Set-Cookie')
+            # ['auth_tkt=Y2M2YzU1OTE5MTAzNGFjZDk0MjU5YjExMTBjZmFjOTM2NTk3MjhmZmFwaWRiIWFwaWRiITE3MDQ0MDUyNDc6; domain=veupathdb.org; path=/']
+            auth_tkt = cookie[0].split("; ")[0].split("=")[1] 
+            return auth_tkt
+        except HTTPError as e:
+            print("Exception authenticating through gateway. Code: " + str(e.code) + " " + e.reason, file=sys.stderr)
+            print("Error URL: " + url, file=sys.stderr)            
+            exit(1)
 
     def create_body_for_post(self):
         return {
