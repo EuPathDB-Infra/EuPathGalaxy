@@ -75,14 +75,13 @@ class Exporter:
         self._dataset_version = dataset_version
 
         # read in config info
-        (vdi_service_url, self._vdi_auth_token) = self.read_config()
         (vdi_service_url, self._vdi_auth_token, self._gateway_url, self._gateway_username, self._gateway_password) = self.read_config()
 
         self._vdi_datasets_url = vdi_service_url + "/vdi-datasets"
 
         gateway_cookie = self.get_eupath_gateway_cookie()
 
-        self._headers = {"Accept": "application/json", "Admin-Token": self._vdi_auth_token, "User-ID": self._stdArgsBundle.user_id, "Cookie": gateway_cookie}
+        self._headers = {"Accept": "application/json", "Admin-Token": self._vdi_auth_token, "User-ID": self._stdArgsBundle.user_id, "Cookie": "auth_tkt=" + gateway_cookie}
 
         # create a unique name for our tmp working dir and the tarball, of the form: 
         #   dataset_uNNNNNN_tTTTTTTT 
@@ -167,7 +166,7 @@ class Exporter:
         #shutil.copy(tarball_name, "/home/galaxy/steve.tgz")
         return tarball_name       
 
-    def get_eupath_gateway_cookie(
+    def get_eupath_gateway_cookie(self):
         params = {    
             "username": self._gateway_username,    
             "password": self._gateway_password,    
@@ -175,7 +174,7 @@ class Exporter:
         query_string = parse.urlencode(params)    
         data = query_string.encode("utf-8")    
 
-        req =  request.Request(self._login_server_url, data=data) # this will make the method "POST"
+        req =  request.Request(self._gateway_url, data=data) # this will make the method "POST"
         req.add_header("Content-Type", "application/x-www-form-urlencoded")
         req.add_header("Content-Length", len(data))
         req.add_header("Cookie", "auth_probe=1")
@@ -208,9 +207,10 @@ class Exporter:
             url = self._vdi_datasets_url + "/admin/proxy-upload"
             form_fields = {"file": open(tarball_name, "rb"),  "meta":json.dumps(json_blob)}
             response = requests.post(url, files=form_fields, headers=self._headers, verify=get_ssl_verify())
+            print("URL: " + url + " HEADERS: " + str(self._headers) + " CODE: " + str(response.status_code) + "TEXT: " + response.text, file=sys.stderr)
             response.raise_for_status()
             print_debug(response.json())
-            return response.json()['datasetID']
+            return response.json()['datasetId']
         except requests.exceptions.RequestException as e:
             self.handleRequestException(e, url, "Posting metadata and data to VDI")    
 
