@@ -79,7 +79,7 @@ SEE VDI IMPORTER FOR VALIDATION RULES
             suffix = typeSpecificArgsList[i+3]
 
             if refGenomeKey != self._refGenomeKey:
-                print("All datasets must have the same reference genome identifier and version. Sample " + samplename + " does not agree with the others: " + refGenomeKey, file=sys.stderr)
+                print("All datasets must have the same reference genome identifier and version. Sample " + samplename + " does not agree with the others.  The value it has is: " + refGenomeKey, file=sys.stderr)
                 exit(1)
             
             filename = self.clean_file_name(re.sub(r"\s+", "_", samplename) + "." + suffix)
