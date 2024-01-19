@@ -207,7 +207,10 @@ class Exporter:
             url = self._vdi_datasets_url + "/admin/proxy-upload"
             form_fields = {"file": open(tarball_name, "rb"),  "meta":json.dumps(json_blob)}
             response = requests.post(url, files=form_fields, headers=self._headers, verify=get_ssl_verify())
-            print("URL: " + url + " HEADERS: " + str(self._headers) + " CODE: " + str(response.status_code) + "TEXT: " + response.text, file=sys.stderr)
+
+            # this is only for dev... includes the secret admin auth token
+            # print("URL: " + url + " HEADERS: " + str(self._headers) + " CODE: " + str(response.status_code) + "TEXT: " + response.text, file=sys.stderr)
+            
             response.raise_for_status()
             print_debug(response.json())
             return response.json()['datasetId']
